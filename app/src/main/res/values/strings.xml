@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">AlzaTest</string>
+    <string name="api_base_url">https://www.alza.cz/Services/RestService.svc/</string>
+    <string name="general_server_error">Unable to connect to server, please try again later…</string>
+    <string name="common_connection_timeout">It looks like your internet connection is weak or the server is overloaded</string>
+    <string name="common_no_internet_connection">No internet connection</string>
+    <string name="category_image">Category image</string>
+    <string name="categories">Categories</string>
+    <string name="try_again">Try again</string>
+</resources>
