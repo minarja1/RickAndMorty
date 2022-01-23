@@ -19,6 +19,7 @@ import androidx.navigation.NavController
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import cz.minarik.alzatest.common.Constants.UTF_8
+import cz.minarik.alzatest.common.util.decodeSafely
 import cz.minarik.alzatest.domain.model.Product
 import cz.minarik.alzatest.navigation.Screen
 import cz.minarik.alzatest.ui.composables.AlzaTopAppBar
@@ -27,7 +28,6 @@ import cz.minarik.alzatest.ui.screens.products.list.components.ProductListItem
 import cz.minarik.alzatest.ui.theme.AlzaTestTheme
 import org.koin.androidx.compose.getViewModel
 import org.koin.core.parameter.parametersOf
-import java.net.URLDecoder
 import java.net.URLEncoder
 
 @Composable
@@ -39,7 +39,7 @@ fun ProductListScreen(navController: NavController, categoryId: String?, categor
         Scaffold(
             modifier = Modifier.fillMaxSize(),
             topBar = {
-                AlzaTopAppBar(navController = navController, text = URLDecoder.decode(categoryName ?: "", UTF_8))
+                AlzaTopAppBar(navController = navController, text = categoryName?.decodeSafely() ?: "")
             },
             content = {
                 HandleState(

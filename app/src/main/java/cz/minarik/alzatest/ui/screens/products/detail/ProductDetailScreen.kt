@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
 import cz.minarik.alzatest.R
-import cz.minarik.alzatest.common.Constants.UTF_8
+import cz.minarik.alzatest.common.util.decodeSafely
 import cz.minarik.alzatest.domain.model.Product
 import cz.minarik.alzatest.ui.composables.AlzaTopAppBar
 import cz.minarik.alzatest.ui.composables.ErrorView
@@ -29,7 +29,6 @@ import cz.minarik.alzatest.ui.screens.products.list.fakeProducts
 import cz.minarik.alzatest.ui.theme.AlzaTestTheme
 import org.koin.androidx.compose.getViewModel
 import org.koin.core.parameter.parametersOf
-import java.net.URLDecoder
 
 
 @Composable
@@ -41,7 +40,7 @@ fun ProductDetailScreen(navController: NavController, productId: String?, produc
         Scaffold(
             modifier = Modifier.fillMaxSize(),
             topBar = {
-                AlzaTopAppBar(navController = navController, text = URLDecoder.decode(productName ?: "", UTF_8))
+                AlzaTopAppBar(navController = navController, text = productName?.decodeSafely() ?: "")
             },
             content = {
                 HandleState(

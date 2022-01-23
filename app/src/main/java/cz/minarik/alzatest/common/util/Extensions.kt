@@ -4,6 +4,8 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
+import cz.minarik.alzatest.common.Constants
+import java.net.URLDecoder
 
 val Context.isInternetAvailable: Boolean
     get() {
@@ -16,3 +18,11 @@ val Context.isInternetAvailable: Boolean
             return connectivityManager.activeNetworkInfo?.isConnected ?: false
         }
     }
+
+fun String.decodeSafely(): String {
+    return try {
+        URLDecoder.decode(this, Constants.UTF_8)
+    } catch (e: Exception) {
+        this
+    }
+}
