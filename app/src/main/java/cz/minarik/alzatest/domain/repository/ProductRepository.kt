@@ -6,4 +6,6 @@ interface ProductRepository {
 
     suspend fun getProducts(categoryId: Long): List<Product>
 
+    suspend fun getProductDetail(productId: Long): Product?
+
 }

@@ -1,9 +1,9 @@
 package cz.minarik.alzatest.domain.use_case.get_products
 
-import cz.minarik.alzatest.data.remote.FailedWithError
-import cz.minarik.alzatest.data.remote.FetchState
-import cz.minarik.alzatest.data.remote.Loading
-import cz.minarik.alzatest.data.remote.SuccessWithData
+import cz.minarik.alzatest.common.base.FailedWithError
+import cz.minarik.alzatest.common.base.FetchState
+import cz.minarik.alzatest.common.base.Loading
+import cz.minarik.alzatest.common.base.SuccessWithData
 import cz.minarik.alzatest.data.remote.exception.GeneralApiException
 import cz.minarik.alzatest.domain.model.Product
 import cz.minarik.alzatest.domain.repository.ProductRepository

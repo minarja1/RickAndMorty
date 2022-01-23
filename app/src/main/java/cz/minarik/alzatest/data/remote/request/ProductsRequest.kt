@@ -10,5 +10,4 @@ data class ProductsRequest(
 @Serializable
 data class FilterParameters(
     val id: Long,
-    val params: List<FilterParameters> = emptyList(),
 )

@@ -2,17 +2,15 @@ package cz.minarik.alzatest.di
 
 import cz.minarik.alzatest.AlzaApplication
 import cz.minarik.alzatest.R
-import cz.minarik.alzatest.common.createOkHttpClient
-import cz.minarik.alzatest.common.createRetrofit
+import cz.minarik.alzatest.common.network.createOkHttpClient
+import cz.minarik.alzatest.common.network.createRetrofit
 import cz.minarik.alzatest.data.remote.AlzaApiService
 import kotlinx.serialization.ExperimentalSerializationApi
 import org.koin.dsl.module
 
 
-@ExperimentalSerializationApi
 val networkModule = module {
 
-    // single instance of HelloRepository
     single {
         AlzaApiService(
             createRetrofit(

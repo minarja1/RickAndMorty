@@ -1,9 +1,9 @@
 package cz.minarik.alzatest.ui.screens.home
 
-import cz.minarik.alzatest.common.BaseViewModel
-import cz.minarik.alzatest.data.remote.FailedWithError
-import cz.minarik.alzatest.data.remote.Loading
-import cz.minarik.alzatest.data.remote.SuccessWithData
+import cz.minarik.alzatest.common.base.BaseViewModel
+import cz.minarik.alzatest.common.base.FailedWithError
+import cz.minarik.alzatest.common.base.Loading
+import cz.minarik.alzatest.common.base.SuccessWithData
 import cz.minarik.alzatest.domain.use_case.get_categories.GetCategoriesUseCase
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,16 +25,21 @@ class HomeScreenViewModel(
         getCategoriesUseCase().onEach { result ->
             when (result) {
                 is SuccessWithData -> {
-                    _state.value = _state.value.copy(categories = result.content, isLoading = false)
+                    _state.value = HomeScreenState(
+                        categories = result.content,
+                    )
                 }
                 is FailedWithError -> {
                     _state.value = _state.value.copy(
-                        error = result.error,
                         isLoading = false,
+                        error = result.error,
                     )
                 }
                 is Loading -> {
-                    _state.value = _state.value.copy(isLoading = true)
+                    _state.value = _state.value.copy(
+                        isLoading = true,
+                        error = ""
+                    )
                 }
             }
         }.launchIn(ioScope)

@@ -8,7 +8,6 @@ import cz.minarik.alzatest.R
 class GeneralApiException : Exception() {
 
     companion object {
-        //todo
         val generalMessage = AlzaApplication.applicationContext.getString(R.string.general_server_error)
     }
 

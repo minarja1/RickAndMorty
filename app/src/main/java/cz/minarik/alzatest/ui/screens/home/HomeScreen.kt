@@ -1,27 +1,26 @@
 package cz.minarik.alzatest.ui.screens.home
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import cz.minarik.alzatest.R
+import cz.minarik.alzatest.common.Constants.UTF_8
 import cz.minarik.alzatest.domain.model.Category
 import cz.minarik.alzatest.navigation.Screen
 import cz.minarik.alzatest.ui.composables.AlzaTopAppBar
@@ -29,6 +28,8 @@ import cz.minarik.alzatest.ui.composables.ErrorView
 import cz.minarik.alzatest.ui.screens.home.components.CategoryListItem
 import cz.minarik.alzatest.ui.theme.AlzaTestTheme
 import org.koin.androidx.compose.getViewModel
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 
 
 @Composable
@@ -55,7 +56,7 @@ fun HandleState(state: State<HomeScreenState>, navController: NavController, rel
         Box(modifier = Modifier.fillMaxSize()) {
             Categories(categories, isLoading, navController, reload)
             if (error.isNotBlank()) {
-                ErrorView(error) {
+                ErrorView(error, categories.isEmpty()) {
                     reload.invoke()
                 }
             }
@@ -77,7 +78,12 @@ fun Categories(categories: List<Category>, isLoading: Boolean, navController: Na
         ) {
             items(categories) { category ->
                 CategoryListItem(category) {
-                    navController.navigate(Screen.ProductList.withArgs(it.id.toString(), it.name ?: ""))
+                    navController.navigate(
+                        Screen.ProductList.withArgs(
+                            it.id.toString(),
+                            URLEncoder.encode(it.name ?: "", UTF_8)
+                        )
+                    )
                 }
             }
         }
@@ -100,5 +106,5 @@ fun CategoriesPreview() {
 @Preview(showSystemUi = true, showBackground = true)
 @Composable
 fun ErrorViewPreview() {
-    ErrorView(error = "Preview error") {}
+    ErrorView(error = "Preview error", true) {}
 }

@@ -27,7 +27,6 @@ class ApiRequest {
                     return null
                 }
                 Log.e(TAG, e.localizedMessage ?: "")
-                //todo log error
                 when (e) {
                     is IOException -> when (e) {
                         is SocketTimeoutException -> throw TimeoutConnectionException()

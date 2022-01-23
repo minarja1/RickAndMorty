@@ -8,7 +8,8 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import cz.minarik.alzatest.common.Constants
 import cz.minarik.alzatest.ui.screens.home.HomeScreen
-import cz.minarik.alzatest.ui.screens.products.ProductList
+import cz.minarik.alzatest.ui.screens.products.detail.ProductDetailScreen
+import cz.minarik.alzatest.ui.screens.products.list.ProductListScreen
 
 @Composable
 fun Navigation() {
@@ -30,10 +31,28 @@ fun Navigation() {
                 },
             )
         ) {
-            ProductList(
+            ProductListScreen(
                 navController = navController,
                 categoryId = it.arguments?.getString(Constants.argCategoryId),
                 categoryName = it.arguments?.getString(Constants.argCategoryName),
+            )
+        }
+
+        composable(
+            route = Screen.ProductDetail.route + "/{${Constants.argProductId}}/{${Constants.argProductName}}",
+            arguments = listOf(
+                navArgument(Constants.argProductId) {
+                    type = NavType.StringType
+                },
+                navArgument(Constants.argProductName) {
+                    type = NavType.StringType
+                },
+            )
+        ) {
+            ProductDetailScreen(
+                navController = navController,
+                productId = it.arguments?.getString(Constants.argProductId),
+                productName = it.arguments?.getString(Constants.argProductName),
             )
         }
     }

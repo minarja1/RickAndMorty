@@ -26,4 +26,12 @@ class ProductRepositoryImpl @Inject constructor(
         } ?: emptyList()
     }
 
+    override suspend fun getProductDetail(productId: Long): Product? {
+        return ApiRequest.getResult {
+            api.getProductDetail(
+                productId
+            )
+        }?.data?.toProduct()
+    }
+
 }
