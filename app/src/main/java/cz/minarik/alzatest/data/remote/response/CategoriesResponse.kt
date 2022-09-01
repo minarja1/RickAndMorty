@@ -1,6 +1,6 @@
 package cz.minarik.alzatest.data.remote.response
 
-import cz.minarik.alzatest.domain.model.Category
+import cz.minarik.alzatest.domain.model.Character
 import java.io.Serializable
 
 @kotlinx.serialization.Serializable
@@ -14,7 +14,7 @@ data class CategoryResponse(
     val name: String? = null,
     val img: String? = null,
 ) : Serializable
-
-fun CategoryResponse.toCategory(): Category {
-    return Category(id, name, img)
-}
+//
+//fun CategoryResponse.toCategory(): Character {
+//    return Character(id, name, img)
+//}

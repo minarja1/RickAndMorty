@@ -21,7 +21,7 @@ import coil.compose.rememberImagePainter
 import cz.minarik.alzatest.R
 import cz.minarik.alzatest.domain.model.Product
 import cz.minarik.alzatest.ui.screens.products.list.fakeProducts
-import cz.minarik.alzatest.ui.theme.cardViewOutlineColor
+import cz.minarik.alzatest.ui.theme.CardViewOutlineColor
 
 @Composable
 fun ProductListItem(
@@ -31,7 +31,7 @@ fun ProductListItem(
     val roundedCornerShape = RoundedCornerShape(8.dp)
     Card(
         shape = roundedCornerShape,
-        border = BorderStroke(1.dp, cardViewOutlineColor),
+        border = BorderStroke(1.dp, CardViewOutlineColor),
         modifier = Modifier
             .fillMaxWidth()
             .clip(roundedCornerShape)

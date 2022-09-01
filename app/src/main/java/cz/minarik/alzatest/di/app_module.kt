@@ -1,8 +1,8 @@
 package cz.minarik.alzatest.di
 
-import cz.minarik.alzatest.data.repository.CategoryRepositoryImpl
+import cz.minarik.alzatest.data.repository.CharacterRepositoryImpl
 import cz.minarik.alzatest.data.repository.ProductRepositoryImpl
-import cz.minarik.alzatest.domain.repository.CategoryRepository
+import cz.minarik.alzatest.domain.repository.CharacterRepository
 import cz.minarik.alzatest.domain.repository.ProductRepository
 import cz.minarik.alzatest.domain.use_case.get_categories.GetCategoriesUseCase
 import cz.minarik.alzatest.domain.use_case.get_product_detail.GetProductDetailUseCase
@@ -15,8 +15,8 @@ import org.koin.dsl.module
 
 val appModule = module {
 
-    single<CategoryRepository> {
-        CategoryRepositoryImpl(
+    single<CharacterRepository> {
+        CharacterRepositoryImpl(
             get(),
             get(),
         )

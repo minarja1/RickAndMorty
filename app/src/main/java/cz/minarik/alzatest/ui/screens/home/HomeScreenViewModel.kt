@@ -26,7 +26,7 @@ class HomeScreenViewModel(
             when (result) {
                 is SuccessWithData -> {
                     _state.value = HomeScreenState(
-                        categories = result.content,
+                        characters = result.content,
                     )
                 }
                 is FailedWithError -> {

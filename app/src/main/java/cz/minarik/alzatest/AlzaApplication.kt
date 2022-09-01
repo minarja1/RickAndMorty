@@ -6,6 +6,7 @@ import android.content.res.Resources
 import coil.Coil
 import coil.ImageLoader
 import coil.decode.SvgDecoder
+import coil.memory.MemoryCache
 import coil.util.CoilUtils
 import cz.minarik.alzatest.common.base.BaseViewModel
 import cz.minarik.alzatest.di.appModule
@@ -52,22 +53,5 @@ class AlzaApplication : Application() {
             androidContext(this@AlzaApplication)
             modules(listOf(appModule, networkModule, dbModule))
         }
-        initCoilImageLoader()
-    }
-
-    private fun initCoilImageLoader() {
-        Coil.setImageLoader(
-            ImageLoader.Builder(this)
-                .availableMemoryPercentage(0.4)
-                .okHttpClient {
-                    OkHttpClient.Builder()
-                        .cache(CoilUtils.createDefaultCache(this@AlzaApplication))
-                        .build()
-                }
-                .componentRegistry {
-                    add(SvgDecoder(this@AlzaApplication))
-                }
-                .build()
-        )
     }
 }

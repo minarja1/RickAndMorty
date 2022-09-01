@@ -28,7 +28,6 @@ fun createOkHttpClient(): OkHttpClient {
             chain.proceed(restBuilder.build())
         }
         .addInterceptor(ConnectivityInterceptor(AlzaApplication.applicationContext))
-//        .addInterceptor(MockCategoriesInterceptor())
         .addInterceptor(HttpLoggingInterceptor().apply {
             level = HttpLoggingInterceptor.Level.BODY
         })

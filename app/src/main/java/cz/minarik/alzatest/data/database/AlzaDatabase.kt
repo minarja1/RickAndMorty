@@ -3,11 +3,11 @@ package cz.minarik.alzatest.data.database
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import cz.minarik.alzatest.data.database.dao.CategoryDao
-import cz.minarik.alzatest.data.database.entity.CategoryEntity
+import cz.minarik.alzatest.data.database.entity.CharacterEntity
 
 @Database(
     entities = [
-        CategoryEntity::class,
+        CharacterEntity::class,
     ],
     version = 1
 )
