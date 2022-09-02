@@ -4,6 +4,7 @@ plugins {
     id 'kotlinx-serialization'
     id 'kotlin-kapt'
     id("com.apollographql.apollo3").version("3.5.0")
+    id "io.gitlab.arturbosch.detekt"
 }
 
 apollo {
@@ -38,7 +39,7 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = '11'
     }
     buildFeatures {
         compose true
