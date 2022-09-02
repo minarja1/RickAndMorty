@@ -30,7 +30,6 @@ import cz.minarik.alzatest.ui.screens.home.util.CharacterItemUtils.getListColumn
 import cz.minarik.alzatest.ui.theme.AlzaTestTheme
 import org.koin.androidx.compose.getViewModel
 
-
 @Composable
 fun HomeScreen(
     onDetailClicked: (Character) -> Unit,
@@ -43,7 +42,7 @@ fun HomeScreen(
                 AlzaTopAppBar(text = stringResource(id = R.string.characters))
             },
         ) { padding ->
-            HandleState(
+            HomeScreenContent(
                 Modifier.padding(padding),
                 viewModel.pagedCharacters.collectAsLazyPagingItems(),
                 onDetailClicked,
@@ -53,7 +52,7 @@ fun HomeScreen(
 }
 
 @Composable
-fun HandleState(
+fun HomeScreenContent(
     modifier: Modifier,
     pagedCharacters: LazyPagingItems<Character>,
     onDetailClicked: (Character) -> Unit,
@@ -159,7 +158,7 @@ private fun CharactersRow(
                             onItemClick = { onDetailClicked(it) }
                         )
                     } else {
-                        // invisible placeholders to fill empty space
+                        // invisible placeholders to fill empty space until end of row
                         Box(
                             modifier = Modifier
                                 .weight(1f)
