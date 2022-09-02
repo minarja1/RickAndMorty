@@ -3,110 +3,169 @@ package cz.minarik.alzatest.ui.screens.home
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.key
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import com.google.accompanist.swiperefresh.SwipeRefresh
-import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
+import androidx.paging.LoadState
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.itemsIndexed
 import cz.minarik.alzatest.R
-import cz.minarik.alzatest.common.Constants.UTF_8
 import cz.minarik.alzatest.domain.model.Character
-import cz.minarik.alzatest.navigation.Screen
 import cz.minarik.alzatest.ui.composables.AlzaTopAppBar
 import cz.minarik.alzatest.ui.composables.ErrorView
+import cz.minarik.alzatest.ui.dimens.SpacingXSmall
 import cz.minarik.alzatest.ui.dimens.SpacingXXSmall
 import cz.minarik.alzatest.ui.screens.home.components.CharacterListItem
 import cz.minarik.alzatest.ui.screens.home.util.CharacterItemUtils.getListColumnsCount
 import cz.minarik.alzatest.ui.theme.AlzaTestTheme
 import org.koin.androidx.compose.getViewModel
-import java.net.URLEncoder
 
 
 @Composable
-fun HomeScreen(navController: NavController) {
+fun HomeScreen(
+    onDetailClicked: (Character) -> Unit,
+) {
     val viewModel = getViewModel<HomeScreenViewModel>()
     AlzaTestTheme {
         Scaffold(
             modifier = Modifier.fillMaxSize(),
             topBar = {
-                AlzaTopAppBar(navController = navController, text = stringResource(id = R.string.characters))
+                AlzaTopAppBar(text = stringResource(id = R.string.characters))
             },
-            content = {
-                HandleState(viewModel.state.collectAsState(initial = HomeScreenState()), navController) {
-                    viewModel.getCategories()
-                }
-            }
-        )
-    }
-}
-
-@Composable
-fun HandleState(state: State<HomeScreenState>, navController: NavController, reload: () -> Unit) {
-    state.value.apply {
-        Box(modifier = Modifier.fillMaxSize()) {
-            Characters(characters, isLoading, navController, reload)
-            if (error.isNotBlank()) {
-                ErrorView(error, characters.isEmpty()) {
-                    reload.invoke()
-                }
-            }
+        ) { padding ->
+            HandleState(
+                Modifier.padding(padding),
+                viewModel.pagedCharacters.collectAsLazyPagingItems(),
+                onDetailClicked,
+            )
         }
     }
 }
 
 @Composable
-fun Characters(characters: List<Character>, isLoading: Boolean, navController: NavController, reload: () -> Unit) {
-    BoxWithConstraints {
-        val screenWidth = maxWidth
-        val columns = remember(maxWidth) {
-            getListColumnsCount(screenWidth)
-        }
+fun HandleState(
+    modifier: Modifier,
+    pagedCharacters: LazyPagingItems<Character>,
+    onDetailClicked: (Character) -> Unit,
+) {
 
-        SwipeRefresh(
-            state = rememberSwipeRefreshState(isLoading),
-            onRefresh = { reload.invoke() },
+    Box(modifier = modifier.fillMaxSize()) {
+        LazyColumn(
+            Modifier
+                .background(MaterialTheme.colors.background)
+                .fillMaxSize(),
+            contentPadding = PaddingValues(vertical = 8.dp)
         ) {
-            LazyColumn(
-                Modifier
-                    .background(MaterialTheme.colors.background)
-                    .fillMaxSize(),
-                contentPadding = PaddingValues(vertical = 8.dp)
-            ) {
-                itemsIndexed(characters) { index, characterInList ->
-                    if (index % columns == 0) {
-                        key(characterInList.id) {
-                            Row(
-                                modifier = Modifier.fillMaxWidth()
+            itemsIndexed(pagedCharacters) { index, characterInList ->
+                BoxWithConstraints {
+                    val screenWidth = maxWidth
+                    val columns = remember(maxWidth) {
+                        getListColumnsCount(screenWidth)
+                    }
+                    CharactersRow(pagedCharacters.itemSnapshotList.items, index, columns, onDetailClicked, characterInList)
+                }
+            }
+            pagedCharacters.loadState.append.apply {
+                when (this) {
+                    is LoadState.Loading -> {
+                        // next page loading
+                        item {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(SpacingXSmall)
                             ) {
-                                for (i in 0 until columns) {
-                                    val character = characters.getOrNull(index + i)
-                                    if (character != null) {
-                                        CharacterListItem(
-                                            modifier = Modifier
-                                                .weight(1f)
-                                                .padding(SpacingXXSmall),
-                                            character
-                                        ) {
-                                            navController.navigate(
-                                                Screen.ProductList.withArgs(
-                                                    it.id,
-                                                    URLEncoder.encode(it.name ?: "", UTF_8)
-                                                )
-                                            )
-                                        }
-                                    } else {
-                                        // todo placeholder
-                                    }
-                                }
+                                CircularProgressIndicator(
+                                    modifier = Modifier
+                                        .align(Alignment.Center)
+                                )
                             }
                         }
+                    }
+                    is LoadState.Error -> {
+                        // next page error
+                        item {
+                            ErrorView(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(SpacingXSmall),
+                                error = this@apply.error.message ?: ""
+                            ) {
+                                pagedCharacters.retry()
+                            }
+                        }
+                    }
+                    else -> { /* handled outside of list*/
+                    }
+                }
+            }
+
+        }
+        pagedCharacters.loadState.refresh.apply {
+            when (this) {
+                is LoadState.Loading -> {
+                    // initial loading
+                    CircularProgressIndicator(
+                        modifier = Modifier.align(Alignment.Center)
+                    )
+                }
+                is LoadState.Error -> {
+                    // initial error
+                    ErrorView(
+                        modifier = Modifier.fillMaxSize(),
+                        error = this.error.message ?: ""
+                    ) {
+                        pagedCharacters.refresh()
+                    }
+                }
+                else -> { /* handled in list */
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun CharactersRow(
+    characters: List<Character>,
+    index: Int,
+    columns: Int,
+    onDetailClicked: (Character) -> Unit,
+    startingCharacter: Character?
+) {
+    if (index % columns == 0) {
+        key(startingCharacter?.id) {
+            Row(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                for (i in 0 until columns) {
+                    val character = characters.getOrNull(index + i)
+                    if (character != null) {
+                        CharacterListItem(
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(SpacingXXSmall),
+                            character = character,
+                            onItemClick = { onDetailClicked(it) }
+                        )
+                    } else {
+                        // invisible placeholders to fill empty space
+                        Box(
+                            modifier = Modifier
+                                .weight(1f)
+                                .alpha(0f)
+                                .padding(SpacingXXSmall),
+                        )
                     }
                 }
             }
@@ -117,18 +176,6 @@ fun Characters(characters: List<Character>, isLoading: Boolean, navController: N
 
 @Preview(showSystemUi = true, showBackground = true)
 @Composable
-fun CharactersPreview() {
-    Characters(
-        listOf(
-            Character("1", "Computers and Laptops", "https://cdn.britannica.com/77/170477-050-1C747EE3/Laptop-computer.jpg"),
-            Character("1", "Network Components", "https://cdn.britannica.com/77/170477-050-1C747EE3/Laptop-computer.jpg"),
-            Character("1", "Software", "https://cdn.britannica.com/77/170477-050-1C747EE3/Laptop-computer.jpg"),
-        ), false, NavController(context = LocalContext.current)
-    ) {}
-}
-
-@Preview(showSystemUi = true, showBackground = true)
-@Composable
 fun ErrorViewPreview() {
-    ErrorView(error = "Preview error", true) {}
+    ErrorView(error = "Preview error") {}
 }

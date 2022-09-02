@@ -1,33 +1,33 @@
-package cz.minarik.alzatest.ui.screens.products.list
+package cz.minarik.alzatest.ui.screens.characters.detail
 
 import cz.minarik.alzatest.common.base.BaseViewModel
 import cz.minarik.alzatest.common.base.FailedWithError
 import cz.minarik.alzatest.common.base.Loading
 import cz.minarik.alzatest.common.base.SuccessWithData
-import cz.minarik.alzatest.domain.use_case.get_products.GetProductsUseCase
+import cz.minarik.alzatest.domain.use_case.get_product_detail.GetCharacterDetailUseCase
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
-class ProductListScreenViewModel(
-    private val categoryId: String,
-    private val getCategoriesUseCase: GetProductsUseCase
+class CharacterDetailScreenViewModel(
+    private val characterId: String,
+    private val getCharacterDetailUseCase: GetCharacterDetailUseCase
 ) : BaseViewModel() {
 
-    private val _state = MutableStateFlow(ProductListScreenState())
-    val state: Flow<ProductListScreenState> = _state
+    private val _state = MutableStateFlow(ProductDetailScreenState())
+    val state: Flow<ProductDetailScreenState> = _state
 
     init {
-        getProducts()
+        getProductDetail()
     }
 
-    fun getProducts() {
-        getCategoriesUseCase(categoryId.toLong()).onEach { result ->
+    fun getProductDetail() {
+        getCharacterDetailUseCase(characterId).onEach { result ->
             when (result) {
                 is SuccessWithData -> {
-                    _state.value = ProductListScreenState(
-                        products = result.content,
+                    _state.value = ProductDetailScreenState(
+                        character = result.content,
                     )
                 }
                 is FailedWithError -> {

@@ -12,16 +12,16 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
-class GetCategoriesUseCase @Inject constructor(
+class GetCharactersUseCase @Inject constructor(
     private val repository: CharacterRepository,
 ) {
 
     operator fun invoke(): Flow<FetchState<List<Character>>> = flow {
         emit(Loading())
-        val categories = repository.getCharacters()
-        emit(SuccessWithData(categories))
-    }.catch { e ->
-        emit(FailedWithError(e.message ?: GeneralApiException.generalMessage))
+//        val categories = repository.getCharacters(nextPage)
+//        emit(SuccessWithData(categories))
+//    }.catch { e ->
+//        emit(FailedWithError(e.message ?: GeneralApiException.generalMessage))
     }
 
 }

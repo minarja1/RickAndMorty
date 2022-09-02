@@ -2,24 +2,22 @@ package cz.minarik.alzatest.data.repository
 
 import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.api.Optional
+import cz.minarik.alzatest.GetCharacterDetailQuery
 import cz.minarik.alzatest.GetCharactersQuery
-import cz.minarik.alzatest.data.database.dao.CategoryDao
+import cz.minarik.alzatest.data.remote.response.CharactersInfo
+import cz.minarik.alzatest.data.remote.response.CharactersResponse
 import cz.minarik.alzatest.domain.model.Character
+import cz.minarik.alzatest.domain.model.CharacterDetail
 import cz.minarik.alzatest.domain.repository.CharacterRepository
 import javax.inject.Inject
 
 class CharacterRepositoryImpl @Inject constructor(
-    private val categoryDao: CategoryDao,
     private val apolloClient: ApolloClient,
 ) : CharacterRepository {
-    companion object {
-        val TAG = CharacterRepositoryImpl::class.simpleName
-    }
 
-    override suspend fun getCharacters(): List<Character> {
-        val page = 1
+    override suspend fun getCharacters(page: Int): CharactersResponse {
         val result = apolloClient.query(GetCharactersQuery(Optional.presentIfNotNull(page))).execute()
-        return result.data?.characters?.results?.mapNotNull { character ->
+        val characters = result.data?.characters?.results?.mapNotNull { character ->
             character?.id?.let {
                 Character(
                     id = it,
@@ -28,25 +26,33 @@ class CharacterRepositoryImpl @Inject constructor(
                 )
             }
         }.orEmpty()
+
+        val info = result.data?.characters?.info?.let {
+            CharactersInfo(
+                pages = it.pages,
+                count = it.count,
+                next = it.next,
+                prev = it.prev,
+            )
+        }
+        return CharactersResponse(
+            characters = characters,
+            info = info
+        )
     }
 
-//    private suspend fun updateDb(categories: List<Character>) {
-//        Log.i(TAG, "Updating data in DB")
-//        categoryDao.delete()
-//        categoryDao.save(
-//            categories.map {
-//                it.toEntity()
-//            }
-//        )
-//        DataStoreManager.setCategoriesLastFetchTime(System.currentTimeMillis())
-//    }
-//
-//    private suspend fun shouldFetchRemote(): Boolean {
-//        return try {
-//            System.currentTimeMillis() - DataStoreManager.getCategoriesLastFetchTime()
-//                .first() >= Constants.categoriesMinFetchGap
-//        } catch (e: Exception) {
-//            true
-//        }
-//    }
+    override suspend fun getCharacterDetail(characterId: String): CharacterDetail? {
+        val result = apolloClient.query(GetCharacterDetailQuery(characterId)).execute()
+        return result.data?.character?.let { character ->
+            character.id?.let {
+                CharacterDetail(
+                    id = character.id,
+                    name = character.name,
+                    imageUrl = character.image,
+                    species = character.species
+                )
+            }
+        }
+    }
+
 }

@@ -7,9 +7,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import cz.minarik.alzatest.common.Constants
+import cz.minarik.alzatest.ui.screens.characters.detail.CharacterDetailScreen
 import cz.minarik.alzatest.ui.screens.home.HomeScreen
-import cz.minarik.alzatest.ui.screens.products.detail.ProductDetailScreen
-import cz.minarik.alzatest.ui.screens.products.list.ProductListScreen
+import java.net.URLEncoder
 
 @Composable
 fun Navigation() {
@@ -17,25 +17,14 @@ fun Navigation() {
 
     NavHost(navController = navController, startDestination = Screen.HomePage.route) {
         composable(route = Screen.HomePage.route) {
-            HomeScreen(navController = navController)
-        }
-
-        composable(
-            route = Screen.ProductList.route + "/{${Constants.argCategoryId}}/{${Constants.argCategoryName}}",
-            arguments = listOf(
-                navArgument(Constants.argCategoryId) {
-                    type = NavType.StringType
-                },
-                navArgument(Constants.argCategoryName) {
-                    type = NavType.StringType
-                },
-            )
-        ) {
-            ProductListScreen(
-                navController = navController,
-                categoryId = it.arguments?.getString(Constants.argCategoryId),
-                categoryName = it.arguments?.getString(Constants.argCategoryName),
-            )
+            HomeScreen {
+                navController.navigate(
+                    Screen.ProductDetail.withArgs(
+                        it.id,
+                        URLEncoder.encode(it.name ?: "", Constants.UTF_8)
+                    )
+                )
+            }
         }
 
         composable(
@@ -49,10 +38,10 @@ fun Navigation() {
                 },
             )
         ) {
-            ProductDetailScreen(
-                navController = navController,
-                productId = it.arguments?.getString(Constants.argProductId),
-                productName = it.arguments?.getString(Constants.argProductName),
+            CharacterDetailScreen(
+                onBackClicked = { navController.navigateUp() },
+                characterId = it.arguments?.getString(Constants.argProductId),
+                characterName = it.arguments?.getString(Constants.argProductName),
             )
         }
     }

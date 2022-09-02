@@ -1,6 +1,5 @@
 package cz.minarik.alzatest.data.remote.response
 
-import cz.minarik.alzatest.domain.model.Product
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -24,16 +23,3 @@ data class ProductResponse(
 data class ImageResponse(
     val big_url: String? = null
 )
-
-fun ProductResponse.toProduct(): Product {
-    return Product(
-        id,
-        name,
-        img,
-        price,
-        availability,
-        canBuy,
-        spec,
-        imgs.firstOrNull()?.big_url,
-    )
-}

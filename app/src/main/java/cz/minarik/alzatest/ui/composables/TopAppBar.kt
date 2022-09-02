@@ -7,15 +7,16 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.navigation.NavController
 import cz.minarik.alzatest.R
 
 @Composable
-fun AlzaTopAppBar(navController: NavController, text: String? = null) {
+fun AlzaTopAppBar(
+    onBackClicked: (() -> Unit)? = null,
+    text: String? = null
+) {
     TopAppBar(
         title = {
             Text(
@@ -24,9 +25,9 @@ fun AlzaTopAppBar(navController: NavController, text: String? = null) {
                 overflow = TextOverflow.Ellipsis,
             )
         },
-        navigationIcon = if (navController.previousBackStackEntry != null) {
+        navigationIcon = if (onBackClicked != null) {
             {
-                IconButton(onClick = { navController.navigateUp() }) {
+                IconButton(onClick = onBackClicked) {
                     Icon(
                         imageVector = Icons.Filled.ArrowBack,
                         contentDescription = stringResource(id = R.string.back)
@@ -42,5 +43,5 @@ fun AlzaTopAppBar(navController: NavController, text: String? = null) {
 @Preview
 @Composable
 fun AlzaTopAppBarPreview() {
-    AlzaTopAppBar(NavController(context = LocalContext.current), "Top App Bar")
+    AlzaTopAppBar({}, "Top App Bar")
 }

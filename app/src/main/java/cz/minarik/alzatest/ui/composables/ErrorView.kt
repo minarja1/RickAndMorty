@@ -1,9 +1,7 @@
 package cz.minarik.alzatest.ui.composables
 
-import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
@@ -12,7 +10,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -21,19 +18,13 @@ import cz.minarik.alzatest.R
 
 
 @Composable
-fun ErrorView(error: String, fullScreen: Boolean, onTryAgainClicked: () -> Unit) {
-    if (fullScreen) {
-        ErrorViewFullscreen(error, onTryAgainClicked)
-    } else {
-        Toast.makeText(LocalContext.current, error, Toast.LENGTH_SHORT).show()
-    }
-}
-
-@Composable
-fun ErrorViewFullscreen(error: String, onTryAgainClicked: () -> Unit) {
+fun ErrorView(
+    error: String,
+    modifier: Modifier = Modifier,
+    onTryAgainClicked: () -> Unit
+) {
     Column(
-        modifier = Modifier
-            .fillMaxSize(),
+        modifier = modifier,
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -58,5 +49,5 @@ fun ErrorViewFullscreen(error: String, onTryAgainClicked: () -> Unit) {
 @Composable
 @Preview
 fun ErrorViewPreview() {
-    ErrorView(error = "Error", true) {}
+    ErrorView(error = "Error") {}
 }
