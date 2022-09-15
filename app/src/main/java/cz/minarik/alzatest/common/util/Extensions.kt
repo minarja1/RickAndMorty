@@ -5,6 +5,8 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
 import cz.minarik.alzatest.common.Constants
+import timber.log.Timber
+import java.io.UnsupportedEncodingException
 import java.net.URLDecoder
 
 val Context.isInternetAvailable: Boolean
@@ -22,7 +24,8 @@ val Context.isInternetAvailable: Boolean
 fun String.decodeSafely(): String {
     return try {
         URLDecoder.decode(this, Constants.UTF_8)
-    } catch (e: Exception) {
+    } catch (e: UnsupportedEncodingException) {
+        Timber.e(e)
         this
     }
 }

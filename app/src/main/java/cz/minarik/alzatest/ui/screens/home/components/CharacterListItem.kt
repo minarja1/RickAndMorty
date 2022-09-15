@@ -76,6 +76,10 @@ private val CharacterImageSize = 148.dp
 @Composable
 private fun CategoryListItemPreview() {
     CharacterListItem(
-        character = Character("1", "Test", "https://cdn.britannica.com/77/170477-050-1C747EE3/Laptop-computer.jpg"),
+        character = Character(
+            "1",
+            "Test",
+            "https://cdn.britannica.com/77/170477-050-1C747EE3/Laptop-computer.jpg"
+        ),
         onItemClick = {})
 }

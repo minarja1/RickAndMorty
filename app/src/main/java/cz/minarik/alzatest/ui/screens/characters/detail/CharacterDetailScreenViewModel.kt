@@ -4,7 +4,7 @@ import cz.minarik.alzatest.common.base.BaseViewModel
 import cz.minarik.alzatest.common.base.FailedWithError
 import cz.minarik.alzatest.common.base.Loading
 import cz.minarik.alzatest.common.base.SuccessWithData
-import cz.minarik.alzatest.domain.use_case.get_product_detail.GetCharacterDetailUseCase
+import cz.minarik.alzatest.domain.usecase.getproductdetail.GetCharacterDetailUseCase
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.launchIn

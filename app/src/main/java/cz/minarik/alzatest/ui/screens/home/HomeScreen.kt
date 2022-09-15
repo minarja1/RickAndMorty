@@ -1,7 +1,14 @@
 package cz.minarik.alzatest.ui.screens.home
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
@@ -52,12 +59,11 @@ fun HomeScreen(
 }
 
 @Composable
-fun HomeScreenContent(
+private fun HomeScreenContent(
     modifier: Modifier,
     pagedCharacters: LazyPagingItems<Character>,
     onDetailClicked: (Character) -> Unit,
 ) {
-
     Box(modifier = modifier.fillMaxSize()) {
         LazyColumn(
             Modifier
@@ -104,32 +110,40 @@ fun HomeScreenContent(
                             }
                         }
                     }
-                    else -> { /* handled outside of list*/
-                    }
+                    is LoadState.NotLoading -> Unit // handled outside of list*
                 }
             }
-
         }
-        pagedCharacters.loadState.refresh.apply {
-            when (this) {
-                is LoadState.Loading -> {
-                    // initial loading
-                    CircularProgressIndicator(
-                        modifier = Modifier.align(Alignment.Center)
-                    )
-                }
-                is LoadState.Error -> {
-                    // initial error
-                    ErrorView(
-                        modifier = Modifier.fillMaxSize(),
-                        error = this.error.message ?: ""
-                    ) {
-                        pagedCharacters.refresh()
-                    }
-                }
-                else -> { /* handled in list */
-                }
+
+        StateScreen(pagedCharacters.loadState.refresh) {
+            pagedCharacters.refresh()
+        }
+
+    }
+}
+
+@Composable
+private fun BoxScope.StateScreen(
+    loadState: LoadState,
+    refresh: () -> Unit
+) {
+    loadState.apply {
+        when (this) {
+            is LoadState.Loading -> {
+                // initial loading
+                CircularProgressIndicator(
+                    modifier = Modifier.align(Alignment.Center)
+                )
             }
+            is LoadState.Error -> {
+                // initial error
+                ErrorView(
+                    modifier = Modifier.fillMaxSize(),
+                    error = this.error.message ?: "",
+                    onTryAgainClicked = refresh
+                )
+            }
+            else -> Unit /* handled in list */
         }
     }
 }

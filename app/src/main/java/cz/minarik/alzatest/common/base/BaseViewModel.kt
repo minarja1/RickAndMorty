@@ -2,7 +2,13 @@ package cz.minarik.alzatest.common.base
 
 import androidx.lifecycle.ViewModel
 import cz.minarik.alzatest.AlzaApplication
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.cancel
 
 open class BaseViewModel : ViewModel() {
 
