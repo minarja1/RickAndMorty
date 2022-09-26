@@ -2,10 +2,10 @@ package cz.minarik.alzatest.data.remote.paging
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.apollographql.apollo.exception.ApolloException
 import cz.minarik.alzatest.domain.model.Character
 import cz.minarik.alzatest.domain.repository.CharacterRepository
 
+@Suppress("TooGenericExceptionCaught")
 class CharacterPagingSource(
     private val characterRepository: CharacterRepository,
 ) : PagingSource<Int, Character>() {
@@ -23,7 +23,7 @@ class CharacterPagingSource(
                 prevKey = charactersResponse.info?.prev,
                 nextKey = charactersResponse.info?.next,
             )
-        } catch (exception: ApolloException) {
+        } catch (exception: Exception) {
             return LoadResult.Error(exception)
         }
     }

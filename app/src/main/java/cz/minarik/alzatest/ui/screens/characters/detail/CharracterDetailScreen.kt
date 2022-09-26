@@ -26,7 +26,7 @@ import coil.compose.rememberImagePainter
 import cz.minarik.alzatest.R
 import cz.minarik.alzatest.common.util.decodeSafely
 import cz.minarik.alzatest.domain.model.CharacterDetail
-import cz.minarik.alzatest.ui.composables.AlzaTopAppBar
+import cz.minarik.alzatest.ui.composables.RaMTopAppBar
 import cz.minarik.alzatest.ui.composables.ErrorView
 import cz.minarik.alzatest.ui.theme.AlzaTestTheme
 import org.koin.androidx.compose.getViewModel
@@ -46,7 +46,7 @@ fun CharacterDetailScreen(
         Scaffold(
             modifier = Modifier.fillMaxSize(),
             topBar = {
-                AlzaTopAppBar(onBackClicked = onBackClicked, text = characterName?.decodeSafely() ?: "")
+                RaMTopAppBar(onBackClicked = onBackClicked, text = characterName?.decodeSafely() ?: "")
             },
             content = { padding ->
                 HandleState(

@@ -13,7 +13,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import cz.minarik.alzatest.R
 
 @Composable
-fun AlzaTopAppBar(
+fun RaMTopAppBar(
     onBackClicked: (() -> Unit)? = null,
     text: String? = null
 ) {
@@ -42,6 +42,6 @@ fun AlzaTopAppBar(
 
 @Preview
 @Composable
-fun AlzaTopAppBarPreview() {
-    AlzaTopAppBar({}, "Top App Bar")
+fun RaMTopAppBarPreview() {
+    RaMTopAppBar({}, "Top App Bar")
 }
