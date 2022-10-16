@@ -3,6 +3,22 @@ query GetCharacterDetail($id: ID!) {
         id
         name
         image
-        species
+        species,
+        type,
+        status,
+        gender,
+        type,
+          origin {
+                  id,
+                  name
+                },
+         location {
+                 id,
+                 name
+               },
+               episode {
+                 id,
+                 name
+               }
       }
 }

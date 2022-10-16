@@ -28,19 +28,22 @@ import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.items
 import androidx.paging.compose.itemsIndexed
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.pagerTabIndicatorOffset
 import com.google.accompanist.pager.rememberPagerState
 import cz.minarik.alzatest.domain.model.Character
+import cz.minarik.alzatest.domain.model.Episode
 import cz.minarik.alzatest.ui.composables.ErrorView
 import cz.minarik.alzatest.ui.dimens.SpacingXXSmall
 import cz.minarik.alzatest.ui.screens.home.components.CharacterListItem
+import cz.minarik.alzatest.ui.screens.home.components.EpisodeListItem
 import cz.minarik.alzatest.ui.screens.home.components.LoadStateFooter
 import cz.minarik.alzatest.ui.screens.home.components.LoadStateScreen
 import cz.minarik.alzatest.ui.screens.home.util.CharacterItemUtils.getListColumnsCount
-import cz.minarik.alzatest.ui.theme.AlzaTestTheme
+import cz.minarik.alzatest.ui.theme.RaMTheme
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.getViewModel
 
@@ -49,14 +52,15 @@ fun HomeScreen(
     onCharacterDetailClicked: (Character) -> Unit,
 ) {
     val viewModel = getViewModel<HomeScreenViewModel>()
-    AlzaTestTheme {
+    RaMTheme {
         Scaffold(
             modifier = Modifier.fillMaxSize(),
         ) { padding ->
             HomeScreenContent(
-                Modifier.padding(padding),
-                viewModel.pagedCharacters.collectAsLazyPagingItems(),
-                onCharacterDetailClicked,
+                modifier = Modifier.padding(padding),
+                pagedCharacters = viewModel.pagedCharacters.collectAsLazyPagingItems(),
+                pagedEpisodes = viewModel.pagedEpisodes.collectAsLazyPagingItems(),
+                onCharacterDetailClicked = onCharacterDetailClicked,
             )
         }
     }
@@ -66,20 +70,67 @@ fun HomeScreen(
 private fun HomeScreenContent(
     modifier: Modifier,
     pagedCharacters: LazyPagingItems<Character>,
+    pagedEpisodes: LazyPagingItems<Episode>,
     onCharacterDetailClicked: (Character) -> Unit,
 ) {
     HomeScreenTabLayout(
         charactersContent = {
             CharactersContent(
-                modifier,
-                pagedCharacters,
-                onCharacterDetailClicked
+                modifier = modifier,
+                pagedCharacters = pagedCharacters,
+                onCharacterDetailClicked = onCharacterDetailClicked
             )
         },
         episodesContent = {
-            // todo
+            EpisodesContent(
+                modifier = modifier,
+                pagedEpisodes = pagedEpisodes
+            )
         },
     )
+}
+
+@Composable
+fun EpisodesContent(
+    modifier: Modifier,
+    pagedEpisodes: LazyPagingItems<Episode>
+) {
+    Box(modifier = modifier.fillMaxSize()) {
+        LazyColumn(
+            Modifier
+                .background(MaterialTheme.colors.background)
+                .fillMaxSize(), contentPadding = PaddingValues(vertical = 8.dp)
+        ) {
+            items(
+                items = pagedEpisodes,
+                key = { it.id },
+            ) { episode ->
+                episode?.let {
+                    EpisodeListItem(
+                        modifier = Modifier.padding(SpacingXXSmall),
+                        episode = episode,
+                        onItemClick = {
+                            // todo
+                        }
+                    )
+                }
+            }
+            if (pagedEpisodes.loadState.append !is LoadState.NotLoading) {
+                item {
+                    LoadStateFooter(
+                        pagedEpisodes.loadState.append
+                    ) {
+                        pagedEpisodes.retry()
+                    }
+                }
+            }
+        }
+
+        LoadStateScreen(pagedEpisodes.loadState.refresh) {
+            pagedEpisodes.refresh()
+        }
+
+    }
 }
 
 @Composable
@@ -92,8 +143,7 @@ private fun CharactersContent(
         LazyColumn(
             Modifier
                 .background(MaterialTheme.colors.background)
-                .fillMaxSize(),
-            contentPadding = PaddingValues(vertical = 8.dp)
+                .fillMaxSize(), contentPadding = PaddingValues(vertical = 8.dp)
         ) {
             itemsIndexed(pagedCharacters) { index, characterInList ->
                 BoxWithConstraints {
@@ -102,11 +152,7 @@ private fun CharactersContent(
                         getListColumnsCount(screenWidth)
                     }
                     CharactersRow(
-                        pagedCharacters.itemSnapshotList.items,
-                        index,
-                        columns,
-                        onCharacterDetailClicked,
-                        characterInList
+                        pagedCharacters.itemSnapshotList.items, index, columns, onCharacterDetailClicked, characterInList
                     )
                 }
             }
@@ -139,14 +185,11 @@ private fun HomeScreenTabLayout(
     val coroutineScope = rememberCoroutineScope()
 
     Column {
-        TabRow(
-            selectedTabIndex = tabIndex,
-            indicator = { tabPositions ->
-                TabRowDefaults.Indicator(
-                    modifier = Modifier.pagerTabIndicatorOffset(pagerState, tabPositions),
-                )
-            }
-        ) {
+        TabRow(selectedTabIndex = tabIndex, indicator = { tabPositions ->
+            TabRowDefaults.Indicator(
+                modifier = Modifier.pagerTabIndicatorOffset(pagerState, tabPositions),
+            )
+        }) {
             HomeScreenTabs.values().forEachIndexed { index, tabData ->
                 val title = stringResource(id = tabData.tabTitleStringRes)
                 Tab(selected = tabIndex == index, onClick = {
@@ -187,13 +230,11 @@ private fun CharactersRow(
                 for (i in 0 until columns) {
                     val character = characters.getOrNull(index + i)
                     if (character != null) {
-                        CharacterListItem(
-                            modifier = Modifier
-                                .weight(1f)
-                                .padding(SpacingXXSmall),
+                        CharacterListItem(modifier = Modifier
+                            .weight(1f)
+                            .padding(SpacingXXSmall),
                             character = character,
-                            onItemClick = { onDetailClicked(it) }
-                        )
+                            onItemClick = { onDetailClicked(it) })
                     } else {
                         // invisible placeholders to fill empty space until end of row
                         Box(

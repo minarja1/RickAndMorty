@@ -1,34 +1,55 @@
 package cz.minarik.alzatest.ui.screens.characters.detail
 
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import coil.compose.rememberImagePainter
+import coil.compose.rememberAsyncImagePainter
 import cz.minarik.alzatest.R
 import cz.minarik.alzatest.common.util.decodeSafely
 import cz.minarik.alzatest.domain.model.CharacterDetail
-import cz.minarik.alzatest.ui.composables.RaMTopAppBar
 import cz.minarik.alzatest.ui.composables.ErrorView
-import cz.minarik.alzatest.ui.theme.AlzaTestTheme
+import cz.minarik.alzatest.ui.composables.RaMTopAppBar
+import cz.minarik.alzatest.ui.dimens.SpacingMedium
+import cz.minarik.alzatest.ui.dimens.SpacingSmall
+import cz.minarik.alzatest.ui.dimens.SpacingXLarge
+import cz.minarik.alzatest.ui.screens.home.components.EpisodeListItem
+import cz.minarik.alzatest.ui.theme.RaMTheme
 import org.koin.androidx.compose.getViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -42,7 +63,7 @@ fun CharacterDetailScreen(
     val viewModel = getViewModel<CharacterDetailScreenViewModel> {
         parametersOf(characterId)
     }
-    AlzaTestTheme {
+    RaMTheme {
         Scaffold(
             modifier = Modifier.fillMaxSize(),
             topBar = {
@@ -52,9 +73,10 @@ fun CharacterDetailScreen(
                 HandleState(
                     Modifier.padding(padding),
                     viewModel.state.collectAsState(initial = ProductDetailScreenState()),
-                ) {
-                    viewModel.getProductDetail()
-                }
+                    expanded = viewModel.expanded,
+                    onExpanded = viewModel::expandedStateChanged,
+                    reload = viewModel::getCharacterDetail
+                )
             }
         )
     }
@@ -65,11 +87,19 @@ fun CharacterDetailScreen(
 fun HandleState(
     modifier: Modifier,
     state: State<ProductDetailScreenState>,
-    reload: () -> Unit
+    expanded: MutableState<Boolean>,
+    reload: () -> Unit,
+    onExpanded: () -> Unit,
 ) {
     state.value.apply {
         Box(modifier = modifier.fillMaxSize()) {
-            character?.let { CharacterDetail(character) }
+            character?.let {
+                CharacterDetailView(
+                    character = character,
+                    expanded = expanded,
+                    onExpanded = onExpanded,
+                )
+            }
             if (error.isNotBlank()) {
                 ErrorView(modifier = Modifier.fillMaxSize(), error = error) {
                     reload.invoke()
@@ -85,36 +115,162 @@ fun HandleState(
 }
 
 @Composable
-fun CharacterDetail(character: CharacterDetail) {
-    Column(
-        Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState()),
+fun CharacterDetailView(
+    character: CharacterDetail,
+    expanded: MutableState<Boolean>,
+    onExpanded: () -> Unit,
+) {
+    val rotationState by animateFloatAsState(
+        targetValue = if (expanded.value) AngleArrowUp else AngleArrowDown
+    )
+    LazyColumn(
+        Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Image(
-            modifier = Modifier.height(164.dp),
-            painter = rememberImagePainter(
-                data = character.imageUrl ?: character.imageUrl,
-            ),
-            contentDescription = stringResource(id = R.string.character_image),
-            contentScale = ContentScale.FillHeight
-        )
+        item {
+            CharacterHeader(character)
+        }
+        if (character.episodes.isNotEmpty()) {
+            item {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = ScreenPaddingHorizontal, vertical = ScreenPaddingVertical)
+                        .clip(RoundedCornerShape(8.dp))
+                        .clickable { onExpanded() }
+                ) {
+                    Spacer(modifier = Modifier.height(ScreenPaddingVertical))
+                    Row {
+                        TitleText(stringResource(id = R.string.episodes))
+                        Image(
+                            modifier = Modifier.rotate(rotationState),
+                            painter = painterResource(id = R.drawable.ic_baseline_chevron_right_24),
+                            contentDescription = stringResource(id = R.string.chevron),
+                            colorFilter = ColorFilter.tint(color = MaterialTheme.colors.primary)
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(ScreenPaddingVertical))
+                }
+            }
+            items(
+                items = character.episodes,
+                key = { it.id },
+            ) { episode ->
+                if (expanded.value) {
+                    EpisodeListItem(
+                        modifier = Modifier
+                            .padding(ScreenPaddingHorizontal, vertical = ScreenPaddingVertical),
+                        episode = episode,
+                        onItemClick = {
+                            // todo
+                        }
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun CharacterHeader(character: CharacterDetail) {
+    Image(
+        modifier = Modifier.height(164.dp),
+        painter = rememberAsyncImagePainter(character.imageUrl),
+        contentDescription = stringResource(id = R.string.character_image),
+        contentScale = ContentScale.FillHeight
+    )
+    if (character.name?.isNotBlank() == true) {
         Text(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(ScreenPaddingHorizontal, vertical = ScreenPaddingVertical),
             textAlign = TextAlign.Center,
-            text = character.name ?: "",
+            text = character.name,
             style = MaterialTheme.typography.h5,
         )
-        Text(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            textAlign = TextAlign.Center,
-            text = character.species ?: "",
+    }
+    if (character.species?.isNotBlank() == true) {
+        TextLine(
+            title = stringResource(id = R.string.species),
+            text = character.species,
             style = MaterialTheme.typography.body1,
         )
     }
+    if (character.type?.isNotBlank() == true) {
+        TextLine(
+            title = stringResource(id = R.string.type),
+            text = character.type,
+            style = MaterialTheme.typography.body1,
+        )
+    }
+    if (character.gender?.isNotBlank() == true) {
+        TextLine(
+            title = stringResource(id = R.string.gender),
+            text = character.gender,
+            style = MaterialTheme.typography.body1,
+        )
+    }
+    if (character.status?.isNotBlank() == true) {
+        TextLine(
+            title = stringResource(id = R.string.status),
+            text = character.status,
+            style = MaterialTheme.typography.body1,
+        )
+    }
+}
+
+@Composable
+private fun TextLine(
+    title: String,
+    text: String,
+    style: TextStyle,
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(ScreenPaddingHorizontal, vertical = ScreenPaddingVertical),
+        horizontalArrangement = Arrangement.spacedBy(SpacingSmall)
+    ) {
+        TitleText(text = title)
+        Text(
+            text = text,
+            style = style,
+        )
+    }
+}
+
+@Composable
+private fun RowScope.TitleText(text: String) {
+    Text(
+        modifier = Modifier.weight(1f),
+        text = text,
+        style = MaterialTheme.typography.body1,
+        color = MaterialTheme.colors.secondary
+    )
+}
+
+private val ScreenPaddingHorizontal = SpacingXLarge
+private val ScreenPaddingVertical = SpacingMedium
+private const val AngleArrowUp = 270f
+private const val AngleArrowDown = 90f
+
+@Preview
+@Composable
+private fun CharacterDetailPreview() {
+    CharacterDetailView(
+        character = CharacterDetail(
+            id = "1",
+            name = "Rick Sanchez",
+            imageUrl = "https://static.wikia.nocookie.net/rickandmorty/images/a/a6/Rick_Sanchez.png/revision/latest/top-crop/width/360/height/360?cb=20160923150728",
+            species = "Human",
+            type = "",
+            status = "Alive",
+            gender = "Male",
+            episodes = emptyList(),
+        ),
+        expanded = remember {
+            mutableStateOf(true)
+        },
+        onExpanded = {},
+    )
 }

@@ -1,10 +1,11 @@
 package cz.minarik.alzatest.ui.screens.characters.detail
 
+import androidx.compose.runtime.mutableStateOf
 import cz.minarik.alzatest.common.base.BaseViewModel
 import cz.minarik.alzatest.common.base.FailedWithError
 import cz.minarik.alzatest.common.base.Loading
 import cz.minarik.alzatest.common.base.SuccessWithData
-import cz.minarik.alzatest.domain.usecase.getproductdetail.GetCharacterDetailUseCase
+import cz.minarik.alzatest.domain.usecase.getcharacterdetail.GetCharacterDetailUseCase
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.launchIn
@@ -18,11 +19,13 @@ class CharacterDetailScreenViewModel(
     private val _state = MutableStateFlow(ProductDetailScreenState())
     val state: Flow<ProductDetailScreenState> = _state
 
+    var expanded = mutableStateOf(false)
+
     init {
-        getProductDetail()
+        getCharacterDetail()
     }
 
-    fun getProductDetail() {
+    fun getCharacterDetail() {
         getCharacterDetailUseCase(characterId).onEach { result ->
             when (result) {
                 is SuccessWithData -> {
@@ -44,5 +47,9 @@ class CharacterDetailScreenViewModel(
                 }
             }
         }.launchIn(ioScope)
+    }
+
+    fun expandedStateChanged() {
+        expanded.value = !expanded.value
     }
 }

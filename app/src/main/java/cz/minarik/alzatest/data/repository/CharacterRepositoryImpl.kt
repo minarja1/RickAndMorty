@@ -4,10 +4,11 @@ import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.api.Optional
 import cz.minarik.alzatest.GetCharacterDetailQuery
 import cz.minarik.alzatest.GetCharactersQuery
-import cz.minarik.alzatest.data.remote.response.CharactersInfo
 import cz.minarik.alzatest.data.remote.response.CharactersResponse
+import cz.minarik.alzatest.data.remote.response.InfoResponse
 import cz.minarik.alzatest.domain.model.Character
 import cz.minarik.alzatest.domain.model.CharacterDetail
+import cz.minarik.alzatest.domain.model.Episode
 import cz.minarik.alzatest.domain.repository.CharacterRepository
 import javax.inject.Inject
 
@@ -18,9 +19,9 @@ class CharacterRepositoryImpl @Inject constructor(
     override suspend fun getCharacters(page: Int): CharactersResponse {
         val result = apolloClient.query(GetCharactersQuery(Optional.presentIfNotNull(page))).execute()
         val characters = result.data?.characters?.results?.mapNotNull { character ->
-            character?.id?.let {
+            character?.id?.let { id ->
                 Character(
-                    id = it,
+                    id = id,
                     name = character.name,
                     imageUrl = character.image
                 )
@@ -28,7 +29,7 @@ class CharacterRepositoryImpl @Inject constructor(
         }.orEmpty()
 
         val info = result.data?.characters?.info?.let {
-            CharactersInfo(
+            InfoResponse(
                 pages = it.pages,
                 count = it.count,
                 next = it.next,
@@ -44,12 +45,23 @@ class CharacterRepositoryImpl @Inject constructor(
     override suspend fun getCharacterDetail(characterId: String): CharacterDetail? {
         val result = apolloClient.query(GetCharacterDetailQuery(characterId)).execute()
         return result.data?.character?.let { character ->
-            character.id?.let {
+            character.id?.let { id ->
                 CharacterDetail(
-                    id = character.id,
+                    id = id,
                     name = character.name,
                     imageUrl = character.image,
-                    species = character.species
+                    species = character.species,
+                    status = character.status,
+                    gender = character.gender,
+                    type = character.type,
+                    episodes = character.episode.mapNotNull {
+                        it?.let {
+                            Episode(
+                                it.id ?: "",
+                                name = it.name,
+                            )
+                        }
+                    },
                 )
             }
         }

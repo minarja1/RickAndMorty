@@ -1,4 +1,4 @@
-package cz.minarik.alzatest.domain.usecase.getproductdetail
+package cz.minarik.alzatest.domain.usecase.getcharacterdetail
 
 import cz.minarik.alzatest.common.base.FailedWithError
 import cz.minarik.alzatest.common.base.FetchState

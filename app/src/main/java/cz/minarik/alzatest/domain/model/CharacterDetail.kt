@@ -5,4 +5,10 @@ data class CharacterDetail(
     val name: String?,
     val imageUrl: String?,
     val species: String?,
+    val type: String?,
+    val status: String?,
+    val gender: String?,
+//    val origin: Location?,
+//    val location: Location?,
+    val episodes: List<Episode>,
 )

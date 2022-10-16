@@ -61,7 +61,7 @@ fun CharacterListItem(
                 Text(
                     modifier = Modifier.padding(SpacingXSmall),
                     text = character.name,
-                    style = MaterialTheme.typography.body2,
+                    style = MaterialTheme.typography.body1,
                     overflow = TextOverflow.Ellipsis,
                     maxLines = 1,
                 )
@@ -74,7 +74,7 @@ private val CharacterImageSize = 148.dp
 
 @Preview
 @Composable
-private fun CategoryListItemPreview() {
+private fun CharacterListItemPreview() {
     CharacterListItem(
         character = Character(
             "1",
