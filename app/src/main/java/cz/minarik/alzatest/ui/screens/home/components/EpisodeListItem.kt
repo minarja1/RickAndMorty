@@ -26,15 +26,15 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import coil.transform.CircleCropTransformation
 import cz.minarik.alzatest.R
-import cz.minarik.alzatest.domain.model.Episode
 import cz.minarik.alzatest.ui.dimens.SpacingXSmall
+import cz.minarik.alzatest.ui.model.ClickableCardViewObject
 import cz.minarik.alzatest.ui.theme.CardViewOutlineColor
 
 @Composable
-fun EpisodeListItem(
+fun ClickableCard(
     modifier: Modifier = Modifier,
-    episode: Episode,
-    onItemClick: (Episode) -> Unit,
+    clickableCardViewObject: ClickableCardViewObject,
+    onItemClick: (String) -> Unit,
 ) {
     val roundedCornerShape = RoundedCornerShape(8.dp)
     Card(
@@ -42,14 +42,14 @@ fun EpisodeListItem(
         border = BorderStroke(1.dp, CardViewOutlineColor),
         modifier = modifier
             .clip(roundedCornerShape)
-            .clickable { onItemClick(episode) }
+            .clickable { onItemClick(clickableCardViewObject.id) }
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .fillMaxWidth()
         ) {
-            episode.name?.let { name ->
+            clickableCardViewObject.title?.let { name ->
                 Text(
                     modifier = Modifier.padding(SpacingXSmall),
                     text = name,
@@ -58,7 +58,7 @@ fun EpisodeListItem(
                     maxLines = 1,
                 )
             }
-            episode.code?.let { code ->
+            clickableCardViewObject.subtitle?.let { code ->
                 Text(
                     modifier = Modifier.padding(SpacingXSmall),
                     text = code,
@@ -67,27 +67,25 @@ fun EpisodeListItem(
                     maxLines = 1,
                 )
             }
-            episode.characters?.let { characters ->
-                LazyRow(
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    items(
-                        items = characters,
-                        key = { it.id },
-                    ) { character ->
-                        AsyncImage(
-                            model = ImageRequest.Builder(LocalContext.current)
-                                .data(character.imageUrl)
-                                .transformations(CircleCropTransformation())
-                                .crossfade(true)
-                                .build(),
-                            contentScale = ContentScale.Crop,
-                            contentDescription = stringResource(id = R.string.character_image),
-                            modifier = Modifier
-                                .height(CharacterImageSize)
-                                .padding(SpacingXSmall)
-                        )
-                    }
+            LazyRow(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                items(
+                    items = clickableCardViewObject.characters,
+                    key = { it.id },
+                ) { character ->
+                    AsyncImage(
+                        model = ImageRequest.Builder(LocalContext.current)
+                            .data(character.imageUrl)
+                            .transformations(CircleCropTransformation())
+                            .crossfade(true)
+                            .build(),
+                        contentScale = ContentScale.Crop,
+                        contentDescription = stringResource(id = R.string.character_image),
+                        modifier = Modifier
+                            .height(CharacterImageSize)
+                            .padding(SpacingXSmall)
+                    )
                 }
             }
         }
@@ -99,12 +97,11 @@ private val CharacterImageSize = 72.dp
 @Preview
 @Composable
 private fun EpisodeListItemPreview() {
-    EpisodeListItem(
-        episode = Episode(
+    ClickableCard(
+        clickableCardViewObject = ClickableCardViewObject(
             id = "1",
-            air_date = "December 2, 2013",
-            name = "Pilot",
-            code = "S01E01",
+            title = "December 2, 2013",
+            subtitle = "S01E01",
             characters = emptyList(),
         ),
         onItemClick = {}

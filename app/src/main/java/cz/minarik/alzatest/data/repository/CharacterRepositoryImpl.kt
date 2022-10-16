@@ -9,6 +9,7 @@ import cz.minarik.alzatest.data.remote.response.InfoResponse
 import cz.minarik.alzatest.domain.model.Character
 import cz.minarik.alzatest.domain.model.CharacterDetail
 import cz.minarik.alzatest.domain.model.Episode
+import cz.minarik.alzatest.domain.model.Location
 import cz.minarik.alzatest.domain.repository.CharacterRepository
 import javax.inject.Inject
 
@@ -54,6 +55,18 @@ class CharacterRepositoryImpl @Inject constructor(
                     status = character.status,
                     gender = character.gender,
                     type = character.type,
+                    origin = character.origin?.let {
+                        Location(
+                            id = it.id ?: "",
+                            name = it.name,
+                        )
+                    },
+                    location = character.location?.let {
+                        Location(
+                            id = it.id ?: "",
+                            name = it.name,
+                        )
+                    },
                     episodes = character.episode.mapNotNull {
                         it?.let {
                             Episode(

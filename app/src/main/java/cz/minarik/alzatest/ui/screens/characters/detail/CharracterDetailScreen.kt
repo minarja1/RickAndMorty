@@ -48,8 +48,10 @@ import cz.minarik.alzatest.ui.composables.RaMTopAppBar
 import cz.minarik.alzatest.ui.dimens.SpacingMedium
 import cz.minarik.alzatest.ui.dimens.SpacingSmall
 import cz.minarik.alzatest.ui.dimens.SpacingXLarge
-import cz.minarik.alzatest.ui.screens.home.components.EpisodeListItem
+import cz.minarik.alzatest.ui.model.toCardVO
+import cz.minarik.alzatest.ui.screens.home.components.ClickableCard
 import cz.minarik.alzatest.ui.theme.RaMTheme
+import cz.minarik.alzatest.ui.theme.grayscale
 import org.koin.androidx.compose.getViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -130,12 +132,13 @@ fun CharacterDetailView(
         item {
             CharacterHeader(character)
         }
+
         if (character.episodes.isNotEmpty()) {
             item {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = ScreenPaddingHorizontal, vertical = ScreenPaddingVertical)
+                        .padding(horizontal = ScreenPaddingHorizontal)
                         .clip(RoundedCornerShape(8.dp))
                         .clickable { onExpanded() }
                 ) {
@@ -146,21 +149,22 @@ fun CharacterDetailView(
                             modifier = Modifier.rotate(rotationState),
                             painter = painterResource(id = R.drawable.ic_baseline_chevron_right_24),
                             contentDescription = stringResource(id = R.string.chevron),
-                            colorFilter = ColorFilter.tint(color = MaterialTheme.colors.primary)
+                            colorFilter = ColorFilter.tint(color = MaterialTheme.colors.grayscale.gray700)
                         )
                     }
                     Spacer(modifier = Modifier.height(ScreenPaddingVertical))
                 }
             }
+
             items(
                 items = character.episodes,
                 key = { it.id },
             ) { episode ->
                 if (expanded.value) {
-                    EpisodeListItem(
+                    ClickableCard(
                         modifier = Modifier
-                            .padding(ScreenPaddingHorizontal, vertical = ScreenPaddingVertical),
-                        episode = episode,
+                            .padding(horizontal = ScreenPaddingHorizontal, vertical = SpacingSmall),
+                        clickableCardViewObject = episode.toCardVO(),
                         onItemClick = {
                             // todo
                         }
@@ -217,6 +221,20 @@ private fun CharacterHeader(character: CharacterDetail) {
             style = MaterialTheme.typography.body1,
         )
     }
+    if (character.origin?.name?.isNotBlank() == true) {
+        TextLine(
+            title = stringResource(id = R.string.origin),
+            text = character.origin.name,
+            style = MaterialTheme.typography.body1,
+        )
+    }
+    if (character.location?.name?.isNotBlank() == true) {
+        TextLine(
+            title = stringResource(id = R.string.location),
+            text = character.location.name,
+            style = MaterialTheme.typography.body1,
+        )
+    }
 }
 
 @Composable
@@ -245,7 +263,7 @@ private fun RowScope.TitleText(text: String) {
         modifier = Modifier.weight(1f),
         text = text,
         style = MaterialTheme.typography.body1,
-        color = MaterialTheme.colors.secondary
+        color = MaterialTheme.colors.grayscale.gray700
     )
 }
 
@@ -266,7 +284,6 @@ private fun CharacterDetailPreview() {
             type = "",
             status = "Alive",
             gender = "Male",
-            episodes = emptyList(),
         ),
         expanded = remember {
             mutableStateOf(true)

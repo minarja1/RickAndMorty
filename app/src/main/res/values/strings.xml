@@ -15,4 +15,6 @@
     <string name="gender">Gender</string>
     <string name="status">Status</string>
     <string name="chevron">Chevron</string>
+    <string name="origin">Origin</string>
+    <string name="location">Location</string>
 </resources>

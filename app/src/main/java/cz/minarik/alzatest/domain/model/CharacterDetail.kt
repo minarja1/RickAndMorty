@@ -8,7 +8,7 @@ data class CharacterDetail(
     val type: String?,
     val status: String?,
     val gender: String?,
-//    val origin: Location?,
-//    val location: Location?,
-    val episodes: List<Episode>,
+    val origin: Location? = null,
+    val location: Location? = null,
+    val episodes: List<Episode> = emptyList(),
 )

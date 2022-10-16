@@ -38,8 +38,9 @@ import cz.minarik.alzatest.domain.model.Character
 import cz.minarik.alzatest.domain.model.Episode
 import cz.minarik.alzatest.ui.composables.ErrorView
 import cz.minarik.alzatest.ui.dimens.SpacingXXSmall
+import cz.minarik.alzatest.ui.model.toCardVO
 import cz.minarik.alzatest.ui.screens.home.components.CharacterListItem
-import cz.minarik.alzatest.ui.screens.home.components.EpisodeListItem
+import cz.minarik.alzatest.ui.screens.home.components.ClickableCard
 import cz.minarik.alzatest.ui.screens.home.components.LoadStateFooter
 import cz.minarik.alzatest.ui.screens.home.components.LoadStateScreen
 import cz.minarik.alzatest.ui.screens.home.util.CharacterItemUtils.getListColumnsCount
@@ -106,9 +107,9 @@ fun EpisodesContent(
                 key = { it.id },
             ) { episode ->
                 episode?.let {
-                    EpisodeListItem(
+                    ClickableCard(
                         modifier = Modifier.padding(SpacingXXSmall),
-                        episode = episode,
+                        clickableCardViewObject = episode.toCardVO(),
                         onItemClick = {
                             // todo
                         }
