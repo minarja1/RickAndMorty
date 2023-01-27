@@ -4,7 +4,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 /**
- * Utils object for catalogue item
+ * Utils object for character item
  */
 object CharacterItemUtils {
 
@@ -12,9 +12,9 @@ object CharacterItemUtils {
     private const val MinimalNumberOfColumns = 2
 
     /**
-     * Gets optimal column count for products grid.
+     * Gets optimal column count for characters grid.
      *
-     * @param availableWidth available width for products.
+     * @param availableWidth available width
      *
      * @return Number of columns that is ideal for current screen.
      */
