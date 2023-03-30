@@ -1,36 +1,36 @@
-package cz.minarik.alzatest.ui.screens.characters.detail
+package cz.minarik.alzatest.ui.screens.episodes.detail
 
 import androidx.compose.runtime.mutableStateOf
 import cz.minarik.alzatest.common.base.BaseViewModel
 import cz.minarik.alzatest.common.base.FailedWithError
 import cz.minarik.alzatest.common.base.Loading
 import cz.minarik.alzatest.common.base.SuccessWithData
-import cz.minarik.alzatest.domain.usecase.getcharacterdetail.GetCharacterDetailUseCase
+import cz.minarik.alzatest.domain.usecase.getepisodedetail.GetEpisodeDetailUseCase
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
-class CharacterDetailScreenViewModel(
-    private val characterId: String,
-    private val getCharacterDetailUseCase: GetCharacterDetailUseCase
+class EpisodeDetailScreenViewModel(
+    private val episodeId: String,
+    private val getEpisodeDetailUseCase: GetEpisodeDetailUseCase
 ) : BaseViewModel() {
 
-    private val _state = MutableStateFlow(CharacterDetailScreenState())
-    val state: Flow<CharacterDetailScreenState> = _state
+    private val _state = MutableStateFlow(EpisodeDetailScreenState())
+    val state: Flow<EpisodeDetailScreenState> = _state
 
     var expanded = mutableStateOf(false)
 
     init {
-        getCharacterDetail()
+        getEpisodeDetail()
     }
 
-    fun getCharacterDetail() {
-        getCharacterDetailUseCase(characterId).onEach { result ->
+    fun getEpisodeDetail() {
+        getEpisodeDetailUseCase(episodeId).onEach { result ->
             when (result) {
                 is SuccessWithData -> {
-                    _state.value = CharacterDetailScreenState(
-                        character = result.content,
+                    _state.value = EpisodeDetailScreenState(
+                        episode = result.content,
                     )
                 }
                 is FailedWithError -> {

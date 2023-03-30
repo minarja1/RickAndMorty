@@ -4,9 +4,11 @@ import cz.minarik.alzatest.data.repository.CharacterRepositoryImpl
 import cz.minarik.alzatest.data.repository.EpisodeRepositoryImpl
 import cz.minarik.alzatest.domain.repository.CharacterRepository
 import cz.minarik.alzatest.domain.repository.EpisodeRepository
-import cz.minarik.alzatest.domain.usecase.getcategories.GetCharactersUseCase
 import cz.minarik.alzatest.domain.usecase.getcharacterdetail.GetCharacterDetailUseCase
+import cz.minarik.alzatest.domain.usecase.getcharacters.GetCharactersUseCase
+import cz.minarik.alzatest.domain.usecase.getepisodedetail.GetEpisodeDetailUseCase
 import cz.minarik.alzatest.ui.screens.characters.detail.CharacterDetailScreenViewModel
+import cz.minarik.alzatest.ui.screens.episodes.detail.EpisodeDetailScreenViewModel
 import cz.minarik.alzatest.ui.screens.home.HomeScreenViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
@@ -37,6 +39,12 @@ val appModule = module {
         )
     }
 
+    single {
+        GetEpisodeDetailUseCase(
+            get(),
+        )
+    }
+
     viewModel {
         HomeScreenViewModel(
             get(),
@@ -44,9 +52,16 @@ val appModule = module {
         )
     }
 
-    viewModel { (productId: String) ->
+    viewModel { (characterId: String) ->
         CharacterDetailScreenViewModel(
-            productId,
+            characterId,
+            get(),
+        )
+    }
+
+    viewModel { (episodeId: String) ->
+        EpisodeDetailScreenViewModel(
+            episodeId,
             get(),
         )
     }

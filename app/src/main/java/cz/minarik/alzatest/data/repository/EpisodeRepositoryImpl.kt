@@ -2,11 +2,13 @@ package cz.minarik.alzatest.data.repository
 
 import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.api.Optional
+import cz.minarik.alzatest.GetEpisodeDetailQuery
 import cz.minarik.alzatest.GetEpisodesQuery
 import cz.minarik.alzatest.data.remote.response.EpisodesResponse
 import cz.minarik.alzatest.data.remote.response.InfoResponse
 import cz.minarik.alzatest.domain.model.Character
 import cz.minarik.alzatest.domain.model.Episode
+import cz.minarik.alzatest.domain.model.EpisodeDetail
 import cz.minarik.alzatest.domain.repository.EpisodeRepository
 import javax.inject.Inject
 
@@ -20,7 +22,6 @@ class EpisodeRepositoryImpl @Inject constructor(
             episode?.id?.let {
                 Episode(
                     id = it,
-                    air_date = episode.air_date,
                     name = episode.name,
                     code = episode.episode,
                     characters = episode.characters.mapNotNull { character ->
@@ -50,4 +51,27 @@ class EpisodeRepositoryImpl @Inject constructor(
         )
     }
 
+    override suspend fun getEpisodeDetail(episodeId: String): EpisodeDetail? {
+        val result = apolloClient.query(GetEpisodeDetailQuery(episodeId)).execute()
+
+        return result.data?.episode?.let { episode ->
+            episode.id?.let {
+                EpisodeDetail(
+                    id = it,
+                    name = episode.name,
+                    code = episode.episode,
+                    airDate = episode.air_date,
+                    characters = episode.characters.mapNotNull { character ->
+                        character?.id?.let { id ->
+                            Character(
+                                id = id,
+                                name = character.name,
+                                imageUrl = character.image,
+                            )
+                        }
+                    }
+                )
+            }
+        }
+    }
 }

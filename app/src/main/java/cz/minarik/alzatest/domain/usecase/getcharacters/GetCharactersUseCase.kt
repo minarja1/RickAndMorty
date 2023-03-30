@@ -1,4 +1,4 @@
-package cz.minarik.alzatest.domain.usecase.getcategories
+package cz.minarik.alzatest.domain.usecase.getcharacters
 
 import cz.minarik.alzatest.common.base.FetchState
 import cz.minarik.alzatest.common.base.Loading

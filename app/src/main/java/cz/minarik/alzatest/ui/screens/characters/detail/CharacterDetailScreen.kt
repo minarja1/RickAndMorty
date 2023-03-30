@@ -74,7 +74,7 @@ fun CharacterDetailScreen(
             content = { padding ->
                 HandleState(
                     Modifier.padding(padding),
-                    viewModel.state.collectAsState(initial = ProductDetailScreenState()),
+                    viewModel.state.collectAsState(initial = CharacterDetailScreenState()),
                     expanded = viewModel.expanded,
                     onExpanded = viewModel::expandedStateChanged,
                     reload = viewModel::getCharacterDetail
@@ -88,7 +88,7 @@ fun CharacterDetailScreen(
 @Composable
 fun HandleState(
     modifier: Modifier,
-    state: State<ProductDetailScreenState>,
+    state: State<CharacterDetailScreenState>,
     expanded: MutableState<Boolean>,
     reload: () -> Unit,
     onExpanded: () -> Unit,

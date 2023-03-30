@@ -1,21 +1,9 @@
 package cz.minarik.alzatest.ui.screens.home
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Tab
-import androidx.compose.material.TabRow
-import androidx.compose.material.TabRowDefaults
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
@@ -51,6 +39,7 @@ import org.koin.androidx.compose.getViewModel
 @Composable
 fun HomeScreen(
     onCharacterDetailClicked: (Character) -> Unit,
+    onEpisodeDetailClicked: (Episode) -> Unit,
 ) {
     val viewModel = getViewModel<HomeScreenViewModel>()
     RaMTheme {
@@ -62,6 +51,7 @@ fun HomeScreen(
                 pagedCharacters = viewModel.pagedCharacters.collectAsLazyPagingItems(),
                 pagedEpisodes = viewModel.pagedEpisodes.collectAsLazyPagingItems(),
                 onCharacterDetailClicked = onCharacterDetailClicked,
+                onEpisodeDetailClicked = onEpisodeDetailClicked,
             )
         }
     }
@@ -73,6 +63,7 @@ private fun HomeScreenContent(
     pagedCharacters: LazyPagingItems<Character>,
     pagedEpisodes: LazyPagingItems<Episode>,
     onCharacterDetailClicked: (Character) -> Unit,
+    onEpisodeDetailClicked: (Episode) -> Unit,
 ) {
     HomeScreenTabLayout(
         charactersContent = {
@@ -85,7 +76,8 @@ private fun HomeScreenContent(
         episodesContent = {
             EpisodesContent(
                 modifier = modifier,
-                pagedEpisodes = pagedEpisodes
+                pagedEpisodes = pagedEpisodes,
+                onEpisodeDetailClicked = onEpisodeDetailClicked,
             )
         },
     )
@@ -94,7 +86,8 @@ private fun HomeScreenContent(
 @Composable
 fun EpisodesContent(
     modifier: Modifier,
-    pagedEpisodes: LazyPagingItems<Episode>
+    pagedEpisodes: LazyPagingItems<Episode>,
+    onEpisodeDetailClicked: (Episode) -> Unit,
 ) {
     Box(modifier = modifier.fillMaxSize()) {
         LazyColumn(
@@ -111,7 +104,7 @@ fun EpisodesContent(
                         modifier = Modifier.padding(SpacingXXSmall),
                         clickableCardViewObject = episode.toCardVO(),
                         onItemClick = {
-                            // todo
+                            onEpisodeDetailClicked(episode)
                         }
                     )
                 }
@@ -153,7 +146,11 @@ private fun CharactersContent(
                         getListColumnsCount(screenWidth)
                     }
                     CharactersRow(
-                        pagedCharacters.itemSnapshotList.items, index, columns, onCharacterDetailClicked, characterInList
+                        pagedCharacters.itemSnapshotList.items,
+                        index,
+                        columns,
+                        onCharacterDetailClicked,
+                        characterInList
                     )
                 }
             }
