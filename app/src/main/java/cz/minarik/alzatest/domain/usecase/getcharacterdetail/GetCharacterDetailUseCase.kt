@@ -12,9 +12,21 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
+/**
+ * Use case for getting character detail.
+ *
+ * @property repository character repository
+ */
 class GetCharacterDetailUseCase @Inject constructor(
     private val repository: CharacterRepository,
 ) {
+
+    /**
+     * Get character detail.
+     *
+     * @param characterId character id
+     * @return character detail
+     */
     operator fun invoke(characterId: String): Flow<FetchState<CharacterDetail?>> = flow {
         emit(Loading())
         val characterDetail = repository.getCharacterDetail(characterId)

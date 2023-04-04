@@ -14,15 +14,27 @@ import cz.minarik.alzatest.domain.repository.CharacterRepository
 import cz.minarik.alzatest.domain.repository.EpisodeRepository
 import kotlinx.coroutines.flow.Flow
 
+/**
+ * ViewModel for HomeScreen.
+ *
+ * @property characterRepository Repository for characters.
+ * @property episodeRepository Repository for episodes.
+ */
 class HomeScreenViewModel(
     private val characterRepository: CharacterRepository,
     private val episodeRepository: EpisodeRepository,
 ) : BaseViewModel() {
 
+    /**
+     * Flow of paged characters.
+     */
     val pagedCharacters: Flow<PagingData<Character>> = Pager(PagingConfig(pageSize = 20)) {
         CharacterPagingSource(characterRepository)
     }.flow.cachedIn(viewModelScope)
 
+    /**
+     * Flow of paged episodes.
+     */
     val pagedEpisodes: Flow<PagingData<Episode>> = Pager(PagingConfig(pageSize = 20)) {
         EpisodePagingSource(episodeRepository)
     }.flow.cachedIn(viewModelScope)

@@ -7,7 +7,9 @@ import cz.minarik.alzatest.R
 import cz.minarik.alzatest.common.network.createOkHttpClient
 import org.koin.dsl.module
 
-
+/**
+ * Module for network related dependencies.
+ */
 val networkModule = module {
 
     single {

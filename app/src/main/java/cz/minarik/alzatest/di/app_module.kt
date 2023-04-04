@@ -13,6 +13,9 @@ import cz.minarik.alzatest.ui.screens.home.HomeScreenViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
+/**
+ * App module DI for Koin.
+ */
 val appModule = module {
 
     single<CharacterRepository> {

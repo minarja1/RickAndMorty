@@ -1,5 +1,8 @@
 package cz.minarik.alzatest.data.remote.response
 
+/**
+ * Response with info about the response.
+ */
 data class InfoResponse(
     /**
      * The amount of pages.

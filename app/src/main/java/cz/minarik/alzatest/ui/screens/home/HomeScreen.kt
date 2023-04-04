@@ -65,11 +65,11 @@ fun HomeScreen(
 
 @Composable
 private fun HomeScreenContent(
-    modifier: Modifier,
     pagedCharacters: LazyPagingItems<Character>,
     pagedEpisodes: LazyPagingItems<Episode>,
     onCharacterDetailClicked: (Character) -> Unit,
     onEpisodeDetailClicked: (Episode) -> Unit,
+    modifier: Modifier,
 ) {
     HomeScreenTabLayout(
         charactersContent = {
@@ -91,9 +91,9 @@ private fun HomeScreenContent(
 
 @Composable
 fun EpisodesContent(
-    modifier: Modifier,
     pagedEpisodes: LazyPagingItems<Episode>,
     onEpisodeDetailClicked: (Episode) -> Unit,
+    modifier: Modifier,
 ) {
     Box(modifier = modifier.fillMaxSize()) {
         LazyColumn(
@@ -135,9 +135,9 @@ fun EpisodesContent(
 
 @Composable
 private fun CharactersContent(
-    modifier: Modifier,
     pagedCharacters: LazyPagingItems<Character>,
-    onCharacterDetailClicked: (Character) -> Unit
+    onCharacterDetailClicked: (Character) -> Unit,
+    modifier: Modifier
 ) {
     Box(modifier = modifier.fillMaxSize()) {
         LazyColumn(

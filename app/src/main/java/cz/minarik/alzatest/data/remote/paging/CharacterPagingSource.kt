@@ -5,6 +5,11 @@ import androidx.paging.PagingState
 import cz.minarik.alzatest.domain.model.Character
 import cz.minarik.alzatest.domain.repository.CharacterRepository
 
+/**
+ * Paging source for characters.
+ *
+ * @param characterRepository character repository.
+ */
 @Suppress("TooGenericExceptionCaught")
 class CharacterPagingSource(
     private val characterRepository: CharacterRepository,

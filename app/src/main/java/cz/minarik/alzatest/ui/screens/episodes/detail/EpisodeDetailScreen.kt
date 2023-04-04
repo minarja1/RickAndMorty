@@ -50,8 +50,8 @@ fun EpisodeDetailScreen(
             },
             content = { padding ->
                 HandleState(
-                    Modifier.padding(padding),
-                    viewModel.state.collectAsState(initial = EpisodeDetailScreenState()),
+                    modifier = Modifier.padding(padding),
+                    state = viewModel.state.collectAsState(initial = EpisodeDetailScreenState()),
                     reload = viewModel::getEpisodeDetail
                 )
             }
@@ -62,9 +62,9 @@ fun EpisodeDetailScreen(
 
 @Composable
 fun HandleState(
-    modifier: Modifier,
     state: State<EpisodeDetailScreenState>,
     reload: () -> Unit,
+    modifier: Modifier,
 ) {
     state.value.apply {
         Box(modifier = modifier.fillMaxSize()) {

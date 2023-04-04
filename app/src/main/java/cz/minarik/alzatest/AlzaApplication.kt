@@ -2,7 +2,6 @@ package cz.minarik.alzatest
 
 import android.app.Application
 import android.content.Context
-import android.content.res.Resources
 import cz.minarik.alzatest.common.base.BaseViewModel
 import cz.minarik.alzatest.di.appModule
 import cz.minarik.alzatest.di.networkModule
@@ -14,20 +13,32 @@ import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.GlobalContext.startKoin
 import org.koin.core.logger.Level
 
+/**
+ * Application class.
+ *
+ * Provides global coroutine scope, application context and resources.
+ */
 class AlzaApplication : Application() {
     private val globalCoroutineScope =
         CoroutineScope(Dispatchers.IO + SupervisorJob() + BaseViewModel.coroutineExceptionHandler)
 
     companion object {
+
+        /**
+         * Global application instance.
+         */
         lateinit var sharedInstance: AlzaApplication
             private set
 
+        /**
+         * Global application context.
+         */
         val applicationContext: Context
             get() = sharedInstance.baseContext
 
-        val res: Resources
-            get() = sharedInstance.resources
-
+        /**
+         * Global application coroutine scope.
+         */
         val globalCoroutineScope: CoroutineScope
             get() = sharedInstance.globalCoroutineScope
     }

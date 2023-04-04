@@ -69,9 +69,9 @@ fun CharacterDetailScreen(
             },
             content = { padding ->
                 HandleState(
-                    Modifier.padding(padding),
-                    viewModel.state.collectAsState(initial = CharacterDetailScreenState()),
-                    expanded = viewModel.expanded,
+                    modifier = Modifier.padding(padding),
+                    state = viewModel.state.collectAsState(initial = CharacterDetailScreenState()),
+                    expanded = viewModel.episodesExpanded,
                     onExpanded = viewModel::expandedStateChanged,
                     reload = viewModel::getCharacterDetail,
                     onEpisodeDetailClicked = onEpisodeDetailClicked,
@@ -84,12 +84,12 @@ fun CharacterDetailScreen(
 
 @Composable
 fun HandleState(
-    modifier: Modifier,
     state: State<CharacterDetailScreenState>,
-    expanded: MutableState<Boolean>,
+    expanded: State<Boolean>,
     reload: () -> Unit,
     onExpanded: () -> Unit,
     onEpisodeDetailClicked: (Episode) -> Unit,
+    modifier: Modifier,
 ) {
     state.value.apply {
         Box(modifier = modifier.fillMaxSize()) {
@@ -118,7 +118,7 @@ fun HandleState(
 @Composable
 fun CharacterDetailView(
     character: CharacterDetail,
-    expanded: MutableState<Boolean>,
+    expanded: State<Boolean>,
     onExpanded: () -> Unit,
     onEpisodeDetailClicked: (Episode) -> Unit,
 ) {
@@ -285,7 +285,8 @@ private fun CharacterDetailPreview() {
         character = CharacterDetail(
             id = "1",
             name = "Rick Sanchez",
-            imageUrl = "https://static.wikia.nocookie.net/rickandmorty/images/a/a6/Rick_Sanchez.png/revision/latest/top-crop/width/360/height/360?cb=20160923150728",
+            imageUrl = "https://static.wikia.nocookie.net/rickandmorty/images/a/a6/Rick_Sanchez.png/" +
+                    "revision/latest/top-crop/width/360/height/360?cb=20160923150728",
             species = "Human",
             type = "",
             status = "Alive",

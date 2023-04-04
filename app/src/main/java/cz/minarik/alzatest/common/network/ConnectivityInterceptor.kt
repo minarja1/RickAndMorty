@@ -7,6 +7,9 @@ import okhttp3.Interceptor
 import okhttp3.Response
 import java.io.IOException
 
+/**
+ * Interceptor for checking internet connection.
+ */
 class ConnectivityInterceptor(private val mContext: Context) : Interceptor {
 
     @Throws(IOException::class)

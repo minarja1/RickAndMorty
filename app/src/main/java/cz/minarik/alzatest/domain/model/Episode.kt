@@ -1,5 +1,13 @@
 package cz.minarik.alzatest.domain.model
 
+/**
+ * Model for episode.
+ *
+ * @param id episode id
+ * @param name episode name
+ * @param code episode code
+ * @param characters list of characters
+ */
 data class Episode(
     val id: String,
     val name: String?,

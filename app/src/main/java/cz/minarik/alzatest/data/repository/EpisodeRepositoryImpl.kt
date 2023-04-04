@@ -12,6 +12,11 @@ import cz.minarik.alzatest.domain.model.EpisodeDetail
 import cz.minarik.alzatest.domain.repository.EpisodeRepository
 import javax.inject.Inject
 
+/**
+ * Implementation of [EpisodeRepository].
+ *
+ * @param apolloClient Apollo client.
+ */
 class EpisodeRepositoryImpl @Inject constructor(
     private val apolloClient: ApolloClient,
 ) : EpisodeRepository {

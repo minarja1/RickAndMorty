@@ -72,18 +72,21 @@ comments:
     matchDeclarationsOrder: true
     allowParamOnConstructorProperties: false
   UndocumentedPublicClass:
-    active: false
+    active: true
     excludes: ['**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/jsTest/**', '**/iosTest/**']
     searchInNestedClass: true
     searchInInnerClass: true
     searchInInnerObject: true
     searchInInnerInterface: true
+    ignoreAnnotated: [ 'Composable' ]
   UndocumentedPublicFunction:
-    active: false
+    active: true
     excludes: ['**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/jsTest/**', '**/iosTest/**']
+    ignoreAnnotated: [ 'Composable' ]
   UndocumentedPublicProperty:
-    active: false
+    active: true
     excludes: ['**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/jsTest/**', '**/iosTest/**']
+    ignoreAnnotated: [ 'Composable' ]
 
 complexity:
   active: true
@@ -120,13 +123,14 @@ complexity:
   LongMethod:
     active: true
     threshold: 60
+    ignoreAnnotated: [ 'Composable' ]
   LongParameterList:
     active: true
     functionThreshold: 6
     constructorThreshold: 7
     ignoreDefaultParameters: false
     ignoreDataClasses: true
-    ignoreAnnotatedParameter: []
+    ignoreAnnotated: [ 'Composable' ]
   MethodOverloading:
     active: false
     threshold: 6
@@ -357,7 +361,7 @@ naming:
     active: true
     packagePattern: '[a-z]+(\.[a-z][A-Za-z0-9]*)*'
   TopLevelPropertyNaming:
-    active: true
+    active: false
     constantPattern: '[A-Z][_A-Z0-9]*'
     propertyPattern: '[A-Za-z][_A-Za-z0-9]*'
     privatePropertyPattern: '_?[A-Za-z][_A-Za-z0-9]*'
@@ -708,6 +712,6 @@ style:
     active: true
     ignoreLateinitVar: false
   WildcardImport:
-    active: true
+    active: false
     excludes: [ '**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/jsTest/**', '**/iosTest/**' ]
     excludeImports: [ 'java.util.*', 'kotlinx.android.synthetic.*' ]

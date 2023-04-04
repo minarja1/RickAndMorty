@@ -13,17 +13,30 @@ import androidx.compose.ui.graphics.Color
 
 
 @Suppress("MagicNumber")
-val Charcoal = Color(0xff373F51)
+internal val Charcoal = Color(0xff373F51)
 
 @Suppress("MagicNumber")
-val CardViewOutlineColor = Color(0x33FFFFFF)
+internal val CardViewOutlineColor = Color(0x33FFFFFF)
 
+@Suppress("MagicNumber")
 internal val Cultured = Color(0xFFF8F8F8)
+
+@Suppress("MagicNumber")
 internal val AntiFlashWhite = Color(0xFFF2F3F3)
+
+@Suppress("MagicNumber")
 internal val DarkSilver = Color(0xFF707070)
+
+@Suppress("MagicNumber")
 internal val EerieBlack = Color(0xFF171B1E)
+
+@Suppress("MagicNumber")
 internal val Placeholder = Color(0xFFE3E5E7)
+
+@Suppress("MagicNumber")
 internal val Border = Color(0xFFE8E8E8)
+
+@Suppress("MagicNumber")
 internal val Headline = Color(0xFF252425)
 
 private object LightGrayscale : Grayscale {
@@ -56,7 +69,8 @@ interface Grayscale {
     val gray900: Color
 }
 
-private val LocalGrayscale: ProvidableCompositionLocal<Grayscale> = staticCompositionLocalOf { LightGrayscale }
+private val LocalGrayscale: ProvidableCompositionLocal<Grayscale> =
+    staticCompositionLocalOf { LightGrayscale }
 
 /**
  * Returns the [Grayscale] colors.

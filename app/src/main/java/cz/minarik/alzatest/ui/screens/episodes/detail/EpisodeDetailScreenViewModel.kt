@@ -10,18 +10,33 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
+/**
+ * ViewModel for EpisodeDetailScreen.
+ *
+ * @property episodeId Id of episode.
+ * @property getEpisodeDetailUseCase Use case for getting episode detail.
+ */
 class EpisodeDetailScreenViewModel(
     private val episodeId: String,
     private val getEpisodeDetailUseCase: GetEpisodeDetailUseCase
 ) : BaseViewModel() {
 
     private val _state = MutableStateFlow(EpisodeDetailScreenState())
+
+    /**
+     * State of EpisodeDetailScreen.
+     */
     val state: Flow<EpisodeDetailScreenState> = _state
 
     init {
         getEpisodeDetail()
     }
 
+    /**
+     * Get episode detail.
+     *
+     * Use [state] to observe the result.
+     */
     fun getEpisodeDetail() {
         getEpisodeDetailUseCase(episodeId).onEach { result ->
             when (result) {

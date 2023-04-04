@@ -6,6 +6,9 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import java.util.concurrent.TimeUnit
 
+/**
+ * Creates OkHttpClient with default settings.
+ */
 @Suppress("MagicNumber")
 fun createOkHttpClient(): OkHttpClient {
 
@@ -18,7 +21,10 @@ fun createOkHttpClient(): OkHttpClient {
             val restBuilder = chain.request().newBuilder()
                 .addHeader("accept-charset", "UTF-8")
                 .addHeader("accept-language", "cs-CZ")
-                .addHeader("user-agent", "okhttp/4.7.0;Google/Android SDK built for x86;10;en_GB;293;9.8.0;0;cz.alza.eshop")
+                .addHeader(
+                    "user-agent",
+                    "okhttp/4.7.0;Google/Android SDK built for x86;10;en_GB;293;9.8.0;0;cz.alza.eshop"
+                )
                 .addHeader("accept", "application/json")
             chain.proceed(restBuilder.build())
         }

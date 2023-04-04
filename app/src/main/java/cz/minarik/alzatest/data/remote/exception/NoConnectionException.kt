@@ -5,6 +5,9 @@ import cz.minarik.alzatest.AlzaApplication
 import cz.minarik.alzatest.R
 import java.io.IOException
 
+/**
+ * Exception thrown when there is no internet connection.
+ */
 @Keep
 class NoConnectionException : IOException() {
     override val message: String

@@ -1,5 +1,6 @@
 package cz.minarik.alzatest.ui.screens.characters.detail
 
+import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import cz.minarik.alzatest.common.base.BaseViewModel
 import cz.minarik.alzatest.common.base.FailedWithError
@@ -11,20 +12,40 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
+/**
+ * ViewModel for CharacterDetailScreen.
+ *
+ * @property characterId Id of character.
+ * @property getCharacterDetailUseCase Use case for getting character detail.
+ */
 class CharacterDetailScreenViewModel(
     private val characterId: String,
     private val getCharacterDetailUseCase: GetCharacterDetailUseCase
 ) : BaseViewModel() {
 
     private val _state = MutableStateFlow(CharacterDetailScreenState())
+
+    /**
+     * State of CharacterDetailScreen.
+     */
     val state: Flow<CharacterDetailScreenState> = _state
 
-    var expanded = mutableStateOf(false)
+    private val _episodesExpanded = mutableStateOf(false)
+
+    /**
+     * State of episodes expansion.
+     */
+    val episodesExpanded: State<Boolean> = _episodesExpanded
 
     init {
         getCharacterDetail()
     }
 
+    /**
+     * Get character detail.
+     *
+     * Use [state] to observe the result.
+     */
     fun getCharacterDetail() {
         getCharacterDetailUseCase(characterId).onEach { result ->
             when (result) {
@@ -49,7 +70,10 @@ class CharacterDetailScreenViewModel(
         }.launchIn(ioScope)
     }
 
+    /**
+     * Expand or collapse episodes.
+     */
     fun expandedStateChanged() {
-        expanded.value = !expanded.value
+        _episodesExpanded.value = !_episodesExpanded.value
     }
 }

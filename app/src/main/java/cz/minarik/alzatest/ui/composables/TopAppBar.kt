@@ -12,6 +12,12 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import cz.minarik.alzatest.R
 
+/**
+ * Rick and Morty Top App Bar.
+ *
+ * @param onBackClicked Callback for back button click.
+ * @param text Title text.
+ */
 @Composable
 fun RaMTopAppBar(
     onBackClicked: (() -> Unit)? = null,

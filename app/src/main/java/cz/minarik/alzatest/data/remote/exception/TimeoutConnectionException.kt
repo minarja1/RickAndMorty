@@ -4,6 +4,9 @@ import androidx.annotation.Keep
 import cz.minarik.alzatest.AlzaApplication
 import cz.minarik.alzatest.R
 
+/**
+ * Exception thrown when there is no internet connection.
+ */
 @Keep
 class TimeoutConnectionException : Exception() {
     override val message: String

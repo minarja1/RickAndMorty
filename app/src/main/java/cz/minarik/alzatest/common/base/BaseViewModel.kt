@@ -2,14 +2,20 @@ package cz.minarik.alzatest.common.base
 
 import androidx.lifecycle.ViewModel
 import cz.minarik.alzatest.AlzaApplication
-import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.cancel
+import kotlinx.coroutines.*
 
+/**
+ * Base class for all ViewModels.
+ *
+ * It provides coroutines scopes for UI, IO and Default dispatchers.
+ * It also provides method for launching coroutines that are bound to the lifecycle of this ViewModel.
+ * If the lifecycle dies, the work WILL be cancelled.
+ *
+ * It also provides method for launching coroutines that are not bound to the lifecycle of this ViewModel.
+ * If the lifecycle dies, the work WILL NOT be cancelled.
+ *
+ * following this principle: https://developer.android.com/kotlin/coroutines/coroutines-best-practices#create-coroutines-data-layer
+ */
 open class BaseViewModel : ViewModel() {
 
     private val uiJob = SupervisorJob()
@@ -17,6 +23,12 @@ open class BaseViewModel : ViewModel() {
     private val defaultJob = SupervisorJob()
 
     companion object {
+        /**
+         * This handler will be invoked if any coroutine launched in [uiScope], [ioScope] or [defaultScope]
+         * throws an exception.
+         *
+         * CancellationException is not logged.
+         */
         val coroutineExceptionHandler = CoroutineExceptionHandler { _, ex ->
             if (ex !is CancellationException) {//no need to log those
                 //log exception

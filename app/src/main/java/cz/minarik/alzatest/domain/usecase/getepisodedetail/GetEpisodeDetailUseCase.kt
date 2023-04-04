@@ -12,9 +12,21 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
+/**
+ * Use case for getting episode detail.
+ *
+ * @property repository episode repository
+ */
 class GetEpisodeDetailUseCase @Inject constructor(
     private val repository: EpisodeRepository,
 ) {
+
+    /**
+     * Get episode detail.
+     *
+     * @param episodeId episode id
+     * @return episode detail
+     */
     operator fun invoke(episodeId: String): Flow<FetchState<EpisodeDetail?>> = flow {
         emit(Loading())
         val episodeDetail = repository.getEpisodeDetail(episodeId)

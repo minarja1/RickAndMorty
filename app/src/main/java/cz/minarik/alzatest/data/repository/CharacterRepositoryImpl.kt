@@ -13,6 +13,11 @@ import cz.minarik.alzatest.domain.model.Location
 import cz.minarik.alzatest.domain.repository.CharacterRepository
 import javax.inject.Inject
 
+/**
+ * Implementation of [CharacterRepository].
+ *
+ * @param apolloClient Apollo client.
+ */
 class CharacterRepositoryImpl @Inject constructor(
     private val apolloClient: ApolloClient,
 ) : CharacterRepository {

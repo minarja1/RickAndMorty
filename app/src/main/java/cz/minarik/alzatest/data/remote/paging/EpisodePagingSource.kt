@@ -5,6 +5,11 @@ import androidx.paging.PagingState
 import cz.minarik.alzatest.domain.model.Episode
 import cz.minarik.alzatest.domain.repository.EpisodeRepository
 
+/**
+ * Paging source for episodes.
+ *
+ * @param episodeRepository episode repository.
+ */
 @Suppress("TooGenericExceptionCaught")
 class EpisodePagingSource(
     private val episodeRepository: EpisodeRepository,

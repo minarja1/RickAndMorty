@@ -1,8 +1,11 @@
 package cz.minarik.alzatest.common
 
 import java.nio.charset.StandardCharsets
-import java.util.concurrent.TimeUnit
 
+/**
+ * Constants used in the app.
+ */
+@Suppress("UndocumentedPublicProperty")
 object Constants {
     const val argCharacterId = "argCharacterId"
     const val argCharacterName = "argCharacterName"
