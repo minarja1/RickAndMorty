@@ -36,6 +36,12 @@ import cz.minarik.alzatest.ui.theme.RaMTheme
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.getViewModel
 
+/**
+ * Home screen with two tabs - Characters and Episodes
+ *
+ * @param onCharacterDetailClicked Callback for character detail click.
+ * @param onEpisodeDetailClicked Callback for episode detail click.
+ */
 @Composable
 fun HomeScreen(
     onCharacterDetailClicked: (Character) -> Unit,

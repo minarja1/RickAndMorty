@@ -53,6 +53,14 @@ fun Navigation() {
                 onBackClicked = navController::navigateUp,
                 characterId = it.arguments?.getString(Constants.argCharacterId),
                 characterName = it.arguments?.getString(Constants.argCharacterName),
+                onEpisodeDetailClicked = { episode ->
+                    navController.navigate(
+                        Screen.EpisodeDetail.withArgs(
+                            episode.id,
+                            URLEncoder.encode(episode.name ?: "", Constants.UTF_8)
+                        )
+                    )
+                }
             )
         }
 

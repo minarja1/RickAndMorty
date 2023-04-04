@@ -1,6 +1,5 @@
 package cz.minarik.alzatest.ui.screens.episodes.detail
 
-import androidx.compose.runtime.mutableStateOf
 import cz.minarik.alzatest.common.base.BaseViewModel
 import cz.minarik.alzatest.common.base.FailedWithError
 import cz.minarik.alzatest.common.base.Loading
@@ -18,8 +17,6 @@ class EpisodeDetailScreenViewModel(
 
     private val _state = MutableStateFlow(EpisodeDetailScreenState())
     val state: Flow<EpisodeDetailScreenState> = _state
-
-    var expanded = mutableStateOf(false)
 
     init {
         getEpisodeDetail()
@@ -49,7 +46,4 @@ class EpisodeDetailScreenViewModel(
         }.launchIn(ioScope)
     }
 
-    fun expandedStateChanged() {
-        expanded.value = !expanded.value
-    }
 }

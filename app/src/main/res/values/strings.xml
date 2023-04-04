@@ -17,4 +17,6 @@
     <string name="chevron">Chevron</string>
     <string name="origin">Origin</string>
     <string name="location">Location</string>
+    <string name="aired">Aired</string>
+    <string name="code">Code</string>
 </resources>

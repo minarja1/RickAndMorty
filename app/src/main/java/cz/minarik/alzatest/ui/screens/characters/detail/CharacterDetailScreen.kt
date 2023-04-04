@@ -3,16 +3,7 @@ package cz.minarik.alzatest.ui.screens.characters.detail
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -43,6 +34,7 @@ import coil.compose.rememberAsyncImagePainter
 import cz.minarik.alzatest.R
 import cz.minarik.alzatest.common.util.decodeSafely
 import cz.minarik.alzatest.domain.model.CharacterDetail
+import cz.minarik.alzatest.domain.model.Episode
 import cz.minarik.alzatest.ui.composables.ErrorView
 import cz.minarik.alzatest.ui.composables.RaMTopAppBar
 import cz.minarik.alzatest.ui.dimens.SpacingMedium
@@ -60,7 +52,8 @@ import org.koin.core.parameter.parametersOf
 fun CharacterDetailScreen(
     onBackClicked: () -> Unit,
     characterId: String?,
-    characterName: String?
+    characterName: String?,
+    onEpisodeDetailClicked: (Episode) -> Unit,
 ) {
     val viewModel = getViewModel<CharacterDetailScreenViewModel> {
         parametersOf(characterId)
@@ -69,7 +62,10 @@ fun CharacterDetailScreen(
         Scaffold(
             modifier = Modifier.fillMaxSize(),
             topBar = {
-                RaMTopAppBar(onBackClicked = onBackClicked, text = characterName?.decodeSafely() ?: "")
+                RaMTopAppBar(
+                    onBackClicked = onBackClicked,
+                    text = characterName?.decodeSafely() ?: ""
+                )
             },
             content = { padding ->
                 HandleState(
@@ -77,7 +73,8 @@ fun CharacterDetailScreen(
                     viewModel.state.collectAsState(initial = CharacterDetailScreenState()),
                     expanded = viewModel.expanded,
                     onExpanded = viewModel::expandedStateChanged,
-                    reload = viewModel::getCharacterDetail
+                    reload = viewModel::getCharacterDetail,
+                    onEpisodeDetailClicked = onEpisodeDetailClicked,
                 )
             }
         )
@@ -92,6 +89,7 @@ fun HandleState(
     expanded: MutableState<Boolean>,
     reload: () -> Unit,
     onExpanded: () -> Unit,
+    onEpisodeDetailClicked: (Episode) -> Unit,
 ) {
     state.value.apply {
         Box(modifier = modifier.fillMaxSize()) {
@@ -100,6 +98,7 @@ fun HandleState(
                     character = character,
                     expanded = expanded,
                     onExpanded = onExpanded,
+                    onEpisodeDetailClicked = onEpisodeDetailClicked,
                 )
             }
             if (error.isNotBlank()) {
@@ -121,6 +120,7 @@ fun CharacterDetailView(
     character: CharacterDetail,
     expanded: MutableState<Boolean>,
     onExpanded: () -> Unit,
+    onEpisodeDetailClicked: (Episode) -> Unit,
 ) {
     val rotationState by animateFloatAsState(
         targetValue = if (expanded.value) AngleArrowUp else AngleArrowDown
@@ -166,7 +166,7 @@ fun CharacterDetailView(
                             .padding(horizontal = ScreenPaddingHorizontal, vertical = SpacingSmall),
                         clickableCardViewObject = episode.toCardVO(),
                         onItemClick = {
-                            // todo
+                            onEpisodeDetailClicked.invoke(episode)
                         }
                     )
                 }
@@ -187,7 +187,10 @@ private fun CharacterHeader(character: CharacterDetail) {
         Text(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(ScreenPaddingHorizontal, vertical = ScreenPaddingVertical),
+                .padding(
+                    horizontal = ScreenPaddingHorizontal,
+                    vertical = ScreenPaddingVertical
+                ),
             textAlign = TextAlign.Center,
             text = character.name,
             style = MaterialTheme.typography.h5,
@@ -246,7 +249,10 @@ private fun TextLine(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(ScreenPaddingHorizontal, vertical = ScreenPaddingVertical),
+            .padding(
+                horizontal = ScreenPaddingHorizontal,
+                vertical = ScreenPaddingVertical
+            ),
         horizontalArrangement = Arrangement.spacedBy(SpacingSmall)
     ) {
         TitleText(text = title)
@@ -289,5 +295,6 @@ private fun CharacterDetailPreview() {
             mutableStateOf(true)
         },
         onExpanded = {},
+        onEpisodeDetailClicked = { },
     )
 }
