@@ -6,7 +6,7 @@ import cz.minarik.alzatest.GetEpisodeDetailQuery
 import cz.minarik.alzatest.GetEpisodesQuery
 import cz.minarik.alzatest.data.remote.response.EpisodesResponse
 import cz.minarik.alzatest.data.remote.response.InfoResponse
-import cz.minarik.alzatest.domain.model.Character
+import cz.minarik.alzatest.domain.model.TVCharacter
 import cz.minarik.alzatest.domain.model.Episode
 import cz.minarik.alzatest.domain.model.EpisodeDetail
 import cz.minarik.alzatest.domain.repository.EpisodeRepository
@@ -31,7 +31,7 @@ class EpisodeRepositoryImpl @Inject constructor(
                     code = episode.episode,
                     characters = episode.characters.mapNotNull { character ->
                         character?.id?.let { id ->
-                            Character(
+                            TVCharacter(
                                 id = id,
                                 name = character.name,
                                 imageUrl = character.image,
@@ -68,7 +68,7 @@ class EpisodeRepositoryImpl @Inject constructor(
                     airDate = episode.air_date,
                     characters = episode.characters.mapNotNull { character ->
                         character?.id?.let { id ->
-                            Character(
+                            TVCharacter(
                                 id = id,
                                 name = character.name,
                                 imageUrl = character.image,

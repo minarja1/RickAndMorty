@@ -1,5 +1,6 @@
 package cz.minarik.alzatest.ui.screens.episodes.detail
 
+import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.CircularProgressIndicator
@@ -45,13 +46,13 @@ fun EpisodeDetailScreen(
             topBar = {
                 RaMTopAppBar(
                     onBackClicked = onBackClicked,
-                    text = episodeName?.decodeSafely() ?: ""
+                    text = episodeName?.decodeSafely()
                 )
             },
             content = { padding ->
                 HandleState(
                     modifier = Modifier.padding(padding),
-                    state = viewModel.state.collectAsState(initial = EpisodeDetailScreenState()),
+                    episodeDetailScreenStateState = viewModel.state.collectAsState(initial = EpisodeDetailScreenState()),
                     reload = viewModel::getEpisodeDetail
                 )
             }
@@ -62,26 +63,28 @@ fun EpisodeDetailScreen(
 
 @Composable
 fun HandleState(
-    state: State<EpisodeDetailScreenState>,
+    episodeDetailScreenStateState: State<EpisodeDetailScreenState>,
     reload: () -> Unit,
     modifier: Modifier,
 ) {
-    state.value.apply {
-        Box(modifier = modifier.fillMaxSize()) {
-            episode?.let {
-                EpisodeDetailView(
-                    episode = episode,
-                )
-            }
-            if (error.isNotBlank()) {
-                ErrorView(modifier = Modifier.fillMaxSize(), error = error) {
-                    reload.invoke()
+    Crossfade(targetState = episodeDetailScreenStateState.value) { state ->
+        state.apply {
+            Box(modifier = modifier.fillMaxSize()) {
+                episode?.let {
+                    EpisodeDetailView(
+                        episode = episode,
+                    )
                 }
-            }
-            if (isLoading) {
-                CircularProgressIndicator(
-                    modifier = Modifier.align(Alignment.Center)
-                )
+                if (error.isNotBlank()) {
+                    ErrorView(modifier = Modifier.fillMaxSize(), error = error) {
+                        reload.invoke()
+                    }
+                }
+                if (isLoading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.align(Alignment.Center)
+                    )
+                }
             }
         }
     }
@@ -200,7 +203,7 @@ private fun CharacterDetailPreview() {
             airDate = "December 2, 2013",
             code = "S01E01",
             characters = listOf(
-                cz.minarik.alzatest.domain.model.Character(
+                cz.minarik.alzatest.domain.model.TVCharacter(
                     id = "1",
                     name = "Rick Sanchez",
                     imageUrl = "https://rickandmortyapi.com/api/character/avatar/1.jpeg",

@@ -1,5 +1,6 @@
 package cz.minarik.alzatest.ui.screens.characters.detail
 
+import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -12,7 +13,6 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -64,13 +64,13 @@ fun CharacterDetailScreen(
             topBar = {
                 RaMTopAppBar(
                     onBackClicked = onBackClicked,
-                    text = characterName?.decodeSafely() ?: ""
+                    text = characterName?.decodeSafely()
                 )
             },
             content = { padding ->
                 HandleState(
                     modifier = Modifier.padding(padding),
-                    state = viewModel.state.collectAsState(initial = CharacterDetailScreenState()),
+                    characterDetailScreenStateState = viewModel.state.collectAsState(initial = CharacterDetailScreenState()),
                     expanded = viewModel.episodesExpanded,
                     onExpanded = viewModel::expandedStateChanged,
                     reload = viewModel::getCharacterDetail,
@@ -84,32 +84,34 @@ fun CharacterDetailScreen(
 
 @Composable
 fun HandleState(
-    state: State<CharacterDetailScreenState>,
+    characterDetailScreenStateState: State<CharacterDetailScreenState>,
     expanded: State<Boolean>,
     reload: () -> Unit,
     onExpanded: () -> Unit,
     onEpisodeDetailClicked: (Episode) -> Unit,
     modifier: Modifier,
 ) {
-    state.value.apply {
-        Box(modifier = modifier.fillMaxSize()) {
-            character?.let {
-                CharacterDetailView(
-                    character = character,
-                    expanded = expanded,
-                    onExpanded = onExpanded,
-                    onEpisodeDetailClicked = onEpisodeDetailClicked,
-                )
-            }
-            if (error.isNotBlank()) {
-                ErrorView(modifier = Modifier.fillMaxSize(), error = error) {
-                    reload.invoke()
+    Crossfade(targetState = characterDetailScreenStateState.value) { state ->
+        state.apply {
+            Box(modifier = modifier.fillMaxSize()) {
+                character?.let {
+                    CharacterDetailView(
+                        character = character,
+                        expanded = expanded,
+                        onExpanded = onExpanded,
+                        onEpisodeDetailClicked = onEpisodeDetailClicked,
+                    )
                 }
-            }
-            if (isLoading) {
-                CircularProgressIndicator(
-                    modifier = Modifier.align(Alignment.Center)
-                )
+                if (error.isNotBlank()) {
+                    ErrorView(modifier = Modifier.fillMaxSize(), error = error) {
+                        reload.invoke()
+                    }
+                }
+                if (isLoading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.align(Alignment.Center)
+                    )
+                }
             }
         }
     }

@@ -6,7 +6,7 @@ import cz.minarik.alzatest.GetCharacterDetailQuery
 import cz.minarik.alzatest.GetCharactersQuery
 import cz.minarik.alzatest.data.remote.response.CharactersResponse
 import cz.minarik.alzatest.data.remote.response.InfoResponse
-import cz.minarik.alzatest.domain.model.Character
+import cz.minarik.alzatest.domain.model.TVCharacter
 import cz.minarik.alzatest.domain.model.CharacterDetail
 import cz.minarik.alzatest.domain.model.Episode
 import cz.minarik.alzatest.domain.model.Location
@@ -26,7 +26,7 @@ class CharacterRepositoryImpl @Inject constructor(
         val result = apolloClient.query(GetCharactersQuery(Optional.presentIfNotNull(page))).execute()
         val characters = result.data?.characters?.results?.mapNotNull { character ->
             character?.id?.let { id ->
-                Character(
+                TVCharacter(
                     id = id,
                     name = character.name,
                     imageUrl = character.image

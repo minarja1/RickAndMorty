@@ -19,7 +19,7 @@ import cz.minarik.alzatest.ui.dimens.SpacingXSmall
 
 @Composable
 fun CharactersRow(
-    characters: List<cz.minarik.alzatest.domain.model.Character>,
+    characters: List<cz.minarik.alzatest.domain.model.TVCharacter>,
     modifier: Modifier = Modifier,
 ) {
     LazyRow(

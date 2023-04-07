@@ -7,6 +7,7 @@ import cz.minarik.alzatest.common.base.SuccessWithData
 import cz.minarik.alzatest.data.remote.exception.GeneralApiException
 import cz.minarik.alzatest.domain.model.CharacterDetail
 import cz.minarik.alzatest.domain.repository.CharacterRepository
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow

@@ -1,6 +1,6 @@
 package cz.minarik.alzatest.data.remote.response
 
-import cz.minarik.alzatest.domain.model.Character
+import cz.minarik.alzatest.domain.model.TVCharacter
 
 /**
  * Response with list of characters.
@@ -9,6 +9,6 @@ import cz.minarik.alzatest.domain.model.Character
  * @param info info about the response
  */
 data class CharactersResponse(
-    val characters: List<Character>,
+    val characters: List<TVCharacter>,
     val info: InfoResponse?,
 )

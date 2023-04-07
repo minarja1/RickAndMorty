@@ -7,7 +7,7 @@ package cz.minarik.alzatest.domain.model
  * @property name character name
  * @property imageUrl character image url
  */
-data class Character(
+data class TVCharacter(
     val id: String,
     val name: String?,
     val imageUrl: String?,

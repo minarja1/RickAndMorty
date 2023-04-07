@@ -12,5 +12,5 @@ data class Episode(
     val id: String,
     val name: String?,
     val code: String? = null,
-    val characters: List<Character>? = null,
+    val characters: List<TVCharacter>? = null,
 )

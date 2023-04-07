@@ -8,7 +8,7 @@ import androidx.paging.cachedIn
 import cz.minarik.alzatest.common.base.BaseViewModel
 import cz.minarik.alzatest.data.remote.paging.CharacterPagingSource
 import cz.minarik.alzatest.data.remote.paging.EpisodePagingSource
-import cz.minarik.alzatest.domain.model.Character
+import cz.minarik.alzatest.domain.model.TVCharacter
 import cz.minarik.alzatest.domain.model.Episode
 import cz.minarik.alzatest.domain.repository.CharacterRepository
 import cz.minarik.alzatest.domain.repository.EpisodeRepository
@@ -28,7 +28,7 @@ class HomeScreenViewModel(
     /**
      * Flow of paged characters.
      */
-    val pagedCharacters: Flow<PagingData<Character>> = Pager(PagingConfig(pageSize = 20)) {
+    val pagedCharacters: Flow<PagingData<TVCharacter>> = Pager(PagingConfig(pageSize = 20)) {
         CharacterPagingSource(characterRepository)
     }.flow.cachedIn(viewModelScope)
 

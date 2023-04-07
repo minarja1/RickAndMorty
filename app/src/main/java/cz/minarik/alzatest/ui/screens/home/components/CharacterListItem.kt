@@ -23,15 +23,15 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import cz.minarik.alzatest.R
-import cz.minarik.alzatest.domain.model.Character
+import cz.minarik.alzatest.domain.model.TVCharacter
 import cz.minarik.alzatest.ui.dimens.SpacingXSmall
 import cz.minarik.alzatest.ui.theme.CardViewOutlineColor
 
 @Composable
 fun CharacterListItem(
     modifier: Modifier = Modifier,
-    character: Character,
-    onItemClick: (Character) -> Unit,
+    character: TVCharacter,
+    onItemClick: (TVCharacter) -> Unit,
 ) {
     val roundedCornerShape = RoundedCornerShape(8.dp)
     Card(
@@ -76,7 +76,7 @@ private val CharacterImageSize = 148.dp
 @Composable
 private fun CharacterListItemPreview() {
     CharacterListItem(
-        character = Character(
+        character = TVCharacter(
             "1",
             "Test",
             "https://cdn.britannica.com/77/170477-050-1C747EE3/Laptop-computer.jpg"

@@ -22,7 +22,7 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.pagerTabIndicatorOffset
 import com.google.accompanist.pager.rememberPagerState
-import cz.minarik.alzatest.domain.model.Character
+import cz.minarik.alzatest.domain.model.TVCharacter
 import cz.minarik.alzatest.domain.model.Episode
 import cz.minarik.alzatest.ui.composables.ErrorView
 import cz.minarik.alzatest.ui.dimens.SpacingXXSmall
@@ -44,7 +44,7 @@ import org.koin.androidx.compose.getViewModel
  */
 @Composable
 fun HomeScreen(
-    onCharacterDetailClicked: (Character) -> Unit,
+    onCharacterDetailClicked: (TVCharacter) -> Unit,
     onEpisodeDetailClicked: (Episode) -> Unit,
 ) {
     val viewModel = getViewModel<HomeScreenViewModel>()
@@ -65,9 +65,9 @@ fun HomeScreen(
 
 @Composable
 private fun HomeScreenContent(
-    pagedCharacters: LazyPagingItems<Character>,
+    pagedCharacters: LazyPagingItems<TVCharacter>,
     pagedEpisodes: LazyPagingItems<Episode>,
-    onCharacterDetailClicked: (Character) -> Unit,
+    onCharacterDetailClicked: (TVCharacter) -> Unit,
     onEpisodeDetailClicked: (Episode) -> Unit,
     modifier: Modifier,
 ) {
@@ -135,8 +135,8 @@ fun EpisodesContent(
 
 @Composable
 private fun CharactersContent(
-    pagedCharacters: LazyPagingItems<Character>,
-    onCharacterDetailClicked: (Character) -> Unit,
+    pagedCharacters: LazyPagingItems<TVCharacter>,
+    onCharacterDetailClicked: (TVCharacter) -> Unit,
     modifier: Modifier
 ) {
     Box(modifier = modifier.fillMaxSize()) {
@@ -220,11 +220,11 @@ private fun HomeScreenTabLayout(
 
 @Composable
 private fun CharactersRow(
-    characters: List<Character>,
+    characters: List<TVCharacter>,
     index: Int,
     columns: Int,
-    onDetailClicked: (Character) -> Unit,
-    startingCharacter: Character?
+    onDetailClicked: (TVCharacter) -> Unit,
+    startingCharacter: TVCharacter?
 ) {
     if (index % columns == 0) {
         key(startingCharacter?.id) {

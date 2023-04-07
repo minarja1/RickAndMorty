@@ -5,7 +5,6 @@ import cz.minarik.alzatest.data.repository.EpisodeRepositoryImpl
 import cz.minarik.alzatest.domain.repository.CharacterRepository
 import cz.minarik.alzatest.domain.repository.EpisodeRepository
 import cz.minarik.alzatest.domain.usecase.getcharacterdetail.GetCharacterDetailUseCase
-import cz.minarik.alzatest.domain.usecase.getcharacters.GetCharactersUseCase
 import cz.minarik.alzatest.domain.usecase.getepisodedetail.GetEpisodeDetailUseCase
 import cz.minarik.alzatest.ui.screens.characters.detail.CharacterDetailScreenViewModel
 import cz.minarik.alzatest.ui.screens.episodes.detail.EpisodeDetailScreenViewModel
@@ -26,12 +25,6 @@ val appModule = module {
 
     single<EpisodeRepository> {
         EpisodeRepositoryImpl(
-            get(),
-        )
-    }
-
-    single {
-        GetCharactersUseCase(
             get(),
         )
     }

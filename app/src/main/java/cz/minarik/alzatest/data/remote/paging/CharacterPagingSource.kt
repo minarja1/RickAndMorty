@@ -2,7 +2,7 @@ package cz.minarik.alzatest.data.remote.paging
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import cz.minarik.alzatest.domain.model.Character
+import cz.minarik.alzatest.domain.model.TVCharacter
 import cz.minarik.alzatest.domain.repository.CharacterRepository
 
 /**
@@ -13,13 +13,13 @@ import cz.minarik.alzatest.domain.repository.CharacterRepository
 @Suppress("TooGenericExceptionCaught")
 class CharacterPagingSource(
     private val characterRepository: CharacterRepository,
-) : PagingSource<Int, Character>() {
+) : PagingSource<Int, TVCharacter>() {
 
-    override fun getRefreshKey(state: PagingState<Int, Character>): Int? {
+    override fun getRefreshKey(state: PagingState<Int, TVCharacter>): Int? {
         return state.anchorPosition
     }
 
-    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Character> {
+    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, TVCharacter> {
         return try {
             val nextPage = params.key ?: 1
             val charactersResponse = characterRepository.getCharacters(nextPage)
