@@ -8,7 +8,7 @@ plugins {
 }
 
 apollo {
-    packageName.set("cz.minarik.alzatest")
+    packageName.set("cz.minarik.rickandmorty")
     generateKotlinModels.set(true)
 }
 
@@ -16,7 +16,7 @@ android {
     compileSdk 33
 
     defaultConfig {
-        applicationId "cz.minarik.alzatest"
+        applicationId "cz.minarik.rickandmorty"
         minSdk 26
         targetSdk 33
         versionCode 1
@@ -64,7 +64,7 @@ android {
         resources.excludes.add("META-INF/*")
     }
 
-    namespace 'cz.minarik.alzatest'
+    namespace 'cz.minarik.rickandmorty'
 }
 
 dependencies {
