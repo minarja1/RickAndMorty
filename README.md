@@ -31,7 +31,7 @@ Currently widely popular architectural approach is implemented using **[clean ar
 
 // todo the layers should be modules, not just packages
 ### Testing
-All business logic is unit tested using [kotest](https://kotest.io/) and [mockk](https://mockk.io/). See the [test package](https://github.com/minarja1/RickAndMorty/tree/develop/app/src/test/java/cz/minarik/rickandmorty) for implementation details.
+Business logic is unit tested using [kotest](https://kotest.io/) and [mockk](https://mockk.io/). See the [test package](https://github.com/minarja1/RickAndMorty/tree/develop/app/src/test/java/cz/minarik/rickandmorty) for implementation details.
 
 // todo add instrumented UI tests using [Compose Testing](https://developer.android.com/jetpack/compose/testing)
 ### Dependency injection
