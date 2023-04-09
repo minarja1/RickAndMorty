@@ -1,4 +1,4 @@
-# Rick and Morty
+# Rick and Morty Android app
 ### Android sample project
 The goal of this project is to showcase a possible approach to developing an Android app.
 ## UI
