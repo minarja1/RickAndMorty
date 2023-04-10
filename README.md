@@ -23,7 +23,7 @@ Episode detail screen contains basic episode info and scrollable list of charact
 
 ## Development
 ### Code style
-[Detekt](https://detekt.dev/) is used to maintain the style and quality of the code.  The check is run server-side on every pull request with [reviewdog] (https://github.com/alaegin/Detekt-Action). It should also be run client-side as part of pre-commit git hook. To enable this, move the [pre-commit.yml](https://github.com/minarja1/RickAndMorty/blob/develop/config/git/pre-commit) file to .git/hooks.
+[Detekt](https://detekt.dev/) is used to maintain the style and quality of the code.  The check is run server-side on every pull request with [reviewdog](https://github.com/alaegin/Detekt-Action). It should also be run client-side as part of pre-commit git hook. To enable this, move the [pre-commit.yml](https://github.com/minarja1/RickAndMorty/blob/develop/config/git/pre-commit) file to .git/hooks.
 
 // todo use other static analysis tools like ktlint/lint/spotless
 ### Architecture
