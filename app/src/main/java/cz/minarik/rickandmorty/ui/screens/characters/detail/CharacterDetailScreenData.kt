@@ -5,12 +5,10 @@ import cz.minarik.rickandmorty.domain.model.CharacterDetail
 /**
  * State of CharacterDetailScreen.
  *
- * @property isLoading True if loading is in progress.
  * @property character Character detail.
- * @property error Error message.
+ * @property episodesExpanded Whether episodes are expanded.
  */
-data class CharacterDetailScreenState(
-    val isLoading: Boolean = false,
+data class CharacterDetailScreenData(
     val character: CharacterDetail? = null,
-    val error: String = "",
+    val episodesExpanded: Boolean = false,
 )

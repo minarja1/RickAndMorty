@@ -18,14 +18,14 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import cz.minarik.rickandmorty.R
 import cz.minarik.rickandmorty.domain.model.TVCharacter
+import cz.minarik.rickandmorty.ui.core.composable.ComponentPreview
+import cz.minarik.rickandmorty.ui.core.composable.PreviewSurface
 import cz.minarik.rickandmorty.ui.dimens.SpacingXSmall
-import cz.minarik.rickandmorty.ui.theme.CardViewOutlineColor
 
 @Composable
 fun CharacterListItem(
@@ -36,7 +36,10 @@ fun CharacterListItem(
     val roundedCornerShape = RoundedCornerShape(8.dp)
     Card(
         shape = roundedCornerShape,
-        border = BorderStroke(1.dp, CardViewOutlineColor),
+        border = BorderStroke(
+            width = 1.dp,
+            color = MaterialTheme.colors.onBackground
+        ),
         modifier = modifier
             .clip(roundedCornerShape)
             .clickable { onItemClick(character) }
@@ -72,14 +75,16 @@ fun CharacterListItem(
 
 private val CharacterImageSize = 148.dp
 
-@Preview
+@ComponentPreview
 @Composable
 private fun CharacterListItemPreview() {
-    CharacterListItem(
-        character = TVCharacter(
-            "1",
-            "Test",
-            "https://cdn.britannica.com/77/170477-050-1C747EE3/Laptop-computer.jpg"
-        ),
-        onItemClick = {})
+    PreviewSurface {
+        CharacterListItem(
+            character = TVCharacter(
+                "1",
+                "Test",
+                "https://cdn.britannica.com/77/170477-050-1C747EE3/Laptop-computer.jpg"
+            ),
+            onItemClick = {})
+    }
 }

@@ -31,7 +31,6 @@ import cz.minarik.rickandmorty.ui.composables.RaMTopAppBar
 import cz.minarik.rickandmorty.ui.dimens.SpacingMedium
 import cz.minarik.rickandmorty.ui.dimens.SpacingSmall
 import cz.minarik.rickandmorty.ui.dimens.SpacingXLarge
-import cz.minarik.rickandmorty.ui.theme.RaMTheme
 import cz.minarik.rickandmorty.ui.theme.grayscale
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
@@ -46,34 +45,35 @@ fun EpisodeDetailScreen(
         parametersOf(episodeId)
     }),
 ) {
-    RaMTheme {
-        Scaffold(
-            modifier = Modifier.fillMaxSize(),
-            topBar = {
-                RaMTopAppBar(
-                    onBackClicked = onBackClicked,
-                    text = episodeName?.decodeSafely()
-                )
-            },
-            content = { padding ->
-                HandleState(
-                    modifier = Modifier.padding(padding),
-                    episodeDetailScreenStateState = viewModel.state.collectAsState(initial = EpisodeDetailScreenState()),
-                    reload = viewModel::getEpisodeDetail
-                )
-            }
-        )
-    }
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        topBar = {
+            RaMTopAppBar(
+                onBackClicked = onBackClicked,
+                text = episodeName?.decodeSafely()
+            )
+        },
+        content = { padding ->
+            HandleState(
+                modifier = Modifier.padding(padding),
+                episodeDetailScreenStateState = viewModel.state.collectAsState(initial = EpisodeDetailScreenState()),
+                reload = viewModel::getEpisodeDetail
+            )
+        }
+    )
 }
 
 
 @Composable
-fun HandleState(
+private fun HandleState(
     episodeDetailScreenStateState: State<EpisodeDetailScreenState>,
     reload: () -> Unit,
     modifier: Modifier,
 ) {
-    Crossfade(targetState = episodeDetailScreenStateState.value) { state ->
+    Crossfade(
+        targetState = episodeDetailScreenStateState.value,
+        label = "EpisodeDetailScreenState Crossfade"
+    ) { state ->
         state.apply {
             Box(modifier = modifier.fillMaxSize()) {
                 episode?.let {
@@ -88,7 +88,8 @@ fun HandleState(
                 }
                 if (isLoading) {
                     CircularProgressIndicator(
-                        modifier = Modifier.align(Alignment.Center)
+                        modifier = Modifier.align(Alignment.Center),
+                        color = MaterialTheme.colors.onBackground,
                     )
                 }
             }
@@ -97,7 +98,7 @@ fun HandleState(
 }
 
 @Composable
-fun EpisodeDetailView(
+private fun EpisodeDetailView(
     episode: EpisodeDetail,
 ) {
     LazyColumn(

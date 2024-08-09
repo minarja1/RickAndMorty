@@ -2,6 +2,7 @@ package cz.minarik.rickandmorty.ui.composables
 
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
@@ -9,8 +10,9 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import cz.minarik.rickandmorty.R
+import cz.minarik.rickandmorty.ui.core.composable.ComponentPreview
+import cz.minarik.rickandmorty.ui.core.composable.PreviewSurface
 
 /**
  * Rick and Morty Top App Bar.
@@ -29,6 +31,7 @@ fun RaMTopAppBar(
                 text = text ?: "",
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
+                color = MaterialTheme.colors.onBackground,
             )
         },
         navigationIcon = if (onBackClicked != null) {
@@ -36,7 +39,8 @@ fun RaMTopAppBar(
                 IconButton(onClick = onBackClicked) {
                     Icon(
                         imageVector = Icons.Filled.ArrowBack,
-                        contentDescription = stringResource(id = R.string.back)
+                        contentDescription = stringResource(id = R.string.back),
+                        tint = MaterialTheme.colors.onBackground
                     )
                 }
             }
@@ -46,8 +50,10 @@ fun RaMTopAppBar(
     )
 }
 
-@Preview
+@ComponentPreview
 @Composable
 fun RaMTopAppBarPreview() {
-    RaMTopAppBar({}, "Top App Bar")
+    PreviewSurface {
+        RaMTopAppBar({}, "Top App Bar")
+    }
 }

@@ -14,12 +14,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import cz.minarik.rickandmorty.ui.components.CharactersRow
+import cz.minarik.rickandmorty.ui.core.composable.ComponentPreview
+import cz.minarik.rickandmorty.ui.core.composable.PreviewSurface
 import cz.minarik.rickandmorty.ui.dimens.SpacingXSmall
 import cz.minarik.rickandmorty.ui.model.ClickableCardViewObject
-import cz.minarik.rickandmorty.ui.theme.CardViewOutlineColor
 
 @Composable
 fun ClickableCard(
@@ -30,7 +30,10 @@ fun ClickableCard(
     val roundedCornerShape = RoundedCornerShape(8.dp)
     Card(
         shape = roundedCornerShape,
-        border = BorderStroke(1.dp, CardViewOutlineColor),
+        border = BorderStroke(
+            width = 1.dp,
+            color = MaterialTheme.colors.onBackground
+        ),
         modifier = modifier
             .clip(roundedCornerShape)
             .clickable { onItemClick(clickableCardViewObject.id) }
@@ -65,16 +68,18 @@ fun ClickableCard(
     }
 }
 
-@Preview
+@ComponentPreview
 @Composable
 private fun EpisodeListItemPreview() {
-    ClickableCard(
-        clickableCardViewObject = ClickableCardViewObject(
-            id = "1",
-            title = "December 2, 2013",
-            subtitle = "S01E01",
-            characters = emptyList(),
-        ),
-        onItemClick = {}
-    )
+    PreviewSurface {
+        ClickableCard(
+            clickableCardViewObject = ClickableCardViewObject(
+                id = "1",
+                title = "December 2, 2013",
+                subtitle = "S01E01",
+                characters = emptyList(),
+            ),
+            onItemClick = {}
+        )
+    }
 }

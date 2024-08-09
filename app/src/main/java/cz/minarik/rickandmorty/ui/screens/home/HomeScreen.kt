@@ -44,7 +44,6 @@ import cz.minarik.rickandmorty.ui.screens.home.components.ClickableCard
 import cz.minarik.rickandmorty.ui.screens.home.components.LoadStateFooter
 import cz.minarik.rickandmorty.ui.screens.home.components.LoadStateScreen
 import cz.minarik.rickandmorty.ui.screens.home.util.CharacterItemUtils.getListColumnsCount
-import cz.minarik.rickandmorty.ui.theme.RaMTheme
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
@@ -61,18 +60,17 @@ fun HomeScreen(
     onEpisodeDetailClicked: (Episode) -> Unit,
     viewModel: HomeScreenViewModel = koinViewModel()
 ) {
-    RaMTheme {
-        Scaffold(
-            modifier = Modifier.fillMaxSize(),
-        ) { padding ->
-            HomeScreenContent(
-                modifier = Modifier.padding(padding),
-                pagedCharacters = viewModel.pagedCharacters.collectAsLazyPagingItems(),
-                pagedEpisodes = viewModel.pagedEpisodes.collectAsLazyPagingItems(),
-                onCharacterDetailClicked = onCharacterDetailClicked,
-                onEpisodeDetailClicked = onEpisodeDetailClicked,
-            )
-        }
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        backgroundColor = MaterialTheme.colors.background,
+    ) { padding ->
+        HomeScreenContent(
+            modifier = Modifier.padding(padding),
+            pagedCharacters = viewModel.pagedCharacters.collectAsLazyPagingItems(),
+            pagedEpisodes = viewModel.pagedEpisodes.collectAsLazyPagingItems(),
+            onCharacterDetailClicked = onCharacterDetailClicked,
+            onEpisodeDetailClicked = onEpisodeDetailClicked,
+        )
     }
 }
 
@@ -132,7 +130,7 @@ fun EpisodesContent(
             if (pagedEpisodes.loadState.append !is LoadState.NotLoading) {
                 item {
                     LoadStateFooter(
-                        pagedEpisodes.loadState.append
+                        loadState = pagedEpisodes.loadState.append
                     ) {
                         pagedEpisodes.retry()
                     }
@@ -170,18 +168,18 @@ private fun CharactersContent(
                         getListColumnsCount(screenWidth)
                     }
                     CharactersRow(
-                        pagedCharacters.itemSnapshotList.items,
-                        index,
-                        columns,
-                        onCharacterDetailClicked,
-                        pagedCharacters[index]
+                        characters = pagedCharacters.itemSnapshotList.items,
+                        index = index,
+                        columns = columns,
+                        onDetailClicked = onCharacterDetailClicked,
+                        startingCharacter = pagedCharacters[index]
                     )
                 }
             }
             if (pagedCharacters.loadState.append !is LoadState.NotLoading) {
                 item {
                     LoadStateFooter(
-                        pagedCharacters.loadState.append
+                        loadState = pagedCharacters.loadState.append
                     ) {
                         pagedCharacters.retry()
                     }
@@ -210,23 +208,27 @@ private fun HomeScreenTabLayout(
         TabRow(selectedTabIndex = tabIndex, indicator = { tabPositions ->
             TabRowDefaults.Indicator(
                 modifier = Modifier.pagerTabIndicatorOffset(pagerState, tabPositions),
+                color = MaterialTheme.colors.onBackground,
             )
         }) {
-            HomeScreenTabs.values().forEachIndexed { index, tabData ->
+            HomeScreenTabs.entries.forEachIndexed { index, tabData ->
                 val title = stringResource(id = tabData.tabTitleStringRes)
                 Tab(selected = tabIndex == index, onClick = {
                     coroutineScope.launch {
                         pagerState.animateScrollToPage(index)
                     }
                 }, text = {
-                    Text(title)
+                    Text(
+                        text = title,
+                        color = MaterialTheme.colors.onBackground,
+                    )
                 })
             }
         }
         HorizontalPager(
             state = pagerState,
             modifier = Modifier.weight(1f),
-            count = HomeScreenTabs.values().size,
+            count = HomeScreenTabs.entries.size,
         ) { index ->
             when (index) {
                 HomeScreenTabs.Characters.ordinal -> charactersContent()
@@ -275,7 +277,7 @@ private fun CharactersRow(
 
 @Preview(showSystemUi = true, showBackground = true)
 @Composable
-fun ErrorViewPreview() {
+private fun ErrorViewPreview() {
     ErrorView(error = "Preview error") {}
 }
 

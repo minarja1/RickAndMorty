@@ -1,11 +1,9 @@
 package cz.minarik.rickandmorty.ui.screens.characters.detail
 
-import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
@@ -17,16 +15,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -37,21 +30,25 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.rememberAsyncImagePainter
 import cz.minarik.rickandmorty.R
 import cz.minarik.rickandmorty.common.util.decodeSafely
 import cz.minarik.rickandmorty.domain.model.CharacterDetail
 import cz.minarik.rickandmorty.domain.model.Episode
-import cz.minarik.rickandmorty.ui.composables.ErrorView
 import cz.minarik.rickandmorty.ui.composables.RaMTopAppBar
+import cz.minarik.rickandmorty.ui.core.composable.PreviewSurface
+import cz.minarik.rickandmorty.ui.core.composable.ScreenContentWrapper
+import cz.minarik.rickandmorty.ui.core.composable.ScreenPreview
+import cz.minarik.rickandmorty.ui.core.model.ComposeViewModel
+import cz.minarik.rickandmorty.ui.core.model.PreviewViewModel
+import cz.minarik.rickandmorty.ui.core.model.UIState
 import cz.minarik.rickandmorty.ui.dimens.SpacingMedium
 import cz.minarik.rickandmorty.ui.dimens.SpacingSmall
 import cz.minarik.rickandmorty.ui.dimens.SpacingXLarge
 import cz.minarik.rickandmorty.ui.model.toCardVO
 import cz.minarik.rickandmorty.ui.screens.home.components.ClickableCard
-import cz.minarik.rickandmorty.ui.theme.RaMTheme
 import cz.minarik.rickandmorty.ui.theme.grayscale
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
@@ -67,7 +64,23 @@ fun CharacterDetailScreen(
         parametersOf(characterId)
     })
 ) {
-    RaMTheme {
+    CharacterDetailScreenContent(
+        onBackClicked = onBackClicked,
+        characterName = characterName,
+        onEpisodeDetailClicked = onEpisodeDetailClicked,
+        viewModel = viewModel,
+    )
+}
+
+@Composable
+private fun CharacterDetailScreenContent(
+    onBackClicked: () -> Unit,
+    characterName: String?,
+    onEpisodeDetailClicked: (Episode) -> Unit,
+    viewModel: ComposeViewModel<CharacterDetailScreenData, CharacterDetailScreenEvent>,
+) {
+    val viewState by viewModel.viewState.collectAsStateWithLifecycle()
+    ScreenContentWrapper(state = viewState) {
         Scaffold(
             modifier = Modifier.fillMaxSize(),
             topBar = {
@@ -77,67 +90,33 @@ fun CharacterDetailScreen(
                 )
             },
             content = { padding ->
-                HandleState(
-                    modifier = Modifier.padding(padding),
-                    characterDetailScreenStateState = viewModel.state.collectAsState(initial = CharacterDetailScreenState()),
-                    expanded = viewModel.episodesExpanded,
-                    onExpanded = viewModel::expandedStateChanged,
-                    reload = viewModel::getCharacterDetail,
-                    onEpisodeDetailClicked = onEpisodeDetailClicked,
-                )
+                viewState.data.character?.let {
+                    CharacterDetailView(
+                        modifier = Modifier.padding(padding),
+                        character = it,
+                        expanded = viewState.data.episodesExpanded,
+                        onExpanded = { viewModel.onEvent(CharacterDetailScreenEvent.ExpandEpisodesClicked) },
+                        onEpisodeDetailClicked = onEpisodeDetailClicked,
+                    )
+                }
             }
         )
     }
 }
 
-
 @Composable
-fun HandleState(
-    characterDetailScreenStateState: State<CharacterDetailScreenState>,
-    expanded: State<Boolean>,
-    reload: () -> Unit,
-    onExpanded: () -> Unit,
-    onEpisodeDetailClicked: (Episode) -> Unit,
-    modifier: Modifier,
-) {
-    Crossfade(targetState = characterDetailScreenStateState.value) { state ->
-        state.apply {
-            Box(modifier = modifier.fillMaxSize()) {
-                character?.let {
-                    CharacterDetailView(
-                        character = character,
-                        expanded = expanded,
-                        onExpanded = onExpanded,
-                        onEpisodeDetailClicked = onEpisodeDetailClicked,
-                    )
-                }
-                if (error.isNotBlank()) {
-                    ErrorView(modifier = Modifier.fillMaxSize(), error = error) {
-                        reload.invoke()
-                    }
-                }
-                if (isLoading) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.align(Alignment.Center)
-                    )
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun CharacterDetailView(
+private fun CharacterDetailView(
     character: CharacterDetail,
-    expanded: State<Boolean>,
+    expanded: Boolean,
     onExpanded: () -> Unit,
     onEpisodeDetailClicked: (Episode) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val rotationState by animateFloatAsState(
-        targetValue = if (expanded.value) AngleArrowUp else AngleArrowDown
+        targetValue = if (expanded) AngleArrowUp else AngleArrowDown
     )
     LazyColumn(
-        Modifier.fillMaxSize(),
+        modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         item {
@@ -171,7 +150,7 @@ fun CharacterDetailView(
                 items = character.episodes,
                 key = { it.id },
             ) { episode ->
-                if (expanded.value) {
+                if (expanded) {
                     ClickableCard(
                         modifier = Modifier
                             .padding(horizontal = ScreenPaddingHorizontal, vertical = SpacingSmall),
@@ -270,6 +249,7 @@ private fun TextLine(
         Text(
             text = text,
             style = style,
+            color = MaterialTheme.colors.onBackground,
         )
     }
 }
@@ -280,7 +260,7 @@ private fun RowScope.TitleText(text: String) {
         modifier = Modifier.weight(1f),
         text = text,
         style = MaterialTheme.typography.body1,
-        color = MaterialTheme.colors.grayscale.gray700
+        color = MaterialTheme.colors.onBackground
     )
 }
 
@@ -289,24 +269,31 @@ private val ScreenPaddingVertical = SpacingMedium
 private const val AngleArrowUp = 270f
 private const val AngleArrowDown = 90f
 
-@Preview
+@ScreenPreview
 @Composable
-private fun CharacterDetailPreview() {
-    CharacterDetailView(
-        character = CharacterDetail(
-            id = "1",
-            name = "Rick Sanchez",
-            imageUrl = "https://static.wikia.nocookie.net/rickandmorty/images/a/a6/Rick_Sanchez.png/" +
-                    "revision/latest/top-crop/width/360/height/360?cb=20160923150728",
-            species = "Human",
-            type = "",
-            status = "Alive",
-            gender = "Male",
-        ),
-        expanded = remember {
-            mutableStateOf(true)
-        },
-        onExpanded = {},
-        onEpisodeDetailClicked = { },
-    )
+internal fun PersonalisedLandingPageScreenPreview() {
+    PreviewSurface {
+        CharacterDetailScreenContent(
+            viewModel = PreviewViewModel(
+                UIState(
+                    data = CharacterDetailScreenData(
+                        character = CharacterDetail(
+                            id = "1",
+                            name = "Rick Sanchez",
+                            imageUrl = "https://static.wikia.nocookie.net/rickandmorty/images/a/a6/Rick_Sanchez.png/" +
+                                    "revision/latest/top-crop/width/360/height/360?cb=20160923150728",
+                            species = "Human",
+                            type = "",
+                            status = "Alive",
+                            gender = "Male",
+                        ),
+                    )
+                )
+            ),
+            onBackClicked = {},
+            characterName = "Rick Sanchez",
+            onEpisodeDetailClicked = { }
+        )
+    }
 }
+

@@ -3,6 +3,7 @@ package cz.minarik.rickandmorty.ui.screens.home.components
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,7 +26,8 @@ fun BoxScope.LoadStateScreen(
             is LoadState.Loading -> {
                 // initial loading
                 CircularProgressIndicator(
-                    modifier = Modifier.align(Alignment.Center)
+                    modifier = Modifier.align(Alignment.Center),
+                    color = MaterialTheme.colors.onBackground,
                 )
             }
             is LoadState.Error -> {
