@@ -9,7 +9,8 @@ import cz.minarik.rickandmorty.domain.usecase.getepisodedetail.GetEpisodeDetailU
 import cz.minarik.rickandmorty.ui.screens.characters.detail.CharacterDetailScreenViewModel
 import cz.minarik.rickandmorty.ui.screens.episodes.detail.EpisodeDetailScreenViewModel
 import cz.minarik.rickandmorty.ui.screens.home.HomeScreenViewModel
-import org.koin.androidx.viewmodel.dsl.viewModel
+import org.koin.core.module.dsl.factoryOf
+import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 
 /**
@@ -29,36 +30,14 @@ val appModule = module {
         )
     }
 
-    single {
-        GetCharacterDetailUseCase(
-            get(),
-        )
-    }
+    factoryOf(::GetCharacterDetailUseCase)
 
-    single {
-        GetEpisodeDetailUseCase(
-            get(),
-        )
-    }
+    factoryOf(::GetEpisodeDetailUseCase)
 
-    viewModel {
-        HomeScreenViewModel(
-            get(),
-            get(),
-        )
-    }
+    viewModelOf(::HomeScreenViewModel)
 
-    viewModel { (characterId: String) ->
-        CharacterDetailScreenViewModel(
-            characterId,
-            get(),
-        )
-    }
+    viewModelOf(::CharacterDetailScreenViewModel)
 
-    viewModel { (episodeId: String) ->
-        EpisodeDetailScreenViewModel(
-            episodeId,
-            get(),
-        )
-    }
+    viewModelOf(::EpisodeDetailScreenViewModel)
+
 }

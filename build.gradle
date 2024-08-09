@@ -2,7 +2,7 @@ import io.gitlab.arturbosch.detekt.Detekt
 
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
-    ext.kotlin_version = '1.8.10'
+    ext.kotlin_version = '2.0.10'
     ext.detekt_version = '1.21.0'
 
     repositories {
@@ -10,23 +10,32 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.4.0'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath "org.jetbrains.kotlin:kotlin-serialization:$kotlin_version"
-        classpath "com.apollographql.apollo:apollo-gradle-plugin:2.4.6"
-        classpath "io.gitlab.arturbosch.detekt:detekt-gradle-plugin:$detekt_version"
+        classpath libs.gradle
+        classpath libs.kotlin.gradle.plugin
+        classpath libs.kotlin.serialization
+        classpath libs.apollo.gradle.plugin
+        classpath libs.detekt.gradle.plugin
     }
 }
 
 plugins {
-    id("io.gitlab.arturbosch.detekt") version "$detekt_version"
+    alias(libs.plugins.android.application) apply false
+    alias(libs.plugins.kotlin.android) apply false
+    alias(libs.plugins.kotlinx.serialization) apply false
+    alias(libs.plugins.apollo3) apply false
+    alias(libs.plugins.detekt) apply false
+    alias(libs.plugins.compose.compiler) apply false
+
+//    id("io.gitlab.arturbosch.detekt") version "1.21.0"
+    // todo replace with version catalog (throws error)
+//    alias(libs.plugins.detekt) apply false
 }
 
 subprojects {
-    detekt {
-        config = files("$projectDir/config/detekt.yml")
-        baseline = file("$projectDir/config/baseline.xml")
-    }
+//    detekt {
+//        config = files("$projectDir/config/detekt.yml")
+//        baseline = file("$projectDir/config/baseline.xml")
+//    }
 }
 
 task clean(type: Delete) {

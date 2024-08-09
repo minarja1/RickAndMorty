@@ -4,7 +4,16 @@ import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -44,7 +53,7 @@ import cz.minarik.rickandmorty.ui.model.toCardVO
 import cz.minarik.rickandmorty.ui.screens.home.components.ClickableCard
 import cz.minarik.rickandmorty.ui.theme.RaMTheme
 import cz.minarik.rickandmorty.ui.theme.grayscale
-import org.koin.androidx.compose.getViewModel
+import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
 
@@ -54,10 +63,10 @@ fun CharacterDetailScreen(
     characterId: String?,
     characterName: String?,
     onEpisodeDetailClicked: (Episode) -> Unit,
-) {
-    val viewModel = getViewModel<CharacterDetailScreenViewModel> {
+    viewModel: CharacterDetailScreenViewModel = koinViewModel(parameters = {
         parametersOf(characterId)
-    }
+    })
+) {
     RaMTheme {
         Scaffold(
             modifier = Modifier.fillMaxSize(),

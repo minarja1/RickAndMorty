@@ -10,7 +10,6 @@ import cz.minarik.rickandmorty.domain.repository.CharacterRepository
  *
  * @param characterRepository character repository.
  */
-@Suppress("TooGenericExceptionCaught")
 class CharacterPagingSource(
     private val characterRepository: CharacterRepository,
 ) : PagingSource<Int, TVCharacter>() {

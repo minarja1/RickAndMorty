@@ -1,9 +1,21 @@
 package cz.minarik.rickandmorty.ui.screens.home
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.*
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Tab
+import androidx.compose.material.TabRow
+import androidx.compose.material.TabRowDefaults
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
@@ -16,14 +28,14 @@ import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
-import androidx.paging.compose.items
-import androidx.paging.compose.itemsIndexed
+import androidx.paging.compose.itemContentType
+import androidx.paging.compose.itemKey
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.pagerTabIndicatorOffset
 import com.google.accompanist.pager.rememberPagerState
-import cz.minarik.rickandmorty.domain.model.TVCharacter
 import cz.minarik.rickandmorty.domain.model.Episode
+import cz.minarik.rickandmorty.domain.model.TVCharacter
 import cz.minarik.rickandmorty.ui.composables.ErrorView
 import cz.minarik.rickandmorty.ui.dimens.SpacingXXSmall
 import cz.minarik.rickandmorty.ui.model.toCardVO
@@ -34,7 +46,8 @@ import cz.minarik.rickandmorty.ui.screens.home.components.LoadStateScreen
 import cz.minarik.rickandmorty.ui.screens.home.util.CharacterItemUtils.getListColumnsCount
 import cz.minarik.rickandmorty.ui.theme.RaMTheme
 import kotlinx.coroutines.launch
-import org.koin.androidx.compose.getViewModel
+import org.koin.androidx.compose.koinViewModel
+
 
 /**
  * Home screen with two tabs - Characters and Episodes
@@ -46,8 +59,8 @@ import org.koin.androidx.compose.getViewModel
 fun HomeScreen(
     onCharacterDetailClicked: (TVCharacter) -> Unit,
     onEpisodeDetailClicked: (Episode) -> Unit,
+    viewModel: HomeScreenViewModel = koinViewModel()
 ) {
-    val viewModel = getViewModel<HomeScreenViewModel>()
     RaMTheme {
         Scaffold(
             modifier = Modifier.fillMaxSize(),
@@ -102,10 +115,11 @@ fun EpisodesContent(
                 .fillMaxSize(), contentPadding = PaddingValues(vertical = 8.dp)
         ) {
             items(
-                items = pagedEpisodes,
-                key = { it.id },
-            ) { episode ->
-                episode?.let {
+                count = pagedEpisodes.itemCount,
+                key = pagedEpisodes.itemKey { it.id },
+                contentType = pagedEpisodes.itemContentType { "contentType" }
+            ) { index ->
+                pagedEpisodes[index]?.let { episode ->
                     ClickableCard(
                         modifier = Modifier.padding(SpacingXXSmall),
                         clickableCardViewObject = episode.toCardVO(),
@@ -145,7 +159,11 @@ private fun CharactersContent(
                 .background(MaterialTheme.colors.background)
                 .fillMaxSize(), contentPadding = PaddingValues(vertical = 8.dp)
         ) {
-            itemsIndexed(pagedCharacters) { index, characterInList ->
+            items(
+                count = pagedCharacters.itemCount,
+                key = pagedCharacters.itemKey { it.id },
+                contentType = pagedCharacters.itemContentType { "contentType" }
+            ) { index ->
                 BoxWithConstraints {
                     val screenWidth = maxWidth
                     val columns = remember(maxWidth) {
@@ -156,7 +174,7 @@ private fun CharactersContent(
                         index,
                         columns,
                         onCharacterDetailClicked,
-                        characterInList
+                        pagedCharacters[index]
                     )
                 }
             }

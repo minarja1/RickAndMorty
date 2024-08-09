@@ -10,7 +10,6 @@ import cz.minarik.rickandmorty.domain.repository.EpisodeRepository
  *
  * @param episodeRepository episode repository.
  */
-@Suppress("TooGenericExceptionCaught")
 class EpisodePagingSource(
     private val episodeRepository: EpisodeRepository,
 ) : PagingSource<Int, Episode>() {

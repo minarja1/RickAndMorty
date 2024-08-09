@@ -1,7 +1,13 @@
 package cz.minarik.rickandmorty.ui.screens.episodes.detail
 
 import androidx.compose.animation.Crossfade
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
@@ -27,7 +33,7 @@ import cz.minarik.rickandmorty.ui.dimens.SpacingSmall
 import cz.minarik.rickandmorty.ui.dimens.SpacingXLarge
 import cz.minarik.rickandmorty.ui.theme.RaMTheme
 import cz.minarik.rickandmorty.ui.theme.grayscale
-import org.koin.androidx.compose.getViewModel
+import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
 
@@ -35,11 +41,11 @@ import org.koin.core.parameter.parametersOf
 fun EpisodeDetailScreen(
     onBackClicked: () -> Unit,
     episodeId: String?,
-    episodeName: String?
-) {
-    val viewModel = getViewModel<EpisodeDetailScreenViewModel> {
+    episodeName: String?,
+    viewModel: EpisodeDetailScreenViewModel = koinViewModel(parameters = {
         parametersOf(episodeId)
-    }
+    }),
+) {
     RaMTheme {
         Scaffold(
             modifier = Modifier.fillMaxSize(),
