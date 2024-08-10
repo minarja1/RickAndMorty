@@ -6,9 +6,15 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.windowInsetsBottomHeight
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
@@ -17,15 +23,16 @@ import androidx.compose.material.TabRow
 import androidx.compose.material.TabRowDefaults
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.paging.LoadState
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemContentType
@@ -34,19 +41,23 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.pagerTabIndicatorOffset
 import com.google.accompanist.pager.rememberPagerState
-import cz.minarik.rickandmorty.domain.model.Episode
-import cz.minarik.rickandmorty.domain.model.TVCharacter
-import cz.minarik.rickandmorty.ui.composables.ErrorView
-import cz.minarik.rickandmorty.ui.dimens.SpacingXXSmall
-import cz.minarik.rickandmorty.ui.model.toCardVO
+import cz.minarik.rickandmorty.ui.core.composable.PagedScreenContentWrapper
+import cz.minarik.rickandmorty.ui.core.composable.PreviewSurface
+import cz.minarik.rickandmorty.ui.core.composable.ScreenPreview
+import cz.minarik.rickandmorty.ui.core.model.ComposeViewModel
+import cz.minarik.rickandmorty.ui.core.model.PreviewViewModel
+import cz.minarik.rickandmorty.ui.core.model.UIEvent
+import cz.minarik.rickandmorty.ui.core.model.UIState
+import cz.minarik.rickandmorty.ui.model.ClickableCardVo
+import cz.minarik.rickandmorty.ui.model.TVCharacterVo
 import cz.minarik.rickandmorty.ui.screens.home.components.CharacterListItem
 import cz.minarik.rickandmorty.ui.screens.home.components.ClickableCard
 import cz.minarik.rickandmorty.ui.screens.home.components.LoadStateFooter
-import cz.minarik.rickandmorty.ui.screens.home.components.LoadStateScreen
 import cz.minarik.rickandmorty.ui.screens.home.util.CharacterItemUtils.getListColumnsCount
+import cz.minarik.rickandmorty.ui.screens.home.util.MockData
+import cz.minarik.rickandmorty.ui.theme.SpacingXXSmall
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
-import org.koin.androidx.compose.koinViewModel
-
 
 /**
  * Home screen with two tabs - Characters and Episodes
@@ -56,18 +67,23 @@ import org.koin.androidx.compose.koinViewModel
  */
 @Composable
 fun HomeScreen(
-    onCharacterDetailClicked: (TVCharacter) -> Unit,
-    onEpisodeDetailClicked: (Episode) -> Unit,
-    viewModel: HomeScreenViewModel = koinViewModel()
+    onCharacterDetailClicked: (String, String?) -> Unit,
+    onEpisodeDetailClicked: (String, String?) -> Unit,
+    viewModel: ComposeViewModel<HomeScreenData, UIEvent>,
 ) {
+    val viewState by viewModel.viewState.collectAsStateWithLifecycle()
     Scaffold(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .windowInsetsPadding(
+                WindowInsets.statusBars
+            ),
         backgroundColor = MaterialTheme.colors.background,
     ) { padding ->
-        HomeScreenContent(
+        TabsContent(
             modifier = Modifier.padding(padding),
-            pagedCharacters = viewModel.pagedCharacters.collectAsLazyPagingItems(),
-            pagedEpisodes = viewModel.pagedEpisodes.collectAsLazyPagingItems(),
+            pagedCharacters = viewState.data.pagedCharacters.collectAsLazyPagingItems(),
+            pagedEpisodes = viewState.data.pagedEpisodes.collectAsLazyPagingItems(),
             onCharacterDetailClicked = onCharacterDetailClicked,
             onEpisodeDetailClicked = onEpisodeDetailClicked,
         )
@@ -75,11 +91,11 @@ fun HomeScreen(
 }
 
 @Composable
-private fun HomeScreenContent(
-    pagedCharacters: LazyPagingItems<TVCharacter>,
-    pagedEpisodes: LazyPagingItems<Episode>,
-    onCharacterDetailClicked: (TVCharacter) -> Unit,
-    onEpisodeDetailClicked: (Episode) -> Unit,
+private fun TabsContent(
+    pagedCharacters: LazyPagingItems<TVCharacterVo>,
+    pagedEpisodes: LazyPagingItems<ClickableCardVo>,
+    onCharacterDetailClicked: (String, String?) -> Unit,
+    onEpisodeDetailClicked: (String, String?) -> Unit,
     modifier: Modifier,
 ) {
     HomeScreenTabLayout(
@@ -102,32 +118,35 @@ private fun HomeScreenContent(
 
 @Composable
 fun EpisodesContent(
-    pagedEpisodes: LazyPagingItems<Episode>,
-    onEpisodeDetailClicked: (Episode) -> Unit,
+    pagedEpisodes: LazyPagingItems<ClickableCardVo>,
+    onEpisodeDetailClicked: (String, String?) -> Unit,
     modifier: Modifier,
 ) {
     Box(modifier = modifier.fillMaxSize()) {
-        LazyColumn(
-            Modifier
-                .background(MaterialTheme.colors.background)
-                .fillMaxSize(), contentPadding = PaddingValues(vertical = 8.dp)
+        PagedScreenContentWrapper(
+            loadState = pagedEpisodes.loadState.refresh,
+            onTryAgain = { pagedEpisodes.refresh() }
         ) {
-            items(
-                count = pagedEpisodes.itemCount,
-                key = pagedEpisodes.itemKey { it.id },
-                contentType = pagedEpisodes.itemContentType { "contentType" }
-            ) { index ->
-                pagedEpisodes[index]?.let { episode ->
-                    ClickableCard(
-                        modifier = Modifier.padding(SpacingXXSmall),
-                        clickableCardViewObject = episode.toCardVO(),
-                        onItemClick = {
-                            onEpisodeDetailClicked(episode)
-                        }
-                    )
+            LazyColumn(
+                Modifier
+                    .background(MaterialTheme.colors.background)
+                    .fillMaxSize(), contentPadding = PaddingValues(vertical = 8.dp)
+            ) {
+                items(
+                    count = pagedEpisodes.itemCount,
+                    key = pagedEpisodes.itemKey { it.id },
+                    contentType = pagedEpisodes.itemContentType { "contentType" }
+                ) { index ->
+                    pagedEpisodes[index]?.let { episode ->
+                        ClickableCard(
+                            modifier = Modifier.padding(SpacingXXSmall),
+                            clickableCardVo = episode,
+                            onItemClick = {
+                                onEpisodeDetailClicked(episode.id, episode.title)
+                            }
+                        )
+                    }
                 }
-            }
-            if (pagedEpisodes.loadState.append !is LoadState.NotLoading) {
                 item {
                     LoadStateFooter(
                         loadState = pagedEpisodes.loadState.append
@@ -135,48 +154,53 @@ fun EpisodesContent(
                         pagedEpisodes.retry()
                     }
                 }
+                item {
+                    Spacer(
+                        Modifier.windowInsetsBottomHeight(
+                            WindowInsets.systemBars
+                        )
+                    )
+                }
             }
         }
-
-        LoadStateScreen(pagedEpisodes.loadState.refresh) {
-            pagedEpisodes.refresh()
-        }
-
     }
 }
 
 @Composable
 private fun CharactersContent(
-    pagedCharacters: LazyPagingItems<TVCharacter>,
-    onCharacterDetailClicked: (TVCharacter) -> Unit,
+    pagedCharacters: LazyPagingItems<TVCharacterVo>,
+    onCharacterDetailClicked: (String, String?) -> Unit,
     modifier: Modifier
 ) {
     Box(modifier = modifier.fillMaxSize()) {
-        LazyColumn(
-            Modifier
-                .background(MaterialTheme.colors.background)
-                .fillMaxSize(), contentPadding = PaddingValues(vertical = 8.dp)
+        PagedScreenContentWrapper(
+            loadState = pagedCharacters.loadState.refresh,
+            onTryAgain = { pagedCharacters.refresh() }
         ) {
-            items(
-                count = pagedCharacters.itemCount,
-                key = pagedCharacters.itemKey { it.id },
-                contentType = pagedCharacters.itemContentType { "contentType" }
-            ) { index ->
-                BoxWithConstraints {
-                    val screenWidth = maxWidth
-                    val columns = remember(maxWidth) {
-                        getListColumnsCount(screenWidth)
+            LazyColumn(
+                Modifier
+                    .background(MaterialTheme.colors.background)
+                    .fillMaxSize(), contentPadding = PaddingValues(vertical = 8.dp)
+            ) {
+                items(
+                    count = pagedCharacters.itemCount,
+                    key = pagedCharacters.itemKey { it.id },
+                    contentType = pagedCharacters.itemContentType { "contentType" }
+                ) { index ->
+                    BoxWithConstraints {
+                        val screenWidth = maxWidth
+                        val columns = remember(maxWidth) {
+                            getListColumnsCount(screenWidth)
+                        }
+                        CharactersRow(
+                            characters = pagedCharacters.itemSnapshotList.items,
+                            index = index,
+                            columns = columns,
+                            onDetailClicked = onCharacterDetailClicked,
+                            startingCharacter = pagedCharacters[index]
+                        )
                     }
-                    CharactersRow(
-                        characters = pagedCharacters.itemSnapshotList.items,
-                        index = index,
-                        columns = columns,
-                        onDetailClicked = onCharacterDetailClicked,
-                        startingCharacter = pagedCharacters[index]
-                    )
                 }
-            }
-            if (pagedCharacters.loadState.append !is LoadState.NotLoading) {
                 item {
                     LoadStateFooter(
                         loadState = pagedCharacters.loadState.append
@@ -184,13 +208,15 @@ private fun CharactersContent(
                         pagedCharacters.retry()
                     }
                 }
+                item {
+                    Spacer(
+                        Modifier.windowInsetsBottomHeight(
+                            WindowInsets.systemBars
+                        )
+                    )
+                }
             }
         }
-
-        LoadStateScreen(pagedCharacters.loadState.refresh) {
-            pagedCharacters.refresh()
-        }
-
     }
 }
 
@@ -212,14 +238,13 @@ private fun HomeScreenTabLayout(
             )
         }) {
             HomeScreenTabs.entries.forEachIndexed { index, tabData ->
-                val title = stringResource(id = tabData.tabTitleStringRes)
                 Tab(selected = tabIndex == index, onClick = {
                     coroutineScope.launch {
                         pagerState.animateScrollToPage(index)
                     }
                 }, text = {
                     Text(
-                        text = title,
+                        text = stringResource(id = tabData.tabTitleStringRes),
                         color = MaterialTheme.colors.onBackground,
                     )
                 })
@@ -240,11 +265,11 @@ private fun HomeScreenTabLayout(
 
 @Composable
 private fun CharactersRow(
-    characters: List<TVCharacter>,
+    characters: List<TVCharacterVo>,
     index: Int,
     columns: Int,
-    onDetailClicked: (TVCharacter) -> Unit,
-    startingCharacter: TVCharacter?
+    onDetailClicked: (String, String?) -> Unit,
+    startingCharacter: TVCharacterVo?
 ) {
     if (index % columns == 0) {
         key(startingCharacter?.id) {
@@ -254,11 +279,12 @@ private fun CharactersRow(
                 for (i in 0 until columns) {
                     val character = characters.getOrNull(index + i)
                     if (character != null) {
-                        CharacterListItem(modifier = Modifier
-                            .weight(1f)
-                            .padding(SpacingXXSmall),
+                        CharacterListItem(
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(SpacingXXSmall),
                             character = character,
-                            onItemClick = { onDetailClicked(it) })
+                            onItemClick = { onDetailClicked(it.id, it.name) })
                     } else {
                         // invisible placeholders to fill empty space until end of row
                         Box(
@@ -275,9 +301,30 @@ private fun CharactersRow(
 }
 
 
-@Preview(showSystemUi = true, showBackground = true)
+@ScreenPreview
 @Composable
-private fun ErrorViewPreview() {
-    ErrorView(error = "Preview error") {}
+private fun HomeScreenPreview() {
+    PreviewSurface {
+        HomeScreen(
+            viewModel = PreviewViewModel(
+                UIState(
+                    data = HomeScreenData(
+                        pagedCharacters = flowOf(
+                            PagingData.from(
+                                MockData.characters
+                            )
+                        ),
+                        pagedEpisodes = flowOf(
+                            PagingData.from(
+                                MockData.clickableCards
+                            )
+                        )
+                    )
+                ),
+            ),
+            onCharacterDetailClicked = { _, _ -> },
+            onEpisodeDetailClicked = { _, _ -> },
+        )
+    }
 }
 

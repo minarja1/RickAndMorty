@@ -1,4 +1,4 @@
-package cz.minarik.rickandmorty.ui.composables
+package cz.minarik.rickandmorty.ui.core.composable
 
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -11,8 +11,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import cz.minarik.rickandmorty.R
-import cz.minarik.rickandmorty.ui.core.composable.ComponentPreview
-import cz.minarik.rickandmorty.ui.core.composable.PreviewSurface
 
 /**
  * Rick and Morty Top App Bar.

@@ -15,18 +15,19 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import coil.transform.CircleCropTransformation
 import cz.minarik.rickandmorty.R
-import cz.minarik.rickandmorty.ui.dimens.SpacingXSmall
+import cz.minarik.rickandmorty.ui.theme.SpacingXSmall
+import cz.minarik.rickandmorty.ui.model.CircleImageVo
 
 @Composable
-fun CharactersRow(
-    characters: List<cz.minarik.rickandmorty.domain.model.TVCharacter>,
+fun CircleImagesRow(
+    images: List<CircleImageVo>,
     modifier: Modifier = Modifier,
 ) {
     LazyRow(
         modifier = modifier.fillMaxWidth()
     ) {
         items(
-            items = characters,
+            items = images,
             key = { it.id },
         ) { character ->
             AsyncImage(

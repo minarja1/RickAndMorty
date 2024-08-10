@@ -10,6 +10,6 @@ package cz.minarik.rickandmorty.ui.core.model
  */
 open class UIState<T>(
     val data: T,
-    val error: ErrorModel? = null,
+    val error: ErrorViewVo? = null,
     val loading: Boolean = false,
 )

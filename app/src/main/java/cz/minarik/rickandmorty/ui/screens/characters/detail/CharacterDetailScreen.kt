@@ -8,10 +8,16 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.windowInsetsBottomHeight
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -35,54 +41,36 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.rememberAsyncImagePainter
 import cz.minarik.rickandmorty.R
 import cz.minarik.rickandmorty.common.util.decodeSafely
-import cz.minarik.rickandmorty.domain.model.CharacterDetail
-import cz.minarik.rickandmorty.domain.model.Episode
-import cz.minarik.rickandmorty.ui.composables.RaMTopAppBar
 import cz.minarik.rickandmorty.ui.core.composable.PreviewSurface
+import cz.minarik.rickandmorty.ui.core.composable.RaMTopAppBar
 import cz.minarik.rickandmorty.ui.core.composable.ScreenContentWrapper
 import cz.minarik.rickandmorty.ui.core.composable.ScreenPreview
 import cz.minarik.rickandmorty.ui.core.model.ComposeViewModel
 import cz.minarik.rickandmorty.ui.core.model.PreviewViewModel
 import cz.minarik.rickandmorty.ui.core.model.UIState
-import cz.minarik.rickandmorty.ui.dimens.SpacingMedium
-import cz.minarik.rickandmorty.ui.dimens.SpacingSmall
-import cz.minarik.rickandmorty.ui.dimens.SpacingXLarge
-import cz.minarik.rickandmorty.ui.model.toCardVO
+import cz.minarik.rickandmorty.ui.model.CharacterDetailVo
 import cz.minarik.rickandmorty.ui.screens.home.components.ClickableCard
+import cz.minarik.rickandmorty.ui.screens.home.util.MockData
+import cz.minarik.rickandmorty.ui.theme.SpacingMedium
+import cz.minarik.rickandmorty.ui.theme.SpacingSmall
+import cz.minarik.rickandmorty.ui.theme.SpacingXLarge
 import cz.minarik.rickandmorty.ui.theme.grayscale
-import org.koin.androidx.compose.koinViewModel
-import org.koin.core.parameter.parametersOf
-
 
 @Composable
 fun CharacterDetailScreen(
     onBackClicked: () -> Unit,
-    characterId: String?,
     characterName: String?,
-    onEpisodeDetailClicked: (Episode) -> Unit,
-    viewModel: CharacterDetailScreenViewModel = koinViewModel(parameters = {
-        parametersOf(characterId)
-    })
-) {
-    CharacterDetailScreenContent(
-        onBackClicked = onBackClicked,
-        characterName = characterName,
-        onEpisodeDetailClicked = onEpisodeDetailClicked,
-        viewModel = viewModel,
-    )
-}
-
-@Composable
-private fun CharacterDetailScreenContent(
-    onBackClicked: () -> Unit,
-    characterName: String?,
-    onEpisodeDetailClicked: (Episode) -> Unit,
+    onEpisodeDetailClicked: (String, String?) -> Unit,
     viewModel: ComposeViewModel<CharacterDetailScreenData, CharacterDetailScreenEvent>,
 ) {
     val viewState by viewModel.viewState.collectAsStateWithLifecycle()
     ScreenContentWrapper(state = viewState) {
         Scaffold(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .windowInsetsPadding(
+                    WindowInsets.statusBars
+                ),
             topBar = {
                 RaMTopAppBar(
                     onBackClicked = onBackClicked,
@@ -106,10 +94,10 @@ private fun CharacterDetailScreenContent(
 
 @Composable
 private fun CharacterDetailView(
-    character: CharacterDetail,
+    character: CharacterDetailVo,
     expanded: Boolean,
     onExpanded: () -> Unit,
-    onEpisodeDetailClicked: (Episode) -> Unit,
+    onEpisodeDetailClicked: (String, String?) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val rotationState by animateFloatAsState(
@@ -154,24 +142,33 @@ private fun CharacterDetailView(
                     ClickableCard(
                         modifier = Modifier
                             .padding(horizontal = ScreenPaddingHorizontal, vertical = SpacingSmall),
-                        clickableCardViewObject = episode.toCardVO(),
+                        clickableCardVo = episode,
                         onItemClick = {
-                            onEpisodeDetailClicked.invoke(episode)
+                            onEpisodeDetailClicked.invoke(episode.id, episode.title)
                         }
                     )
                 }
+            }
+            item {
+                Spacer(
+                    Modifier.windowInsetsBottomHeight(
+                        WindowInsets.systemBars
+                    )
+                )
             }
         }
     }
 }
 
 @Composable
-private fun CharacterHeader(character: CharacterDetail) {
+private fun CharacterHeader(character: CharacterDetailVo) {
     Image(
-        modifier = Modifier.height(164.dp),
+        modifier = Modifier
+            .aspectRatio(1f)
+            .fillMaxWidth(),
         painter = rememberAsyncImagePainter(character.imageUrl),
         contentDescription = stringResource(id = R.string.character_image),
-        contentScale = ContentScale.FillHeight
+        contentScale = ContentScale.Crop
     )
     if (character.name?.isNotBlank() == true) {
         Text(
@@ -214,17 +211,17 @@ private fun CharacterHeader(character: CharacterDetail) {
             style = MaterialTheme.typography.body1,
         )
     }
-    if (character.origin?.name?.isNotBlank() == true) {
+    if (character.origin?.isNotBlank() == true) {
         TextLine(
             title = stringResource(id = R.string.origin),
-            text = character.origin.name,
+            text = character.origin,
             style = MaterialTheme.typography.body1,
         )
     }
-    if (character.location?.name?.isNotBlank() == true) {
+    if (character.location?.isNotBlank() == true) {
         TextLine(
             title = stringResource(id = R.string.location),
-            text = character.location.name,
+            text = character.location,
             style = MaterialTheme.typography.body1,
         )
     }
@@ -271,13 +268,13 @@ private const val AngleArrowDown = 90f
 
 @ScreenPreview
 @Composable
-internal fun PersonalisedLandingPageScreenPreview() {
+private fun CharacterDetailScreenPreview() {
     PreviewSurface {
-        CharacterDetailScreenContent(
+        CharacterDetailScreen(
             viewModel = PreviewViewModel(
                 UIState(
                     data = CharacterDetailScreenData(
-                        character = CharacterDetail(
+                        character = CharacterDetailVo(
                             id = "1",
                             name = "Rick Sanchez",
                             imageUrl = "https://static.wikia.nocookie.net/rickandmorty/images/a/a6/Rick_Sanchez.png/" +
@@ -286,13 +283,17 @@ internal fun PersonalisedLandingPageScreenPreview() {
                             type = "",
                             status = "Alive",
                             gender = "Male",
+                            episodes = MockData.clickableCards
                         ),
+                        episodesExpanded = true,
                     )
                 )
             ),
             onBackClicked = {},
             characterName = "Rick Sanchez",
-            onEpisodeDetailClicked = { }
+            onEpisodeDetailClicked = { _, _ ->
+
+            }
         )
     }
 }

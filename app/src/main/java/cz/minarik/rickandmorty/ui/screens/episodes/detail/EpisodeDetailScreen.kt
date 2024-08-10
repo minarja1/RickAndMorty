@@ -1,115 +1,93 @@
 package cz.minarik.rickandmorty.ui.screens.episodes.detail
 
-import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.windowInsetsBottomHeight
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cz.minarik.rickandmorty.R
 import cz.minarik.rickandmorty.common.util.decodeSafely
-import cz.minarik.rickandmorty.domain.model.EpisodeDetail
-import cz.minarik.rickandmorty.ui.components.CharactersRow
-import cz.minarik.rickandmorty.ui.composables.ErrorView
-import cz.minarik.rickandmorty.ui.composables.RaMTopAppBar
-import cz.minarik.rickandmorty.ui.dimens.SpacingMedium
-import cz.minarik.rickandmorty.ui.dimens.SpacingSmall
-import cz.minarik.rickandmorty.ui.dimens.SpacingXLarge
+import cz.minarik.rickandmorty.ui.components.CircleImagesRow
+import cz.minarik.rickandmorty.ui.core.composable.PreviewSurface
+import cz.minarik.rickandmorty.ui.core.composable.RaMTopAppBar
+import cz.minarik.rickandmorty.ui.core.composable.ScreenContentWrapper
+import cz.minarik.rickandmorty.ui.core.composable.ScreenPreview
+import cz.minarik.rickandmorty.ui.core.model.ComposeViewModel
+import cz.minarik.rickandmorty.ui.core.model.PreviewViewModel
+import cz.minarik.rickandmorty.ui.core.model.UIEvent
+import cz.minarik.rickandmorty.ui.core.model.UIState
+import cz.minarik.rickandmorty.ui.model.CircleImageVo
+import cz.minarik.rickandmorty.ui.model.EpisodeDetailVo
+import cz.minarik.rickandmorty.ui.theme.SpacingMedium
+import cz.minarik.rickandmorty.ui.theme.SpacingSmall
+import cz.minarik.rickandmorty.ui.theme.SpacingXLarge
 import cz.minarik.rickandmorty.ui.theme.grayscale
-import org.koin.androidx.compose.koinViewModel
-import org.koin.core.parameter.parametersOf
-
 
 @Composable
 fun EpisodeDetailScreen(
     onBackClicked: () -> Unit,
-    episodeId: String?,
     episodeName: String?,
-    viewModel: EpisodeDetailScreenViewModel = koinViewModel(parameters = {
-        parametersOf(episodeId)
-    }),
+    viewModel: ComposeViewModel<EpisodeDetailScreenData, UIEvent>,
 ) {
-    Scaffold(
-        modifier = Modifier.fillMaxSize(),
-        topBar = {
-            RaMTopAppBar(
-                onBackClicked = onBackClicked,
-                text = episodeName?.decodeSafely()
-            )
-        },
-        content = { padding ->
-            HandleState(
-                modifier = Modifier.padding(padding),
-                episodeDetailScreenStateState = viewModel.state.collectAsState(initial = EpisodeDetailScreenState()),
-                reload = viewModel::getEpisodeDetail
-            )
-        }
-    )
-}
-
-
-@Composable
-private fun HandleState(
-    episodeDetailScreenStateState: State<EpisodeDetailScreenState>,
-    reload: () -> Unit,
-    modifier: Modifier,
-) {
-    Crossfade(
-        targetState = episodeDetailScreenStateState.value,
-        label = "EpisodeDetailScreenState Crossfade"
-    ) { state ->
-        state.apply {
-            Box(modifier = modifier.fillMaxSize()) {
-                episode?.let {
+    val viewState by viewModel.viewState.collectAsStateWithLifecycle()
+    ScreenContentWrapper(state = viewState) {
+        Scaffold(
+            modifier = Modifier
+                .fillMaxSize()
+                .windowInsetsPadding(
+                    WindowInsets.statusBars
+                ),
+            topBar = {
+                RaMTopAppBar(
+                    onBackClicked = onBackClicked,
+                    text = episodeName?.decodeSafely()
+                )
+            },
+            content = { padding ->
+                viewState.data.episode?.let {
                     EpisodeDetailView(
-                        episode = episode,
-                    )
-                }
-                if (error.isNotBlank()) {
-                    ErrorView(modifier = Modifier.fillMaxSize(), error = error) {
-                        reload.invoke()
-                    }
-                }
-                if (isLoading) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.align(Alignment.Center),
-                        color = MaterialTheme.colors.onBackground,
+                        modifier = Modifier.padding(padding),
+                        episode = it,
                     )
                 }
             }
-        }
+        )
     }
 }
 
 @Composable
 private fun EpisodeDetailView(
-    episode: EpisodeDetail,
+    episode: EpisodeDetailVo,
+    modifier: Modifier = Modifier,
 ) {
     LazyColumn(
-        Modifier.fillMaxSize(),
+        modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         item {
             EpisodeHeader(episode)
         }
 
-        if (!episode.characters.isNullOrEmpty()) {
+        if (!episode.characterImages.isNullOrEmpty()) {
             item {
                 Text(
                     modifier = Modifier
@@ -122,18 +100,25 @@ private fun EpisodeDetailView(
                     text = stringResource(id = R.string.characters),
                     style = MaterialTheme.typography.h6,
                 )
-                CharactersRow(
+                CircleImagesRow(
                     modifier = Modifier.padding(top = ScreenPaddingVertical),
-                    characters = episode.characters
+                    images = episode.characterImages
                 )
             }
+        }
+        item {
+            Spacer(
+                Modifier.windowInsetsBottomHeight(
+                    WindowInsets.systemBars
+                )
+            )
         }
     }
 }
 
 @Composable
 private fun EpisodeHeader(
-    episode: EpisodeDetail
+    episode: EpisodeDetailVo
 ) {
     if (episode.name?.isNotBlank() == true) {
         Text(
@@ -200,22 +185,39 @@ private fun RowScope.TitleText(text: String) {
 private val ScreenPaddingHorizontal = SpacingXLarge
 private val ScreenPaddingVertical = SpacingMedium
 
-@Preview
+@ScreenPreview
 @Composable
-private fun CharacterDetailPreview() {
-    EpisodeDetailView(
-        episode = EpisodeDetail(
-            id = "1",
-            name = "Rick Sanchez",
-            airDate = "December 2, 2013",
-            code = "S01E01",
-            characters = listOf(
-                cz.minarik.rickandmorty.domain.model.TVCharacter(
-                    id = "1",
-                    name = "Rick Sanchez",
-                    imageUrl = "https://rickandmortyapi.com/api/character/avatar/1.jpeg",
+private fun EpisodeDetailScreenPreview() {
+    PreviewSurface {
+        EpisodeDetailScreen(
+            viewModel = PreviewViewModel(
+                UIState(
+                    data = EpisodeDetailScreenData(
+                        episode = EpisodeDetailVo(
+                            id = "1",
+                            name = "Pilot",
+                            airDate = "December 2, 2013",
+                            code = "S01E01",
+                            characterImages = listOf(
+                                CircleImageVo(
+                                    id = "1",
+                                    imageUrl = "https://rickandmortyapi.com/api/character/avatar/1.jpeg"
+                                ),
+                                CircleImageVo(
+                                    id = "2",
+                                    imageUrl = "https://rickandmortyapi.com/api/character/avatar/2.jpeg"
+                                ),
+                                CircleImageVo(
+                                    id = "3",
+                                    imageUrl = "https://rickandmortyapi.com/api/character/avatar/3.jpeg"
+                                ),
+                            )
+                        )
+                    )
                 )
-            )
-        ),
-    )
+            ),
+            onBackClicked = {},
+            episodeName = "Pilot",
+        )
+    }
 }

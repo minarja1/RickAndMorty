@@ -1,4 +1,4 @@
-package cz.minarik.rickandmorty.ui.dimens
+package cz.minarik.rickandmorty.ui.theme
 
 import androidx.compose.ui.unit.dp
 

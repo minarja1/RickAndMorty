@@ -1,13 +1,14 @@
 package cz.minarik.rickandmorty.ui.screens.characters.detail
 
-import cz.minarik.rickandmorty.common.base.BaseViewModel
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import cz.minarik.rickandmorty.common.base.FailedWithError
 import cz.minarik.rickandmorty.common.base.Loading
 import cz.minarik.rickandmorty.common.base.SuccessWithData
 import cz.minarik.rickandmorty.domain.usecase.getcharacterdetail.GetCharacterDetailUseCase
-import cz.minarik.rickandmorty.ui.core.model.ButtonModel
+import cz.minarik.rickandmorty.ui.core.model.ButtonVo
 import cz.minarik.rickandmorty.ui.core.model.ComposeViewModel
-import cz.minarik.rickandmorty.ui.core.model.ErrorModel
+import cz.minarik.rickandmorty.ui.core.model.ErrorViewVo
 import cz.minarik.rickandmorty.ui.core.model.UIState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -25,7 +26,7 @@ import kotlinx.coroutines.flow.update
 class CharacterDetailScreenViewModel(
     private val characterId: String,
     private val getCharacterDetailUseCase: GetCharacterDetailUseCase
-) : BaseViewModel(), ComposeViewModel<CharacterDetailScreenData, CharacterDetailScreenEvent> {
+) : ComposeViewModel<CharacterDetailScreenData, CharacterDetailScreenEvent>, ViewModel() {
 
     private val _viewState = MutableStateFlow(
         UIState(
@@ -59,7 +60,7 @@ class CharacterDetailScreenViewModel(
                     _viewState.update {
                         UIState(
                             data = CharacterDetailScreenData(
-                                character = result.content,
+                                character = result.content?.toVo(),
                             ),
                         )
                     }
@@ -69,9 +70,10 @@ class CharacterDetailScreenViewModel(
                     _viewState.update {
                         UIState(
                             data = it.data,
-                            error = ErrorModel(
-                                error = result.error,
-                                buttonModel = ButtonModel(
+                            error = ErrorViewVo(
+                                text = result.error,
+                                buttonVo = ButtonVo(
+                                    // todo replace with TextModel
                                     text = "Retry",
                                     onClick = { getCharacterDetail() }
                                 ),
@@ -91,7 +93,7 @@ class CharacterDetailScreenViewModel(
                     }
                 }
             }
-        }.launchIn(ioScope)
+        }.launchIn(viewModelScope)
     }
 
     /**

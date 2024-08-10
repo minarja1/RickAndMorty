@@ -8,9 +8,14 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import cz.minarik.rickandmorty.common.Constants
 import cz.minarik.rickandmorty.ui.screens.characters.detail.CharacterDetailScreen
+import cz.minarik.rickandmorty.ui.screens.characters.detail.CharacterDetailScreenViewModel
 import cz.minarik.rickandmorty.ui.screens.episodes.detail.EpisodeDetailScreen
+import cz.minarik.rickandmorty.ui.screens.episodes.detail.EpisodeDetailScreenViewModel
 import cz.minarik.rickandmorty.ui.screens.home.HomeScreen
+import cz.minarik.rickandmorty.ui.screens.home.HomeScreenViewModel
 import cz.minarik.rickandmorty.ui.theme.RaMTheme
+import org.koin.androidx.compose.koinViewModel
+import org.koin.core.parameter.parametersOf
 import java.net.URLEncoder
 
 @Composable
@@ -21,19 +26,20 @@ fun Navigation() {
         NavHost(navController = navController, startDestination = Screen.HomePage.route) {
             composable(route = Screen.HomePage.route) {
                 HomeScreen(
-                    onCharacterDetailClicked = { character ->
+                    viewModel = koinViewModel<HomeScreenViewModel>(),
+                    onCharacterDetailClicked = { id, name ->
                         navController.navigate(
                             Screen.CharacterDetail.withArgs(
-                                character.id,
-                                URLEncoder.encode(character.name ?: "", Constants.UTF_8)
+                                id,
+                                URLEncoder.encode(name ?: "", Constants.UTF_8)
                             )
                         )
                     },
-                    onEpisodeDetailClicked = { episode ->
+                    onEpisodeDetailClicked = { id, name ->
                         navController.navigate(
                             Screen.EpisodeDetail.withArgs(
-                                episode.id,
-                                URLEncoder.encode(episode.name ?: "", Constants.UTF_8)
+                                id,
+                                URLEncoder.encode(name ?: "", Constants.UTF_8)
                             )
                         )
                     }
@@ -53,13 +59,15 @@ fun Navigation() {
             ) {
                 CharacterDetailScreen(
                     onBackClicked = navController::navigateUp,
-                    characterId = it.arguments?.getString(Constants.argCharacterId),
                     characterName = it.arguments?.getString(Constants.argCharacterName),
-                    onEpisodeDetailClicked = { episode ->
+                    viewModel = koinViewModel<CharacterDetailScreenViewModel>(parameters = {
+                        parametersOf(it.arguments?.getString(Constants.argCharacterId))
+                    }),
+                    onEpisodeDetailClicked = { id, name ->
                         navController.navigate(
                             Screen.EpisodeDetail.withArgs(
-                                episode.id,
-                                URLEncoder.encode(episode.name ?: "", Constants.UTF_8)
+                                id,
+                                URLEncoder.encode(name ?: "", Constants.UTF_8)
                             )
                         )
                     }
@@ -79,7 +87,9 @@ fun Navigation() {
             ) {
                 EpisodeDetailScreen(
                     onBackClicked = navController::navigateUp,
-                    episodeId = it.arguments?.getString(Constants.argEpisodeId),
+                    viewModel = koinViewModel<EpisodeDetailScreenViewModel>(parameters = {
+                        parametersOf(it.arguments?.getString(Constants.argEpisodeId))
+                    }),
                     episodeName = it.arguments?.getString(Constants.argEpisodeName),
                 )
             }

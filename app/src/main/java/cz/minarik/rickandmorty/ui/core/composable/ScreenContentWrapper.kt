@@ -1,11 +1,18 @@
 package cz.minarik.rickandmorty.ui.core.composable
 
 import androidx.compose.animation.Crossfade
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.sp
+import androidx.paging.LoadState
+import cz.minarik.rickandmorty.R
+import cz.minarik.rickandmorty.ui.core.model.ButtonVo
+import cz.minarik.rickandmorty.ui.core.model.ErrorViewVo
 import cz.minarik.rickandmorty.ui.core.model.UIState
 
 /**
@@ -26,16 +33,110 @@ fun ScreenContentWrapper(
     ) { targetState ->
         when {
             targetState.loading -> {
-                // todo
-                CircularProgressIndicator(
+                ProgressIndicator(
                     modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colors.onBackground,
                 )
             }
 
             targetState.error != null -> {
-                // todo
+                ErrorIndicator(
+                    modifier = Modifier.fillMaxSize(),
+                    errorViewVo = targetState.error,
+                )
             }
         }
     }
 }
+
+/**
+ * Wrapper for screen content based on paged load state
+ *
+ * @param loadState Paged load state
+ * @param onTryAgain Callback for retry button
+ * @param content screen content
+ */
+@Composable
+fun PagedScreenContentWrapper(
+    loadState: LoadState,
+    onTryAgain: () -> Unit,
+    content: @Composable () -> Unit,
+) {
+    content()
+    Crossfade(
+        targetState = loadState,
+        label = "resultScreenAnimation"
+    ) { targetState ->
+        when (targetState) {
+            is LoadState.Loading -> {
+                ProgressIndicator(
+                    modifier = Modifier.fillMaxSize(),
+                )
+            }
+
+            is LoadState.Error -> {
+                (loadState as? LoadState.Error)?.let {
+                    ErrorIndicator(
+                        modifier = Modifier.fillMaxSize(),
+                        errorViewVo = ErrorViewVo(
+                            text = loadState.error.message ?: "",
+                            buttonVo = ButtonVo(
+                                text = stringResource(id = R.string.try_again),
+                                onClick = onTryAgain
+                            ),
+                        ),
+                    )
+                }
+            }
+
+            is LoadState.NotLoading -> Unit
+        }
+    }
+}
+
+@ComponentPreview
+@Composable
+private fun ScreenContentWrapperLoadingPreview() {
+    PreviewSurface {
+        ScreenContentWrapper(
+            state = UIState(loading = true, data = null),
+            content = {
+                Column {
+                    Text(
+                        "Content",
+                        color = MaterialTheme.colors.onBackground,
+                        fontSize = 40.sp
+                    )
+                }
+            }
+        )
+    }
+}
+
+@ComponentPreview
+@Composable
+private fun ScreenContentWrapperErrorPreview() {
+    PreviewSurface {
+        ScreenContentWrapper(
+            state = UIState(
+                error = ErrorViewVo(
+                    text = "Error message",
+                    buttonVo = ButtonVo(
+                        text = stringResource(id = R.string.try_again),
+                        onClick = {}
+                    )
+                ),
+                data = null
+            ),
+            content = {
+                Column {
+                    Text(
+                        "Content",
+                        color = MaterialTheme.colors.onBackground,
+                        fontSize = 40.sp
+                    )
+                }
+            }
+        )
+    }
+}
+

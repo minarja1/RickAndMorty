@@ -1,8 +1,9 @@
 package cz.minarik.rickandmorty.ui.screens.home.components
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -14,6 +15,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -22,16 +25,20 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import cz.minarik.rickandmorty.R
-import cz.minarik.rickandmorty.domain.model.TVCharacter
 import cz.minarik.rickandmorty.ui.core.composable.ComponentPreview
 import cz.minarik.rickandmorty.ui.core.composable.PreviewSurface
-import cz.minarik.rickandmorty.ui.dimens.SpacingXSmall
+import cz.minarik.rickandmorty.ui.model.TVCharacterVo
+import cz.minarik.rickandmorty.ui.screens.home.util.MockData
+import cz.minarik.rickandmorty.ui.theme.SpacingLarge
+import cz.minarik.rickandmorty.ui.theme.SpacingSmall
+import cz.minarik.rickandmorty.ui.theme.SpacingXSmall
+import cz.minarik.rickandmorty.ui.theme.SpacingXXSmall
 
 @Composable
 fun CharacterListItem(
     modifier: Modifier = Modifier,
-    character: TVCharacter,
-    onItemClick: (TVCharacter) -> Unit,
+    character: TVCharacterVo,
+    onItemClick: (TVCharacterVo) -> Unit,
 ) {
     val roundedCornerShape = RoundedCornerShape(8.dp)
     Card(
@@ -44,10 +51,8 @@ fun CharacterListItem(
             .clip(roundedCornerShape)
             .clickable { onItemClick(character) }
     ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier
-                .fillMaxWidth()
+        Box(
+            modifier = Modifier.fillMaxWidth()
         ) {
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
@@ -61,13 +66,31 @@ fun CharacterListItem(
                     .height(CharacterImageSize)
             )
             character.name?.let {
-                Text(
-                    modifier = Modifier.padding(SpacingXSmall),
-                    text = character.name,
-                    style = MaterialTheme.typography.body1,
-                    overflow = TextOverflow.Ellipsis,
-                    maxLines = 1,
-                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .align(Alignment.BottomCenter)
+                        .background(
+                            brush = Brush.verticalGradient(
+                                colors = listOf(
+                                    Color.Transparent,
+                                    MaterialTheme.colors.background
+                                )
+                            )
+                        ),
+                ) {
+                    Text(
+                        modifier = Modifier
+                            .padding(horizontal = SpacingXSmall)
+                            .padding(bottom = SpacingXXSmall)
+                            .padding(top = SpacingSmall)
+                            .align(Alignment.BottomCenter),
+                        text = character.name,
+                        style = MaterialTheme.typography.h6,
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = 1,
+                    )
+                }
             }
         }
     }
@@ -80,11 +103,7 @@ private val CharacterImageSize = 148.dp
 private fun CharacterListItemPreview() {
     PreviewSurface {
         CharacterListItem(
-            character = TVCharacter(
-                "1",
-                "Test",
-                "https://cdn.britannica.com/77/170477-050-1C747EE3/Laptop-computer.jpg"
-            ),
+            character = MockData.characters.first(),
             onItemClick = {})
     }
 }

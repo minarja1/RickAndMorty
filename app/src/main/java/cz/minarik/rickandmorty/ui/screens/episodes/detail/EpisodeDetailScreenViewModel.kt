@@ -1,14 +1,22 @@
 package cz.minarik.rickandmorty.ui.screens.episodes.detail
 
-import cz.minarik.rickandmorty.common.base.BaseViewModel
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import cz.minarik.rickandmorty.common.base.FailedWithError
 import cz.minarik.rickandmorty.common.base.Loading
 import cz.minarik.rickandmorty.common.base.SuccessWithData
 import cz.minarik.rickandmorty.domain.usecase.getepisodedetail.GetEpisodeDetailUseCase
-import kotlinx.coroutines.flow.Flow
+import cz.minarik.rickandmorty.ui.core.model.ButtonVo
+import cz.minarik.rickandmorty.ui.core.model.ComposeViewModel
+import cz.minarik.rickandmorty.ui.core.model.ErrorViewVo
+import cz.minarik.rickandmorty.ui.core.model.UIEvent
+import cz.minarik.rickandmorty.ui.core.model.UIState
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.update
 
 /**
  * ViewModel for EpisodeDetailScreen.
@@ -19,48 +27,70 @@ import kotlinx.coroutines.flow.onEach
 class EpisodeDetailScreenViewModel(
     private val episodeId: String,
     private val getEpisodeDetailUseCase: GetEpisodeDetailUseCase
-) : BaseViewModel() {
+) : ComposeViewModel<EpisodeDetailScreenData, UIEvent>, ViewModel() {
 
-    private val _state = MutableStateFlow(EpisodeDetailScreenState())
+    private val _viewState = MutableStateFlow(
+        UIState(
+            data = EpisodeDetailScreenData(),
+        )
+    )
 
-    /**
-     * State of EpisodeDetailScreen.
-     */
-    val state: Flow<EpisodeDetailScreenState> = _state
+    override val viewState: StateFlow<UIState<EpisodeDetailScreenData>> =
+        _viewState.asStateFlow()
 
     init {
         getEpisodeDetail()
     }
 
+    override fun onEvent(event: UIEvent) {
+        // No events to handle
+    }
+
     /**
      * Get episode detail.
      *
-     * Use [state] to observe the result.
+     * Use [viewState] to observe the result.
      */
-    fun getEpisodeDetail() {
+    private fun getEpisodeDetail() {
         getEpisodeDetailUseCase(episodeId).onEach { result ->
             when (result) {
                 is SuccessWithData -> {
-                    _state.value = EpisodeDetailScreenState(
-                        episode = result.content,
-                    )
+                    _viewState.update {
+                        UIState(
+                            data = EpisodeDetailScreenData(
+                                episode = result.content?.toVo(),
+                            ),
+                        )
+                    }
                 }
 
                 is FailedWithError -> {
-                    _state.value = _state.value.copy(
-                        isLoading = false,
-                        error = result.error,
-                    )
+                    _viewState.update {
+                        UIState(
+                            data = it.data,
+                            error = ErrorViewVo(
+                                text = result.error,
+                                buttonVo = ButtonVo(
+                                    // todo replace with TextModel
+                                    text = "Retry",
+                                    onClick = { getEpisodeDetail() }
+                                ),
+                            ),
+                            loading = false,
+                        )
+                    }
                 }
 
                 is Loading -> {
-                    _state.value = _state.value.copy(
-                        isLoading = true,
-                        error = ""
-                    )
+                    _viewState.update {
+                        UIState(
+                            data = it.data,
+                            error = null,
+                            loading = true,
+                        )
+                    }
                 }
             }
-        }.launchIn(ioScope)
+        }.launchIn(viewModelScope)
     }
-
 }

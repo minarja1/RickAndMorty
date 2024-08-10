@@ -8,12 +8,19 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.paging.LoadState
-import cz.minarik.rickandmorty.ui.composables.ErrorView
-import cz.minarik.rickandmorty.ui.dimens.SpacingXSmall
+import cz.minarik.rickandmorty.R
+import cz.minarik.rickandmorty.ui.core.composable.ComponentPreview
+import cz.minarik.rickandmorty.ui.core.composable.ErrorIndicator
+import cz.minarik.rickandmorty.ui.core.composable.PreviewSurface
+import cz.minarik.rickandmorty.ui.core.model.ButtonVo
+import cz.minarik.rickandmorty.ui.core.model.ErrorViewVo
+import cz.minarik.rickandmorty.ui.theme.SpacingLarge
 
 /**
- * State footer based on [LoadState]. Typically used to show progressBar or error while loading next page.
+ * State footer based on [LoadState]. Typically used to show progressBar or error while loading next
+ * page.
  *
  * @param loadState Given state.
  * @param onTryAgain Callback for retry button.
@@ -29,7 +36,7 @@ fun LoadStateFooter(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(SpacingXSmall)
+                    .padding(SpacingLarge)
             ) {
                 CircularProgressIndicator(
                     modifier = Modifier
@@ -38,16 +45,46 @@ fun LoadStateFooter(
                 )
             }
         }
+
         is LoadState.Error -> {
             // next page error
-            ErrorView(
+            ErrorIndicator(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(SpacingXSmall),
-                error = loadState.error.message ?: "",
-                onTryAgainClicked = onTryAgain
+                    .padding(SpacingLarge),
+                errorViewVo = ErrorViewVo(
+                    text = loadState.error.message ?: "",
+                    buttonVo = ButtonVo(
+                        text = stringResource(id = R.string.try_again),
+                        onClick = onTryAgain
+                    ),
+                    showOverlay = false,
+                )
             )
         }
+
         is LoadState.NotLoading -> Unit
+    }
+}
+
+@ComponentPreview
+@Composable
+private fun LoadStateFooterLoadingPreview() {
+    PreviewSurface {
+        LoadStateFooter(
+            loadState = LoadState.Loading,
+            onTryAgain = {}
+        )
+    }
+}
+
+@ComponentPreview
+@Composable
+private fun LoadStateFooterErrorPreview() {
+    PreviewSurface {
+        LoadStateFooter(
+            loadState = LoadState.Error(Exception("Error")),
+            onTryAgain = {}
+        )
     }
 }

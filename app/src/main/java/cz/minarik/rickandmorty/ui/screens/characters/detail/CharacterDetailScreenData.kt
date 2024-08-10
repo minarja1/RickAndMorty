@@ -1,6 +1,7 @@
 package cz.minarik.rickandmorty.ui.screens.characters.detail
 
-import cz.minarik.rickandmorty.domain.model.CharacterDetail
+import androidx.compose.runtime.Immutable
+import cz.minarik.rickandmorty.ui.model.CharacterDetailVo
 
 /**
  * State of CharacterDetailScreen.
@@ -8,7 +9,8 @@ import cz.minarik.rickandmorty.domain.model.CharacterDetail
  * @property character Character detail.
  * @property episodesExpanded Whether episodes are expanded.
  */
+@Immutable
 data class CharacterDetailScreenData(
-    val character: CharacterDetail? = null,
+    val character: CharacterDetailVo? = null,
     val episodesExpanded: Boolean = false,
 )

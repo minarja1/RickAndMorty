@@ -15,17 +15,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import cz.minarik.rickandmorty.ui.components.CharactersRow
+import cz.minarik.rickandmorty.ui.components.CircleImagesRow
 import cz.minarik.rickandmorty.ui.core.composable.ComponentPreview
 import cz.minarik.rickandmorty.ui.core.composable.PreviewSurface
-import cz.minarik.rickandmorty.ui.dimens.SpacingXSmall
-import cz.minarik.rickandmorty.ui.model.ClickableCardViewObject
+import cz.minarik.rickandmorty.ui.theme.SpacingXSmall
+import cz.minarik.rickandmorty.ui.model.ClickableCardVo
+import cz.minarik.rickandmorty.ui.screens.home.util.MockData
 
 @Composable
 fun ClickableCard(
-    modifier: Modifier = Modifier,
-    clickableCardViewObject: ClickableCardViewObject,
+    clickableCardVo: ClickableCardVo,
     onItemClick: (String) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val roundedCornerShape = RoundedCornerShape(8.dp)
     Card(
@@ -36,14 +37,14 @@ fun ClickableCard(
         ),
         modifier = modifier
             .clip(roundedCornerShape)
-            .clickable { onItemClick(clickableCardViewObject.id) }
+            .clickable { onItemClick(clickableCardVo.id) }
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .fillMaxWidth()
         ) {
-            clickableCardViewObject.title?.let { name ->
+            clickableCardVo.title?.let { name ->
                 Text(
                     modifier = Modifier.padding(SpacingXSmall),
                     text = name,
@@ -52,7 +53,7 @@ fun ClickableCard(
                     maxLines = 1,
                 )
             }
-            clickableCardViewObject.subtitle?.let { code ->
+            clickableCardVo.subtitle?.let { code ->
                 Text(
                     modifier = Modifier.padding(SpacingXSmall),
                     text = code,
@@ -61,8 +62,8 @@ fun ClickableCard(
                     maxLines = 1,
                 )
             }
-            CharactersRow(
-                characters = clickableCardViewObject.characters,
+            CircleImagesRow(
+                images = clickableCardVo.images,
             )
         }
     }
@@ -70,15 +71,10 @@ fun ClickableCard(
 
 @ComponentPreview
 @Composable
-private fun EpisodeListItemPreview() {
+private fun ClickableCardPreview() {
     PreviewSurface {
         ClickableCard(
-            clickableCardViewObject = ClickableCardViewObject(
-                id = "1",
-                title = "December 2, 2013",
-                subtitle = "S01E01",
-                characters = emptyList(),
-            ),
+            clickableCardVo = MockData.clickableCards.first(),
             onItemClick = {}
         )
     }
