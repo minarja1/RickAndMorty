@@ -27,7 +27,7 @@ Episode detail screen contains basic episode info and scrollable list of charact
 
 // todo use other static analysis tools like ktlint/lint/spotless
 ### Architecture
-Currently widely popular architectural approach is implemented using **[clean architecture](https://developer.android.com/topic/architecture)** and [MVVM](https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93viewmodel) pattern. The code is split into 3 main layers: **data**, **domain** and **UI**. All business logic is implemented in **use-case** files.
+Currently widely popular architectural approach is implemented using Clean Architecture and MVI pattern. The code is split into 3 main layers: **data**, **domain** and **UI**. All business logic is implemented in **use-case** files.
 
 // todo the layers should be modules, not just packages
 ### Testing
