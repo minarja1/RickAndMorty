@@ -7,6 +7,6 @@ package cz.minarik.rickandmorty.ui.core.model
  * @property onClick action to be executed when button is clicked
  */
 data class ButtonVo(
-    val text: String,
+    val text: StringModel,
     val onClick: () -> Unit,
 )

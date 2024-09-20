@@ -8,14 +8,14 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.paging.LoadState
 import cz.minarik.rickandmorty.R
 import cz.minarik.rickandmorty.ui.core.composable.ComponentPreview
 import cz.minarik.rickandmorty.ui.core.composable.ErrorIndicator
 import cz.minarik.rickandmorty.ui.core.composable.PreviewSurface
 import cz.minarik.rickandmorty.ui.core.model.ButtonVo
-import cz.minarik.rickandmorty.ui.core.model.ErrorViewVo
+import cz.minarik.rickandmorty.ui.core.model.ErrorIndicatorVo
+import cz.minarik.rickandmorty.ui.core.model.StringModel
 import cz.minarik.rickandmorty.ui.theme.SpacingLarge
 
 /**
@@ -52,10 +52,10 @@ fun LoadStateFooter(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(SpacingLarge),
-                errorViewVo = ErrorViewVo(
-                    text = loadState.error.message ?: "",
+                errorIndicatorVo = ErrorIndicatorVo(
+                    text = StringModel.String(loadState.error.message ?: ""),
                     buttonVo = ButtonVo(
-                        text = stringResource(id = R.string.try_again),
+                        text = StringModel.Resource(id = R.string.try_again),
                         onClick = onTryAgain
                     ),
                     showOverlay = false,

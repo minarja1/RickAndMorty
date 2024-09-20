@@ -2,13 +2,15 @@ package cz.minarik.rickandmorty.ui.screens.characters.detail
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import cz.minarik.rickandmorty.R
 import cz.minarik.rickandmorty.common.base.FailedWithError
 import cz.minarik.rickandmorty.common.base.Loading
 import cz.minarik.rickandmorty.common.base.SuccessWithData
 import cz.minarik.rickandmorty.domain.usecase.getcharacterdetail.GetCharacterDetailUseCase
 import cz.minarik.rickandmorty.ui.core.model.ButtonVo
 import cz.minarik.rickandmorty.ui.core.model.ComposeViewModel
-import cz.minarik.rickandmorty.ui.core.model.ErrorViewVo
+import cz.minarik.rickandmorty.ui.core.model.ErrorIndicatorVo
+import cz.minarik.rickandmorty.ui.core.model.StringModel
 import cz.minarik.rickandmorty.ui.core.model.UIState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -70,11 +72,10 @@ class CharacterDetailScreenViewModel(
                     _viewState.update {
                         UIState(
                             data = it.data,
-                            error = ErrorViewVo(
-                                text = result.error,
+                            error = ErrorIndicatorVo(
+                                text = StringModel.String(result.error),
                                 buttonVo = ButtonVo(
-                                    // todo replace with TextModel
-                                    text = "Retry",
+                                    text = StringModel.Resource(R.string.try_again),
                                     onClick = { getCharacterDetail() }
                                 ),
                             ),

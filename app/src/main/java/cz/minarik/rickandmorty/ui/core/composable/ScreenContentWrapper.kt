@@ -7,12 +7,12 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.sp
 import androidx.paging.LoadState
 import cz.minarik.rickandmorty.R
 import cz.minarik.rickandmorty.ui.core.model.ButtonVo
-import cz.minarik.rickandmorty.ui.core.model.ErrorViewVo
+import cz.minarik.rickandmorty.ui.core.model.ErrorIndicatorVo
+import cz.minarik.rickandmorty.ui.core.model.StringModel
 import cz.minarik.rickandmorty.ui.core.model.UIState
 
 /**
@@ -41,7 +41,7 @@ fun ScreenContentWrapper(
             targetState.error != null -> {
                 ErrorIndicator(
                     modifier = Modifier.fillMaxSize(),
-                    errorViewVo = targetState.error,
+                    errorIndicatorVo = targetState.error,
                 )
             }
         }
@@ -77,10 +77,10 @@ fun PagedScreenContentWrapper(
                 (loadState as? LoadState.Error)?.let {
                     ErrorIndicator(
                         modifier = Modifier.fillMaxSize(),
-                        errorViewVo = ErrorViewVo(
-                            text = loadState.error.message ?: "",
+                        errorIndicatorVo = ErrorIndicatorVo(
+                            text = StringModel.String(loadState.error.message ?: ""),
                             buttonVo = ButtonVo(
-                                text = stringResource(id = R.string.try_again),
+                                text = StringModel.Resource(id = R.string.try_again),
                                 onClick = onTryAgain
                             ),
                         ),
@@ -118,10 +118,10 @@ private fun ScreenContentWrapperErrorPreview() {
     PreviewSurface {
         ScreenContentWrapper(
             state = UIState(
-                error = ErrorViewVo(
-                    text = "Error message",
+                error = ErrorIndicatorVo(
+                    text = StringModel.String("Error message"),
                     buttonVo = ButtonVo(
-                        text = stringResource(id = R.string.try_again),
+                        text = StringModel.Resource(id = R.string.try_again),
                         onClick = {}
                     )
                 ),

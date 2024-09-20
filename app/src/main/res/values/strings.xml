@@ -18,4 +18,5 @@
     <string name="location">Location</string>
     <string name="aired">Aired</string>
     <string name="code">Code</string>
+    <string name="html_resource_text_example"><![CDATA[<html><body>This is a html resource text<br/><b>%1$s</b></body></html>]]></string>
 </resources>

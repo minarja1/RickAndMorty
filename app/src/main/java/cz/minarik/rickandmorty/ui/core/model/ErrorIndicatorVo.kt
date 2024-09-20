@@ -7,8 +7,8 @@ package cz.minarik.rickandmorty.ui.core.model
  * @property buttonVo button model for error view
  * @property showOverlay show overlay or not
  */
-data class ErrorViewVo(
-    val text: String,
+data class ErrorIndicatorVo(
+    val text: StringModel,
     val buttonVo: ButtonVo? = null,
     val showOverlay: Boolean = true,
 )
