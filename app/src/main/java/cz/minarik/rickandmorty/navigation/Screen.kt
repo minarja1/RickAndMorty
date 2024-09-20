@@ -9,17 +9,17 @@ sealed class Screen(val route: String) {
     /**
      * Home screen.
      */
-    object HomePage : Screen("home_page")
+    data object HomePage : Screen("home_page")
 
     /**
      * Characters screen.
      */
-    object CharacterDetail : Screen("character_detail")
+    data object CharacterDetail : Screen("character_detail")
 
     /**
      * Episodes screen.
      */
-    object EpisodeDetail : Screen("episode_detail")
+    data object EpisodeDetail : Screen("episode_detail")
 
     /**
      * Builds route with arguments.

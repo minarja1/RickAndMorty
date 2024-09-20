@@ -26,7 +26,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cz.minarik.rickandmorty.R
 import cz.minarik.rickandmorty.common.util.decodeSafely
-import cz.minarik.rickandmorty.ui.components.CircleImagesRow
+import cz.minarik.rickandmorty.ui.core.composable.CircleImagesRow
 import cz.minarik.rickandmorty.ui.core.composable.PreviewSurface
 import cz.minarik.rickandmorty.ui.core.composable.RaMTopAppBar
 import cz.minarik.rickandmorty.ui.core.composable.ScreenContentWrapper

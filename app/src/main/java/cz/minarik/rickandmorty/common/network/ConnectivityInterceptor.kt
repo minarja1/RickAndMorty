@@ -10,11 +10,11 @@ import java.io.IOException
 /**
  * Interceptor for checking internet connection.
  */
-class ConnectivityInterceptor(private val mContext: Context) : Interceptor {
+class ConnectivityInterceptor(private val context: Context) : Interceptor {
 
     @Throws(IOException::class)
     override fun intercept(chain: Interceptor.Chain): Response {
-        if (!mContext.isInternetAvailable) {
+        if (!context.isInternetAvailable) {
             throw NoConnectionException()
         }
 

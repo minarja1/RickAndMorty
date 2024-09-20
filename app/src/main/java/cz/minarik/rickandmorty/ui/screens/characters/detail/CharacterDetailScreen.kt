@@ -4,6 +4,7 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -152,17 +153,18 @@ private fun EpisodesExpandButton(
         targetValue = if (expanded) AngleArrowUp else AngleArrowDown,
         label = "rotation"
     )
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(
-                horizontal = ScreenPaddingHorizontal,
-                vertical = ItemPaddingVertical
-            )
             .clip(RoundedCornerShape(8.dp))
             .clickable { onExpanded() }
     ) {
-        Row {
+        Row(
+            modifier = Modifier.padding(
+                horizontal = ScreenPaddingHorizontal,
+                vertical = ItemPaddingVertical
+            )
+        ) {
             Text(
                 text = stringResource(id = R.string.episodes),
                 style = MaterialTheme.typography.body1,

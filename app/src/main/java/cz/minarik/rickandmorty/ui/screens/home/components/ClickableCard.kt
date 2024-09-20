@@ -15,7 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import cz.minarik.rickandmorty.ui.components.CircleImagesRow
+import cz.minarik.rickandmorty.ui.core.composable.CircleImagesRow
 import cz.minarik.rickandmorty.ui.core.composable.ComponentPreview
 import cz.minarik.rickandmorty.ui.core.composable.PreviewSurface
 import cz.minarik.rickandmorty.ui.theme.SpacingXSmall

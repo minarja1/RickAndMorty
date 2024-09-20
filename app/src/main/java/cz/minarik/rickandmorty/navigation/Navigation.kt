@@ -18,6 +18,7 @@ import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 import java.net.URLEncoder
 
+// TODO refactor to typed navigation
 @Composable
 fun Navigation() {
     RaMTheme {
@@ -47,21 +48,21 @@ fun Navigation() {
             }
 
             composable(
-                route = Screen.CharacterDetail.route + "/{${Constants.argCharacterId}}/{${Constants.argCharacterName}}",
+                route = Screen.CharacterDetail.route + "/{${NavigationConstants.argCharacterId}}/{${NavigationConstants.argCharacterName}}",
                 arguments = listOf(
-                    navArgument(Constants.argCharacterId) {
+                    navArgument(NavigationConstants.argCharacterId) {
                         type = NavType.StringType
                     },
-                    navArgument(Constants.argCharacterName) {
+                    navArgument(NavigationConstants.argCharacterName) {
                         type = NavType.StringType
                     },
                 )
             ) {
                 CharacterDetailScreen(
                     onBackClicked = navController::navigateUp,
-                    characterName = it.arguments?.getString(Constants.argCharacterName),
+                    characterName = it.arguments?.getString(NavigationConstants.argCharacterName),
                     viewModel = koinViewModel<CharacterDetailScreenViewModel>(parameters = {
-                        parametersOf(it.arguments?.getString(Constants.argCharacterId))
+                        parametersOf(it.arguments?.getString(NavigationConstants.argCharacterId))
                     }),
                     onEpisodeDetailClicked = { id, name ->
                         navController.navigate(
@@ -75,12 +76,12 @@ fun Navigation() {
             }
 
             composable(
-                route = Screen.EpisodeDetail.route + "/{${Constants.argEpisodeId}}/{${Constants.argEpisodeName}}",
+                route = Screen.EpisodeDetail.route + "/{${NavigationConstants.argEpisodeId}}/{${NavigationConstants.argEpisodeName}}",
                 arguments = listOf(
-                    navArgument(Constants.argEpisodeId) {
+                    navArgument(NavigationConstants.argEpisodeId) {
                         type = NavType.StringType
                     },
-                    navArgument(Constants.argEpisodeName) {
+                    navArgument(NavigationConstants.argEpisodeName) {
                         type = NavType.StringType
                     },
                 )
@@ -88,9 +89,9 @@ fun Navigation() {
                 EpisodeDetailScreen(
                     onBackClicked = navController::navigateUp,
                     viewModel = koinViewModel<EpisodeDetailScreenViewModel>(parameters = {
-                        parametersOf(it.arguments?.getString(Constants.argEpisodeId))
+                        parametersOf(it.arguments?.getString(NavigationConstants.argEpisodeId))
                     }),
-                    episodeName = it.arguments?.getString(Constants.argEpisodeName),
+                    episodeName = it.arguments?.getString(NavigationConstants.argEpisodeName),
                 )
             }
         }

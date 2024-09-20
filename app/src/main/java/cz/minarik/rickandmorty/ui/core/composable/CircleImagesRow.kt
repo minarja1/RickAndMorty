@@ -1,4 +1,4 @@
-package cz.minarik.rickandmorty.ui.components
+package cz.minarik.rickandmorty.ui.core.composable
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height

@@ -3,7 +3,7 @@ package cz.minarik.rickandmorty.ui.model
 import androidx.compose.runtime.Immutable
 
 /**
- * Model for character detail.
+ * Model for episode detail.
  *
  **/
 @Immutable
