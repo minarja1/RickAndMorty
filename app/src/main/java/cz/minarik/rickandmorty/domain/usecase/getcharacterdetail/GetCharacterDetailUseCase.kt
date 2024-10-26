@@ -28,7 +28,7 @@ class GetCharacterDetailUseCase @Inject constructor(
      * @return character detail
      */
     operator fun invoke(characterId: String): Flow<FetchState<CharacterDetail?>> = flow {
-        emit(Loading())
+        emit(Loading)
         val characterDetail = repository.getCharacterDetail(characterId)
         emit(SuccessWithData(characterDetail))
     }.catch { e ->

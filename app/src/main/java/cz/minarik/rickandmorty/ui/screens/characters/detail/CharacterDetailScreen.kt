@@ -43,9 +43,9 @@ import cz.minarik.rickandmorty.ui.core.composable.PreviewSurface
 import cz.minarik.rickandmorty.ui.core.composable.RaMTopAppBar
 import cz.minarik.rickandmorty.ui.core.composable.ScreenContentWrapper
 import cz.minarik.rickandmorty.ui.core.composable.ScreenPreview
-import cz.minarik.rickandmorty.ui.core.model.ComposeViewModel
 import cz.minarik.rickandmorty.ui.core.model.PreviewViewModel
 import cz.minarik.rickandmorty.ui.core.model.UIState
+import cz.minarik.rickandmorty.ui.core.model.UIViewModel
 import cz.minarik.rickandmorty.ui.model.CharacterDetailVo
 import cz.minarik.rickandmorty.ui.screens.home.components.ClickableCard
 import cz.minarik.rickandmorty.ui.screens.home.util.MockData
@@ -59,7 +59,7 @@ fun CharacterDetailScreen(
     onBackClicked: () -> Unit,
     characterName: String?,
     onEpisodeDetailClicked: (String, String?) -> Unit,
-    viewModel: ComposeViewModel<CharacterDetailScreenData, CharacterDetailScreenEvent>,
+    viewModel: UIViewModel<CharacterDetailScreenData, CharacterDetailScreenEvent>,
 ) {
     val viewState by viewModel.viewState.collectAsStateWithLifecycle()
     ScreenContentWrapper(state = viewState) {

@@ -10,8 +10,6 @@ import androidx.compose.ui.graphics.Color
 /**
  * Color definitions.
  */
-
-
 @Suppress("MagicNumber")
 internal val Charcoal = Color(0xff373F51)
 

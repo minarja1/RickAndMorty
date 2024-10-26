@@ -28,7 +28,7 @@ class GetEpisodeDetailUseCase @Inject constructor(
      * @return episode detail
      */
     operator fun invoke(episodeId: String): Flow<FetchState<EpisodeDetail?>> = flow {
-        emit(Loading())
+        emit(Loading)
         val episodeDetail = repository.getEpisodeDetail(episodeId)
         emit(SuccessWithData(episodeDetail))
     }.catch { e ->

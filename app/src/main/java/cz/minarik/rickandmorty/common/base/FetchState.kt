@@ -3,12 +3,12 @@ package cz.minarik.rickandmorty.common.base
 /**
  * Base class for all states of fetching data.
  */
-sealed class FetchState<T>
+sealed class FetchState<out T>
 
 /**
  * Loading state.
  */
-class Loading<T> : FetchState<T>()
+data object Loading : FetchState<Nothing>()
 
 /**
  * Success state with data.
@@ -24,6 +24,6 @@ data class SuccessWithData<T>(
  *
  * @param error error message
  */
-data class FailedWithError<T>(
+data class FailedWithError(
     val error: String,
-) : FetchState<T>()
+) : FetchState<Nothing>()

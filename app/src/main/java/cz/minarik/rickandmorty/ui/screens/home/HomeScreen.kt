@@ -44,7 +44,7 @@ import com.google.accompanist.pager.rememberPagerState
 import cz.minarik.rickandmorty.ui.core.composable.PagedScreenContentWrapper
 import cz.minarik.rickandmorty.ui.core.composable.PreviewSurface
 import cz.minarik.rickandmorty.ui.core.composable.ScreenPreview
-import cz.minarik.rickandmorty.ui.core.model.ComposeViewModel
+import cz.minarik.rickandmorty.ui.core.model.UIViewModel
 import cz.minarik.rickandmorty.ui.core.model.PreviewViewModel
 import cz.minarik.rickandmorty.ui.core.model.UIEvent
 import cz.minarik.rickandmorty.ui.core.model.UIState
@@ -69,7 +69,7 @@ import kotlinx.coroutines.launch
 fun HomeScreen(
     onCharacterDetailClicked: (String, String?) -> Unit,
     onEpisodeDetailClicked: (String, String?) -> Unit,
-    viewModel: ComposeViewModel<HomeScreenData, UIEvent>,
+    viewModel: UIViewModel<HomeScreenData, UIEvent>,
 ) {
     val viewState by viewModel.viewState.collectAsStateWithLifecycle()
     Scaffold(

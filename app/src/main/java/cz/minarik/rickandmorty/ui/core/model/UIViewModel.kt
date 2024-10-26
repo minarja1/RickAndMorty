@@ -4,13 +4,13 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
 /**
- * Interface that needs to be implemented in each of ViewModel that is used together
- * with Jetpack Compose. It ensures correct usage of State/Event architecture.
+ * Interface that needs to be implemented in each of ViewModel that manages a [UIState].
+ * It ensures correct usage of State/Event architecture.
  *
  * @param T type of data that are shared with UI in [UIState]
  * @param E type of event sealed class that implements [UIEvent]
  */
-interface ComposeViewModel<T, E : UIEvent> {
+interface UIViewModel<T, E : UIEvent> {
 
     /**
      * State of View that is observed in compose screens. It uses [StateFlow] to limit accessibility
@@ -28,13 +28,13 @@ interface ComposeViewModel<T, E : UIEvent> {
 }
 
 /**
- * CLass which simplifies usage of compose previews that are connected to [ComposeViewModel].
+ * CLass which simplifies usage of compose previews that are connected to [UIViewModel].
  *
  * @param T type of data that are shared with UI in UIState
  * @param E type of event sealed class that implements UIEvent
  * @property state UI state to be set in ViewModel.
  */
-open class PreviewViewModel<T, E : UIEvent>(val state: UIState<T>) : ComposeViewModel<T, E> {
+open class PreviewViewModel<T, E : UIEvent>(val state: UIState<T>) : UIViewModel<T, E> {
 
     override val viewState: StateFlow<UIState<T>> = MutableStateFlow(state)
 

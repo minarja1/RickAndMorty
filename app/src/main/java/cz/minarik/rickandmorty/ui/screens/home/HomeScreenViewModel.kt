@@ -12,7 +12,7 @@ import cz.minarik.rickandmorty.data.remote.paging.EpisodePagingSource
 import cz.minarik.rickandmorty.domain.repository.CharacterRepository
 import cz.minarik.rickandmorty.domain.repository.EpisodeRepository
 import cz.minarik.rickandmorty.ui.common.toCardVO
-import cz.minarik.rickandmorty.ui.core.model.ComposeViewModel
+import cz.minarik.rickandmorty.ui.core.model.UIViewModel
 import cz.minarik.rickandmorty.ui.core.model.UIEvent
 import cz.minarik.rickandmorty.ui.core.model.UIState
 import cz.minarik.rickandmorty.ui.model.ClickableCardVo
@@ -32,7 +32,7 @@ import kotlinx.coroutines.flow.map
 class HomeScreenViewModel(
     private val characterRepository: CharacterRepository,
     private val episodeRepository: EpisodeRepository,
-) : ComposeViewModel<HomeScreenData, UIEvent>, ViewModel() {
+) : UIViewModel<HomeScreenData, UIEvent>, ViewModel() {
 
     /**
      * Flow of paged characters.
