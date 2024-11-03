@@ -48,6 +48,22 @@ fun CharacterListItem(
     animatedContentScope: AnimatedContentScope? = null,
 ) {
     val roundedCornerShape = RoundedCornerShape(8.dp)
+
+    val sharedTransitionModifierImage =
+        if (sharedTransitionScope == null || animatedContentScope == null) {
+            Modifier
+        } else {
+            with(sharedTransitionScope) {
+                Modifier.sharedBounds(
+                    rememberSharedContentState(key = "${character.imageUrl}"),
+                    animatedVisibilityScope = animatedContentScope,
+                    enter = fadeIn(),
+                    exit = fadeOut(),
+                    resizeMode = SharedTransitionScope.ResizeMode.ScaleToBounds()
+                )
+            }
+        }
+
     Card(
         shape = roundedCornerShape,
         border = BorderStroke(
@@ -56,22 +72,12 @@ fun CharacterListItem(
         ),
         modifier = modifier
             .clip(roundedCornerShape)
+            .then(sharedTransitionModifierImage)
             .clickable { onItemClick(character) }
     ) {
         Box(
             modifier = Modifier.fillMaxWidth()
         ) {
-            val sharedTransitionModifierImage =
-                if (sharedTransitionScope == null || animatedContentScope == null) {
-                    Modifier
-                } else {
-                    with(sharedTransitionScope) {
-                        Modifier.sharedElement(
-                            sharedTransitionScope.rememberSharedContentState(key = "${character.imageUrl}"),
-                            animatedVisibilityScope = animatedContentScope
-                        )
-                    }
-                }
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
                     .data(character.imageUrl)
@@ -82,7 +88,6 @@ fun CharacterListItem(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(CharacterImageSize)
-                    .then(sharedTransitionModifierImage)
             )
             character.name?.let {
                 val sharedTransitionModifierName =
@@ -111,15 +116,15 @@ fun CharacterListItem(
                                     MaterialTheme.colorScheme.background
                                 )
                             )
-                        ),
+                        )
+                        .then(sharedTransitionModifierName),
                 ) {
                     Text(
                         modifier = Modifier
                             .padding(horizontal = SpacingXSmall)
                             .padding(bottom = SpacingXXSmall)
                             .padding(top = SpacingSmall)
-                            .align(Alignment.BottomCenter)
-                            .then(sharedTransitionModifierName),
+                            .align(Alignment.BottomCenter),
                         text = character.name,
                         style = MaterialTheme.typography.bodyLarge,
                         overflow = TextOverflow.Ellipsis,

@@ -88,9 +88,12 @@ fun CharacterDetailScreen(
                         Modifier
                     } else {
                         with(sharedTransitionScope) {
-                            Modifier.sharedElement(
-                                sharedTransitionScope.rememberSharedContentState(key = "$imageUrl"),
-                                animatedVisibilityScope = animatedContentScope
+                            Modifier.sharedBounds(
+                                rememberSharedContentState(key = "$imageUrl"),
+                                animatedVisibilityScope = animatedContentScope,
+                                enter = fadeIn(),
+                                exit = fadeOut(),
+                                resizeMode = SharedTransitionScope.ResizeMode.ScaleToBounds()
                             )
                         }
                     }
