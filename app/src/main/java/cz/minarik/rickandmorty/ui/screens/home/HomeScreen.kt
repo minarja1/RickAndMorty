@@ -44,10 +44,10 @@ import com.google.accompanist.pager.rememberPagerState
 import cz.minarik.rickandmorty.ui.core.composable.PagedScreenContentWrapper
 import cz.minarik.rickandmorty.ui.core.composable.PreviewSurface
 import cz.minarik.rickandmorty.ui.core.composable.ScreenPreview
-import cz.minarik.rickandmorty.ui.core.model.UIViewModel
 import cz.minarik.rickandmorty.ui.core.model.PreviewViewModel
 import cz.minarik.rickandmorty.ui.core.model.UIEvent
 import cz.minarik.rickandmorty.ui.core.model.UIState
+import cz.minarik.rickandmorty.ui.core.model.UIViewModel
 import cz.minarik.rickandmorty.ui.model.ClickableCardVo
 import cz.minarik.rickandmorty.ui.model.TVCharacterVo
 import cz.minarik.rickandmorty.ui.screens.home.components.CharacterListItem

@@ -8,6 +8,9 @@ import cz.minarik.rickandmorty.ui.core.model.UIEvent
  */
 sealed interface CharacterDetailScreenEvent : UIEvent {
 
+    /**
+     * Event for when the user clicks on the expand episodes button.
+     */
     data object ExpandEpisodesClicked : CharacterDetailScreenEvent
 
 }

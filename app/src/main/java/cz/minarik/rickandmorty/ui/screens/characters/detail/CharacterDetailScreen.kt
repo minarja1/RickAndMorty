@@ -132,13 +132,13 @@ private fun CharacterDetailContent(
                     )
                 }
             }
-            item {
-                Spacer(
-                    Modifier.windowInsetsBottomHeight(
-                        WindowInsets.systemBars
-                    )
+        }
+        item {
+            Spacer(
+                Modifier.windowInsetsBottomHeight(
+                    WindowInsets.systemBars
                 )
-            }
+            )
         }
     }
 }

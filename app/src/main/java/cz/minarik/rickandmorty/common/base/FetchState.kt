@@ -25,5 +25,5 @@ data class SuccessWithData<T>(
  * @param error error message
  */
 data class FailedWithError(
-    val error: String,
+    val error: Throwable,
 ) : FetchState<Nothing>()

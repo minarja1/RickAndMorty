@@ -3,7 +3,6 @@ package cz.minarik.rickandmorty.domain.usecase.getcharacterdetail
 import cz.minarik.rickandmorty.common.base.FailedWithError
 import cz.minarik.rickandmorty.common.base.Loading
 import cz.minarik.rickandmorty.common.base.SuccessWithData
-import cz.minarik.rickandmorty.data.remote.exception.GeneralApiException
 import cz.minarik.rickandmorty.domain.model.CharacterDetail
 import cz.minarik.rickandmorty.domain.model.Episode
 import cz.minarik.rickandmorty.domain.model.Location
@@ -14,6 +13,7 @@ import io.kotest.matchers.types.shouldBeInstanceOf
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.flow.toList
+import okio.IOException
 
 /**
  * Tests for [GetCharacterDetailUseCase].
@@ -45,17 +45,17 @@ class GetCharacterDetailUseCaseTest : StringSpec({
 
         val result = useCase(characterId).toList()
 
-        result.first().shouldBeInstanceOf<Loading<*>>()
+        result.first().shouldBeInstanceOf<Loading>()
         result.last() shouldBe SuccessWithData(characterDetail)
     }
 
     "should emit Loading and FailedWithError when repository throws an exception" {
-        coEvery { repository.getCharacterDetail(characterId) } throws GeneralApiException()
+        coEvery { repository.getCharacterDetail(characterId) } throws IOException()
 
         val result = useCase(characterId).toList()
 
-        result.first().shouldBeInstanceOf<Loading<*>>()
-        result.last().shouldBeInstanceOf<FailedWithError<GeneralApiException>>()
-        (result.last() as FailedWithError<*>).error shouldBe GeneralApiException.generalMessage
+        result.first().shouldBeInstanceOf<Loading>()
+        result.last().shouldBeInstanceOf<FailedWithError>()
+        (result.last() as FailedWithError).error shouldBe IOException()
     }
 })

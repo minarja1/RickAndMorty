@@ -4,6 +4,9 @@ import cz.minarik.rickandmorty.domain.model.CharacterDetail
 import cz.minarik.rickandmorty.ui.common.toCardVO
 import cz.minarik.rickandmorty.ui.model.CharacterDetailVo
 
+/**
+ * Mapper for converting [CharacterDetail] to [CharacterDetailVo].
+ */
 fun CharacterDetail.toVo() = CharacterDetailVo(
     id = id,
     name = name,

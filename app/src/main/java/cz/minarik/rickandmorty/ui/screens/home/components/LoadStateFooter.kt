@@ -10,6 +10,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.paging.LoadState
 import cz.minarik.rickandmorty.R
+import cz.minarik.rickandmorty.ui.common.toDisplayMessage
 import cz.minarik.rickandmorty.ui.core.composable.ComponentPreview
 import cz.minarik.rickandmorty.ui.core.composable.ErrorIndicator
 import cz.minarik.rickandmorty.ui.core.composable.PreviewSurface
@@ -53,7 +54,7 @@ fun LoadStateFooter(
                     .fillMaxWidth()
                     .padding(SpacingLarge),
                 errorIndicatorVo = ErrorIndicatorVo(
-                    text = StringModel.String(loadState.error.message ?: ""),
+                    text = StringModel.String(loadState.error.toDisplayMessage()),
                     buttonVo = ButtonVo(
                         text = StringModel.Resource(id = R.string.try_again),
                         onClick = onTryAgain

@@ -3,7 +3,6 @@ package cz.minarik.rickandmorty.domain.usecase.getepisodedetail
 import cz.minarik.rickandmorty.common.base.FailedWithError
 import cz.minarik.rickandmorty.common.base.Loading
 import cz.minarik.rickandmorty.common.base.SuccessWithData
-import cz.minarik.rickandmorty.data.remote.exception.GeneralApiException
 import cz.minarik.rickandmorty.domain.model.EpisodeDetail
 import cz.minarik.rickandmorty.domain.repository.EpisodeRepository
 import io.kotest.core.spec.style.StringSpec
@@ -33,7 +32,7 @@ class GetEpisodeDetailUseCaseTest : StringSpec({
 
         val result = useCase(episodeId).toList()
 
-        result.first().shouldBeInstanceOf<Loading<*>>()
+        result.first().shouldBeInstanceOf<Loading>()
         result.last() shouldBe SuccessWithData(expectedEpisodeDetail)
     }
 
@@ -45,9 +44,9 @@ class GetEpisodeDetailUseCaseTest : StringSpec({
 
         val result = useCase(episodeId).toList()
 
-        result.first().shouldBeInstanceOf<Loading<*>>()
-        result.last().shouldBeInstanceOf<FailedWithError<GeneralApiException>>()
-        (result.last() as FailedWithError<*>).error shouldBe expectedErrorMessage
+        result.first().shouldBeInstanceOf<Loading>()
+        result.last().shouldBeInstanceOf<FailedWithError>()
+        (result.last() as FailedWithError).error.message shouldBe expectedErrorMessage
     }
 })
 

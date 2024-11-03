@@ -25,17 +25,6 @@ plugins {
     alias(libs.plugins.apollo3) apply false
     alias(libs.plugins.detekt) apply false
     alias(libs.plugins.compose.compiler) apply false
-
-//    id("io.gitlab.arturbosch.detekt") version "1.21.0"
-    // todo replace with version catalog (throws error)
-//    alias(libs.plugins.detekt) apply false
-}
-
-subprojects {
-//    detekt {
-//        config = files("$projectDir/config/detekt.yml")
-//        baseline = file("$projectDir/config/baseline.xml")
-//    }
 }
 
 task clean(type: Delete) {

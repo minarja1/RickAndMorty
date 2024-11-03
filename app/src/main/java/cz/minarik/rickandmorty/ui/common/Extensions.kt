@@ -1,5 +1,6 @@
 package cz.minarik.rickandmorty.ui.common
 
+import cz.minarik.rickandmorty.data.remote.exception.NoConnectionException
 import cz.minarik.rickandmorty.ui.core.model.ErrorIndicatorVo
 import cz.minarik.rickandmorty.ui.core.model.UIState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -61,5 +62,16 @@ fun <T> MutableStateFlow<UIState<T>>.hideAllOverlays() {
         UIState(
             data = currentState.data
         )
+    }
+}
+
+/**
+ * Converts throwable to display message.
+ */
+fun Throwable.toDisplayMessage(): String {
+    val cause = this.cause
+    return when {
+        cause is NoConnectionException -> cause.message
+        else -> this.message ?: ""
     }
 }

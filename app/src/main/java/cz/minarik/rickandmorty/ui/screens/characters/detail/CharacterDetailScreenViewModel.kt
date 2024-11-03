@@ -10,6 +10,7 @@ import cz.minarik.rickandmorty.domain.usecase.getcharacterdetail.GetCharacterDet
 import cz.minarik.rickandmorty.ui.common.hideAllOverlays
 import cz.minarik.rickandmorty.ui.common.showError
 import cz.minarik.rickandmorty.ui.common.showLoading
+import cz.minarik.rickandmorty.ui.common.toDisplayMessage
 import cz.minarik.rickandmorty.ui.common.updateData
 import cz.minarik.rickandmorty.ui.core.model.ButtonVo
 import cz.minarik.rickandmorty.ui.core.model.ErrorIndicatorVo
@@ -73,7 +74,7 @@ class CharacterDetailScreenViewModel(
                 is FailedWithError -> {
                     _viewState.showError(
                         error = ErrorIndicatorVo(
-                            text = StringModel.String(result.error),
+                            text = StringModel.String(result.error.toDisplayMessage()),
                             buttonVo = ButtonVo(
                                 text = StringModel.Resource(R.string.try_again),
                                 onClick = { getCharacterDetail() }

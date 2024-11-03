@@ -53,7 +53,7 @@ sealed interface StringModel : java.io.Serializable {
             other as HtmlResource
 
             return id == other.id &&
-                params.contentEquals(other.params)
+                    params.contentEquals(other.params)
         }
 
         override fun hashCode(): Int {
@@ -90,7 +90,7 @@ sealed interface StringModel : java.io.Serializable {
             other as Resource
 
             return id == other.id &&
-                params.contentEquals(other.params)
+                    params.contentEquals(other.params)
         }
 
         override fun hashCode(): Int {
@@ -138,8 +138,8 @@ sealed interface StringModel : java.io.Serializable {
 
             other as PluralResource
             return id == other.id &&
-                count == other.count &&
-                params.contentEquals(other.params)
+                    count == other.count &&
+                    params.contentEquals(other.params)
         }
 
         override fun hashCode(): Int {
@@ -221,14 +221,6 @@ sealed interface StringModel : java.io.Serializable {
             } else {
                 getStringFromComposedString(context, model.models)
             }
-        }
-    }
-
-    fun isNotEmpty(): Boolean {
-        return when (this) {
-            is String -> value.isNotEmpty()
-            is Html -> value.isNotEmpty()
-            else -> false
         }
     }
 }

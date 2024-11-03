@@ -4,6 +4,9 @@ import cz.minarik.rickandmorty.ui.model.CircleImageVo
 import cz.minarik.rickandmorty.ui.model.ClickableCardVo
 import cz.minarik.rickandmorty.ui.model.TVCharacterVo
 
+/**
+ * Mock data for testing/preview purposes.
+ */
 object MockData {
     val characters = listOf(
         TVCharacterVo(

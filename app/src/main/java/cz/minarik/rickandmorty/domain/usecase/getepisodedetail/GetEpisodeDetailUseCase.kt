@@ -4,7 +4,6 @@ import cz.minarik.rickandmorty.common.base.FailedWithError
 import cz.minarik.rickandmorty.common.base.FetchState
 import cz.minarik.rickandmorty.common.base.Loading
 import cz.minarik.rickandmorty.common.base.SuccessWithData
-import cz.minarik.rickandmorty.data.remote.exception.GeneralApiException
 import cz.minarik.rickandmorty.domain.model.EpisodeDetail
 import cz.minarik.rickandmorty.domain.repository.EpisodeRepository
 import kotlinx.coroutines.flow.Flow
@@ -32,6 +31,6 @@ class GetEpisodeDetailUseCase @Inject constructor(
         val episodeDetail = repository.getEpisodeDetail(episodeId)
         emit(SuccessWithData(episodeDetail))
     }.catch { e ->
-        emit(FailedWithError(e.message ?: GeneralApiException.generalMessage))
+        emit(FailedWithError(e))
     }
 }

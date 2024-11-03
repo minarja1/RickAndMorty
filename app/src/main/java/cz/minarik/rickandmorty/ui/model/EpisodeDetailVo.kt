@@ -4,7 +4,6 @@ import androidx.compose.runtime.Immutable
 
 /**
  * Model for episode detail.
- *
  **/
 @Immutable
 data class EpisodeDetailVo(

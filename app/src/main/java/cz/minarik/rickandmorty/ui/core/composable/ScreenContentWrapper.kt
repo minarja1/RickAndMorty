@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.sp
 import androidx.paging.LoadState
 import cz.minarik.rickandmorty.R
+import cz.minarik.rickandmorty.ui.common.toDisplayMessage
 import cz.minarik.rickandmorty.ui.core.model.ButtonVo
 import cz.minarik.rickandmorty.ui.core.model.ErrorIndicatorVo
 import cz.minarik.rickandmorty.ui.core.model.StringModel
@@ -78,7 +79,7 @@ fun PagedScreenContentWrapper(
                     ErrorIndicator(
                         modifier = Modifier.fillMaxSize(),
                         errorIndicatorVo = ErrorIndicatorVo(
-                            text = StringModel.String(loadState.error.message ?: ""),
+                            text = StringModel.String(loadState.error.toDisplayMessage()),
                             buttonVo = ButtonVo(
                                 text = StringModel.Resource(id = R.string.try_again),
                                 onClick = onTryAgain
