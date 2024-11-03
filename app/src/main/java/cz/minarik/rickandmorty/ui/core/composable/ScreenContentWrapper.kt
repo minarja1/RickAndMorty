@@ -20,11 +20,13 @@ import cz.minarik.rickandmorty.ui.core.model.UIState
  * Wrapper for screen content with loading and error states.
  *
  * @param state UI state
+ * @param showLoading show loading indicator
  * @param content screen content
  */
 @Composable
 fun ScreenContentWrapper(
     state: UIState<*>,
+    showLoading: Boolean = true,
     content: @Composable () -> Unit,
 ) {
     content()
@@ -33,7 +35,7 @@ fun ScreenContentWrapper(
         label = "resultScreenAnimation"
     ) { targetState ->
         when {
-            targetState.loading -> {
+            targetState.loading && showLoading -> {
                 ProgressIndicator(
                     modifier = Modifier.fillMaxSize(),
                 )

@@ -1,7 +1,12 @@
 package cz.minarik.rickandmorty.ui.screens.characters.detail
 
 import android.annotation.SuppressLint
+import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -21,6 +26,7 @@ import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.windowInsetsBottomHeight
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
@@ -40,7 +46,10 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.rememberAsyncImagePainter
 import cz.minarik.rickandmorty.R
+import cz.minarik.rickandmorty.navigation.CharacterImageUrl
+import cz.minarik.rickandmorty.navigation.CharacterName
 import cz.minarik.rickandmorty.ui.core.composable.PreviewSurface
+import cz.minarik.rickandmorty.ui.core.composable.ProgressIndicator
 import cz.minarik.rickandmorty.ui.core.composable.ScreenContentWrapper
 import cz.minarik.rickandmorty.ui.core.composable.ScreenPreview
 import cz.minarik.rickandmorty.ui.core.model.PreviewViewModel
@@ -53,54 +62,65 @@ import cz.minarik.rickandmorty.ui.theme.SpacingMedium
 import cz.minarik.rickandmorty.ui.theme.SpacingSmall
 import cz.minarik.rickandmorty.ui.theme.SpacingXLarge
 
+@OptIn(ExperimentalSharedTransitionApi::class, ExperimentalFoundationApi::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun CharacterDetailScreen(
-    onEpisodeDetailClicked: (String, String?) -> Unit,
+    onEpisodeDetailClicked: (String) -> Unit,
     viewModel: UIViewModel<CharacterDetailScreenData, CharacterDetailScreenEvent>,
+    sharedTransitionScope: SharedTransitionScope? = null,
+    animatedContentScope: AnimatedContentScope? = null,
+    imageUrl: CharacterImageUrl? = null,
+    characterName: CharacterName? = null,
+    characterId: String,
 ) {
     val viewState by viewModel.viewState.collectAsStateWithLifecycle()
-    ScreenContentWrapper(state = viewState) {
-        viewState.data.character?.let {
-            CharacterDetailContent(
-                character = it,
-                expanded = viewState.data.episodesExpanded,
-                onExpanded = { viewModel.onEvent(CharacterDetailScreenEvent.ExpandEpisodesClicked) },
-                onEpisodeDetailClicked = onEpisodeDetailClicked,
-            )
-        }
-    }
-}
-
-@OptIn(ExperimentalFoundationApi::class)
-@Composable
-private fun CharacterDetailContent(
-    character: CharacterDetailVo,
-    expanded: Boolean,
-    onExpanded: () -> Unit,
-    onEpisodeDetailClicked: (String, String?) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Box {
+    ScreenContentWrapper(state = viewState, showLoading = false) {
         LazyColumn(
-            modifier
+            Modifier
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             item {
+                val sharedTransitionModifierImage =
+                    if (sharedTransitionScope == null || animatedContentScope == null) {
+                        Modifier
+                    } else {
+                        with(sharedTransitionScope) {
+                            Modifier.sharedElement(
+                                sharedTransitionScope.rememberSharedContentState(key = "$imageUrl"),
+                                animatedVisibilityScope = animatedContentScope
+                            )
+                        }
+                    }
                 Image(
                     modifier = Modifier
                         .aspectRatio(1f)
-                        .fillMaxWidth(),
-                    painter = rememberAsyncImagePainter(character.imageUrl),
+                        .fillMaxWidth()
+                        .then(sharedTransitionModifierImage),
+                    painter = rememberAsyncImagePainter(imageUrl),
                     contentDescription = stringResource(id = R.string.character_image),
                     contentScale = ContentScale.Crop
                 )
             }
 
             stickyHeader {
-                if (character.name?.isNotBlank() == true) {
+                if (characterName?.isNotBlank() == true) {
+                    val sharedTransitionModifierName =
+                        if (sharedTransitionScope == null || animatedContentScope == null) {
+                            Modifier
+                        } else {
+                            with(sharedTransitionScope) {
+                                Modifier.sharedBounds(
+                                    rememberSharedContentState(key = "$characterId + $characterName"),
+                                    animatedVisibilityScope = animatedContentScope,
+                                    enter = fadeIn(),
+                                    exit = fadeOut(),
+                                    resizeMode = SharedTransitionScope.ResizeMode.RemeasureToBounds
+                                )
+                            }
+                        }
                     Text(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -108,54 +128,84 @@ private fun CharacterDetailContent(
                             .background(MaterialTheme.colorScheme.background)
                             .windowInsetsPadding(
                                 WindowInsets.statusBars
-                            ),
+                            )
+                            .then(sharedTransitionModifierName),
                         textAlign = TextAlign.Center,
-                        text = character.name,
+                        text = characterName,
                         style = MaterialTheme.typography.headlineMedium,
                         color = MaterialTheme.colorScheme.onBackground,
                     )
                 }
             }
 
-            item {
-                CharacterHeader(character)
-            }
-
-            if (character.episodes.isNotEmpty()) {
-                item {
-                    EpisodesExpandButton(
-                        expanded = expanded,
-                        onExpanded = onExpanded
-                    )
+            when {
+                viewState.data.character != null -> {
+                    viewState.data.character?.let {
+                        characterDetailContent(
+                            character = it,
+                            expanded = viewState.data.episodesExpanded,
+                            onExpanded = { viewModel.onEvent(CharacterDetailScreenEvent.ExpandEpisodesClicked) },
+                            onEpisodeDetailClicked = onEpisodeDetailClicked,
+                        )
+                    }
                 }
 
-                if (expanded) {
-                    items(
-                        items = character.episodes,
-                        key = { it.id },
-                    ) { episode ->
-                        ClickableCard(
-                            modifier = Modifier
-                                .padding(
-                                    horizontal = ScreenPaddingHorizontal,
-                                    vertical = SpacingSmall
-                                ),
-                            clickableCardVo = episode,
-                            onItemClick = {
-                                onEpisodeDetailClicked.invoke(episode.id, episode.title)
-                            }
+                viewState.loading -> {
+                    item {
+                        ProgressIndicator(
+                            modifier = Modifier.padding(top = SpacingXLarge),
+                            showOverlay = false
                         )
                     }
                 }
             }
-            item {
-                Spacer(
-                    Modifier.windowInsetsBottomHeight(
-                        WindowInsets.systemBars
-                    )
+        }
+    }
+}
+
+private fun LazyListScope.characterDetailContent(
+    character: CharacterDetailVo,
+    expanded: Boolean,
+    onExpanded: () -> Unit,
+    onEpisodeDetailClicked: (String) -> Unit,
+) {
+    item {
+        CharacterHeader(character)
+    }
+
+    if (character.episodes.isNotEmpty()) {
+        item {
+            EpisodesExpandButton(
+                expanded = expanded,
+                onExpanded = onExpanded
+            )
+        }
+
+        if (expanded) {
+            items(
+                items = character.episodes,
+                key = { it.id },
+            ) { episode ->
+                ClickableCard(
+                    modifier = Modifier
+                        .padding(
+                            horizontal = ScreenPaddingHorizontal,
+                            vertical = SpacingSmall
+                        ),
+                    clickableCardVo = episode,
+                    onItemClick = {
+                        onEpisodeDetailClicked.invoke(episode.id)
+                    }
                 )
             }
         }
+    }
+    item {
+        Spacer(
+            Modifier.windowInsetsBottomHeight(
+                WindowInsets.systemBars
+            )
+        )
     }
 }
 
@@ -274,11 +324,14 @@ private val ItemPaddingVertical = SpacingMedium
 private const val AngleArrowUp = 270f
 private const val AngleArrowDown = 90f
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @ScreenPreview
 @Composable
 private fun CharacterDetailScreenPreview() {
     PreviewSurface {
         CharacterDetailScreen(
+            onEpisodeDetailClicked = { _ ->
+            },
             viewModel = PreviewViewModel(
                 UIState(
                     data = CharacterDetailScreenData(
@@ -297,9 +350,7 @@ private fun CharacterDetailScreenPreview() {
                     )
                 )
             ),
-            onEpisodeDetailClicked = { _, _ ->
-
-            }
+            characterId = "1",
         )
     }
 }

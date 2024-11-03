@@ -1,16 +1,17 @@
 package cz.minarik.rickandmorty.ui.screens.home
 
 import android.annotation.SuppressLint
+import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.systemBars
@@ -26,11 +27,9 @@ import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -39,6 +38,10 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemContentType
 import androidx.paging.compose.itemKey
+import cz.minarik.rickandmorty.navigation.CharacterId
+import cz.minarik.rickandmorty.navigation.CharacterImageUrl
+import cz.minarik.rickandmorty.navigation.CharacterName
+import cz.minarik.rickandmorty.ui.core.composable.CharactersRow
 import cz.minarik.rickandmorty.ui.core.composable.PagedScreenContentWrapper
 import cz.minarik.rickandmorty.ui.core.composable.PreviewSurface
 import cz.minarik.rickandmorty.ui.core.composable.ScreenPreview
@@ -48,7 +51,6 @@ import cz.minarik.rickandmorty.ui.core.model.UIState
 import cz.minarik.rickandmorty.ui.core.model.UIViewModel
 import cz.minarik.rickandmorty.ui.model.ClickableCardVo
 import cz.minarik.rickandmorty.ui.model.TVCharacterVo
-import cz.minarik.rickandmorty.ui.screens.home.components.CharacterListItem
 import cz.minarik.rickandmorty.ui.screens.home.components.ClickableCard
 import cz.minarik.rickandmorty.ui.screens.home.components.LoadStateFooter
 import cz.minarik.rickandmorty.ui.screens.home.util.CharacterItemUtils.getListColumnsCount
@@ -63,12 +65,15 @@ import kotlinx.coroutines.launch
  * @param onCharacterDetailClicked Callback for character detail click.
  * @param onEpisodeDetailClicked Callback for episode detail click.
  */
+@OptIn(ExperimentalSharedTransitionApi::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun HomeScreen(
-    onCharacterDetailClicked: (String, String?) -> Unit,
-    onEpisodeDetailClicked: (String, String?) -> Unit,
+    onCharacterDetailClicked: (CharacterId, CharacterImageUrl?, CharacterName?) -> Unit,
+    onEpisodeDetailClicked: (String) -> Unit,
     viewModel: UIViewModel<HomeScreenData, UIEvent>,
+    sharedTransitionScope: SharedTransitionScope? = null,
+    animatedContentScope: AnimatedContentScope? = null,
 ) {
     val viewState by viewModel.viewState.collectAsStateWithLifecycle()
     Scaffold(
@@ -86,25 +91,32 @@ fun HomeScreen(
                 pagedEpisodes = viewState.data.pagedEpisodes.collectAsLazyPagingItems(),
                 onCharacterDetailClicked = onCharacterDetailClicked,
                 onEpisodeDetailClicked = onEpisodeDetailClicked,
+                sharedTransitionScope = sharedTransitionScope,
+                animatedContentScope = animatedContentScope,
             )
         }
     }
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 private fun TabsContent(
     pagedCharacters: LazyPagingItems<TVCharacterVo>,
     pagedEpisodes: LazyPagingItems<ClickableCardVo>,
-    onCharacterDetailClicked: (String, String?) -> Unit,
-    onEpisodeDetailClicked: (String, String?) -> Unit,
+    onCharacterDetailClicked: (CharacterId, CharacterImageUrl?, CharacterName?) -> Unit,
+    onEpisodeDetailClicked: (String) -> Unit,
     modifier: Modifier = Modifier,
+    sharedTransitionScope: SharedTransitionScope? = null,
+    animatedContentScope: AnimatedContentScope? = null,
 ) {
     HomeScreenTabLayout(
         charactersContent = {
             CharactersContent(
                 modifier = modifier,
                 pagedCharacters = pagedCharacters,
-                onCharacterDetailClicked = onCharacterDetailClicked
+                onCharacterDetailClicked = onCharacterDetailClicked,
+                sharedTransitionScope = sharedTransitionScope,
+                animatedContentScope = animatedContentScope,
             )
         },
         episodesContent = {
@@ -120,7 +132,7 @@ private fun TabsContent(
 @Composable
 fun EpisodesContent(
     pagedEpisodes: LazyPagingItems<ClickableCardVo>,
-    onEpisodeDetailClicked: (String, String?) -> Unit,
+    onEpisodeDetailClicked: (String) -> Unit,
     modifier: Modifier,
 ) {
     Box(modifier = modifier.fillMaxSize()) {
@@ -143,7 +155,7 @@ fun EpisodesContent(
                             modifier = Modifier.padding(SpacingXXSmall),
                             clickableCardVo = episode,
                             onItemClick = {
-                                onEpisodeDetailClicked(episode.id, episode.title)
+                                onEpisodeDetailClicked(episode.id)
                             }
                         )
                     }
@@ -167,11 +179,14 @@ fun EpisodesContent(
     }
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 private fun CharactersContent(
     pagedCharacters: LazyPagingItems<TVCharacterVo>,
-    onCharacterDetailClicked: (String, String?) -> Unit,
-    modifier: Modifier
+    onCharacterDetailClicked: (CharacterId, CharacterImageUrl?, CharacterName?) -> Unit,
+    modifier: Modifier,
+    sharedTransitionScope: SharedTransitionScope? = null,
+    animatedContentScope: AnimatedContentScope? = null,
 ) {
     Box(modifier = modifier.fillMaxSize()) {
         PagedScreenContentWrapper(
@@ -198,7 +213,9 @@ private fun CharactersContent(
                             index = index,
                             columns = columns,
                             onDetailClicked = onCharacterDetailClicked,
-                            startingCharacter = pagedCharacters[index]
+                            startingCharacter = pagedCharacters[index],
+                            sharedTransitionScope = sharedTransitionScope,
+                            animatedContentScope = animatedContentScope,
                         )
                     }
                 }
@@ -257,44 +274,8 @@ private fun HomeScreenTabLayout(
     }
 }
 
-@Composable
-fun CharactersRow(
-    characters: List<TVCharacterVo>,
-    index: Int,
-    columns: Int,
-    onDetailClicked: (String, String?) -> Unit,
-    startingCharacter: TVCharacterVo?
-) {
-    if (index % columns == 0) {
-        key(startingCharacter?.id) {
-            Row(
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                for (i in 0 until columns) {
-                    val character = characters.getOrNull(index + i)
-                    if (character != null) {
-                        CharacterListItem(
-                            modifier = Modifier
-                                .weight(1f)
-                                .padding(SpacingXXSmall),
-                            character = character,
-                            onItemClick = { onDetailClicked(it.id, it.name) })
-                    } else {
-                        // invisible placeholders to fill empty space until end of row
-                        Box(
-                            modifier = Modifier
-                                .weight(1f)
-                                .alpha(0f)
-                                .padding(SpacingXXSmall),
-                        )
-                    }
-                }
-            }
-        }
-    }
-}
 
-
+@OptIn(ExperimentalSharedTransitionApi::class)
 @ScreenPreview
 @Composable
 private fun HomeScreenPreview() {
@@ -316,8 +297,8 @@ private fun HomeScreenPreview() {
                     )
                 ),
             ),
-            onCharacterDetailClicked = { _, _ -> },
-            onEpisodeDetailClicked = { _, _ -> },
+            onCharacterDetailClicked = { _, _, _ -> },
+            onEpisodeDetailClicked = { _ -> },
         )
     }
 }

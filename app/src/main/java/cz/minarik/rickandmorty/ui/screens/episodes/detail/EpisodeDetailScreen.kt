@@ -1,6 +1,9 @@
 package cz.minarik.rickandmorty.ui.screens.episodes.detail
 
 import android.annotation.SuppressLint
+import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.PaddingValues
@@ -29,6 +32,10 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cz.minarik.rickandmorty.R
+import cz.minarik.rickandmorty.navigation.CharacterId
+import cz.minarik.rickandmorty.navigation.CharacterImageUrl
+import cz.minarik.rickandmorty.navigation.CharacterName
+import cz.minarik.rickandmorty.ui.core.composable.CharactersRow
 import cz.minarik.rickandmorty.ui.core.composable.PreviewSurface
 import cz.minarik.rickandmorty.ui.core.composable.ScreenContentWrapper
 import cz.minarik.rickandmorty.ui.core.composable.ScreenPreview
@@ -37,18 +44,20 @@ import cz.minarik.rickandmorty.ui.core.model.UIEvent
 import cz.minarik.rickandmorty.ui.core.model.UIState
 import cz.minarik.rickandmorty.ui.core.model.UIViewModel
 import cz.minarik.rickandmorty.ui.model.EpisodeDetailVo
-import cz.minarik.rickandmorty.ui.screens.home.CharactersRow
 import cz.minarik.rickandmorty.ui.screens.home.util.CharacterItemUtils.getListColumnsCount
 import cz.minarik.rickandmorty.ui.screens.home.util.MockData
 import cz.minarik.rickandmorty.ui.theme.SpacingMedium
 import cz.minarik.rickandmorty.ui.theme.SpacingSmall
 import cz.minarik.rickandmorty.ui.theme.SpacingXLarge
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun EpisodeDetailScreen(
     viewModel: UIViewModel<EpisodeDetailScreenData, UIEvent>,
-    onCharacterDetailClicked: (String, String?) -> Unit,
+    onCharacterDetailClicked: (CharacterId, CharacterImageUrl?, CharacterName?) -> Unit,
+    sharedTransitionScope: SharedTransitionScope? = null,
+    animatedContentScope: AnimatedContentScope? = null,
 ) {
     val viewState by viewModel.viewState.collectAsStateWithLifecycle()
     ScreenContentWrapper(state = viewState) {
@@ -61,7 +70,9 @@ fun EpisodeDetailScreen(
                         episode = it,
                         onCharacterDetailClicked = onCharacterDetailClicked,
                         modifier = Modifier
-                            .fillMaxSize()
+                            .fillMaxSize(),
+                        sharedTransitionScope = sharedTransitionScope,
+                        animatedContentScope = animatedContentScope,
                     )
                 }
             }
@@ -69,11 +80,14 @@ fun EpisodeDetailScreen(
     }
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 private fun EpisodeDetailView(
     episode: EpisodeDetailVo,
     modifier: Modifier = Modifier,
-    onCharacterDetailClicked: (String, String?) -> Unit,
+    onCharacterDetailClicked: (CharacterId, CharacterImageUrl?, CharacterName?) -> Unit,
+    sharedTransitionScope: SharedTransitionScope? = null,
+    animatedContentScope: AnimatedContentScope? = null,
 ) {
     LazyColumn(
         modifier = modifier,
@@ -120,7 +134,9 @@ private fun EpisodeDetailView(
                         index = index,
                         columns = columns,
                         onDetailClicked = onCharacterDetailClicked,
-                        startingCharacter = episode.characters[index]
+                        startingCharacter = episode.characters[index],
+                        sharedTransitionScope = sharedTransitionScope,
+                        animatedContentScope = animatedContentScope,
                     )
                 }
             }
@@ -198,6 +214,7 @@ private fun RowScope.TitleText(text: String) {
 private val ScreenPaddingHorizontal = SpacingXLarge
 private val ScreenPaddingVertical = SpacingMedium
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @ScreenPreview
 @Composable
 private fun EpisodeDetailScreenPreview() {
@@ -216,7 +233,7 @@ private fun EpisodeDetailScreenPreview() {
                     )
                 )
             ),
-            onCharacterDetailClicked = { _, _ -> }
+            onCharacterDetailClicked = { _, _, _ -> }
         )
     }
 }

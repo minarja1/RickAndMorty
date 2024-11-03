@@ -6,8 +6,8 @@ package cz.minarik.rickandmorty.navigation
 @Suppress("UndocumentedPublicProperty")
 object NavigationConstants {
     const val argCharacterId = "argCharacterId"
+    const val argCharacterImageUrl = "argCharacterImageUrl"
     const val argCharacterName = "argCharacterName"
 
-    const val argEpisodeName = "argEpisodeName"
     const val argEpisodeId = "argEpisodeId"
 }
