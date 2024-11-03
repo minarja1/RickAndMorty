@@ -29,7 +29,6 @@ import cz.minarik.rickandmorty.ui.core.composable.ComponentPreview
 import cz.minarik.rickandmorty.ui.core.composable.PreviewSurface
 import cz.minarik.rickandmorty.ui.model.TVCharacterVo
 import cz.minarik.rickandmorty.ui.screens.home.util.MockData
-import cz.minarik.rickandmorty.ui.theme.SpacingLarge
 import cz.minarik.rickandmorty.ui.theme.SpacingSmall
 import cz.minarik.rickandmorty.ui.theme.SpacingXSmall
 import cz.minarik.rickandmorty.ui.theme.SpacingXXSmall

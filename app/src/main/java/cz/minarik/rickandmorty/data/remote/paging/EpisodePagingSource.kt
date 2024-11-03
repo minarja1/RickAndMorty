@@ -28,7 +28,7 @@ class EpisodePagingSource(
                 nextKey = charactersResponse.info?.next,
             )
         } catch (exception: Exception) {
-            return LoadResult.Error(exception)
+            LoadResult.Error(exception)
         }
     }
 }
