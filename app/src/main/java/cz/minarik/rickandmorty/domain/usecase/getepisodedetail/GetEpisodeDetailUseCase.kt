@@ -9,14 +9,13 @@ import cz.minarik.rickandmorty.domain.repository.EpisodeRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
-import javax.inject.Inject
 
 /**
  * Use case for getting episode detail.
  *
  * @property repository episode repository
  */
-class GetEpisodeDetailUseCase @Inject constructor(
+class GetEpisodeDetailUseCase(
     private val repository: EpisodeRepository,
 ) {
 

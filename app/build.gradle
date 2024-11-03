@@ -71,10 +71,9 @@ dependencies {
 
     implementation libs.androidx.core.ktx
     implementation libs.androidx.appcompat
-    implementation libs.material
     implementation libs.androidx.lifecycle.runtime.ktx
     implementation libs.androidx.activity.compose
-    implementation libs.javax.inject
+    implementation libs.androidx.material3.android
 
     // tests
     testImplementation libs.kotest.runner.junit5.jvm
@@ -82,8 +81,6 @@ dependencies {
     androidTestImplementation libs.mockk.android
     androidTestImplementation libs.kotest.runner.junit5.jvm
     androidTestImplementation libs.kotest.assertions.core.jvm
-    androidTestImplementation libs.androidx.rules
-    androidTestImplementation libs.androidx.espresso.core
     androidTestImplementation libs.core.ktx
     androidTestImplementation libs.androidx.core
 
@@ -104,22 +101,14 @@ dependencies {
     implementation libs.koin.android
     implementation libs.koin.androidx.compose
 
-    //retrofit + okhttp
-    implementation libs.retrofit
+    //okhttp
     implementation libs.okhttp
     implementation libs.logging.interceptor
-    implementation(libs.retrofit2.kotlinx.serialization.converter)
     implementation libs.kotlinx.serialization.json
 
     //Coil
     implementation(libs.coil.compose)
     implementation libs.coil.svg
-
-    //Swipe Refresh layout for Jetpack Compose
-    implementation libs.accompanist.swiperefresh
-
-    //DataStore
-    implementation(libs.androidx.datastore.preferences)         \
 
     // apollo
     implementation(libs.apollo.runtime)
@@ -130,9 +119,6 @@ dependencies {
     implementation libs.androidx.paging.compose
 
     implementation libs.timber
-
-    implementation libs.accompanist.pager
-    implementation libs.accompanist.pager.indicators
 }
 
 apollo {

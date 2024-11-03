@@ -9,14 +9,13 @@ import cz.minarik.rickandmorty.domain.repository.CharacterRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
-import javax.inject.Inject
 
 /**
  * Use case for getting character detail.
  *
  * @property repository character repository
  */
-class GetCharacterDetailUseCase @Inject constructor(
+class GetCharacterDetailUseCase(
     private val repository: CharacterRepository,
 ) {
 

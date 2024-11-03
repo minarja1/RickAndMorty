@@ -5,9 +5,10 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Button
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -26,7 +27,7 @@ fun ErrorIndicator(
     Column(
         modifier = modifier
             .background(
-                color = MaterialTheme.colors.background.copy(
+                color = MaterialTheme.colorScheme.background.copy(
                     alpha = if (errorIndicatorVo.showOverlay) .9f else 0f
                 )
             )
@@ -37,18 +38,18 @@ fun ErrorIndicator(
         GeneralText(
             modifier = Modifier.padding(bottom = 16.dp),
             text = errorIndicatorVo.text,
-            style = MaterialTheme.typography.h6,
-            color = MaterialTheme.colors.error,
+            style = MaterialTheme.typography.headlineMedium,
+            color = MaterialTheme.colorScheme.error,
             textAlign = TextAlign.Center,
         )
         errorIndicatorVo.buttonVo?.let {
-            Button(
+            OutlinedButton(
                 onClick = it.onClick,
                 content = {
                     Text(
-                        style = MaterialTheme.typography.body1,
+                        style = MaterialTheme.typography.bodyLarge,
                         text = it.text.getString(),
-                        color = MaterialTheme.colors.onBackground
+                        color = MaterialTheme.colorScheme.onBackground
                     )
                 }
             )

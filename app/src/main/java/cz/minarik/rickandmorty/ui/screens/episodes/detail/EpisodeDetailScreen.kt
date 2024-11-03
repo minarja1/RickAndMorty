@@ -1,6 +1,9 @@
 package cz.minarik.rickandmorty.ui.screens.episodes.detail
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
@@ -11,13 +14,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.windowInsetsBottomHeight
-import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.layout.windowInsetsTopHeight
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -25,48 +29,39 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cz.minarik.rickandmorty.R
-import cz.minarik.rickandmorty.common.util.decodeSafely
-import cz.minarik.rickandmorty.ui.core.composable.CircleImagesRow
 import cz.minarik.rickandmorty.ui.core.composable.PreviewSurface
-import cz.minarik.rickandmorty.ui.core.composable.RaMTopAppBar
 import cz.minarik.rickandmorty.ui.core.composable.ScreenContentWrapper
 import cz.minarik.rickandmorty.ui.core.composable.ScreenPreview
-import cz.minarik.rickandmorty.ui.core.model.UIViewModel
 import cz.minarik.rickandmorty.ui.core.model.PreviewViewModel
 import cz.minarik.rickandmorty.ui.core.model.UIEvent
 import cz.minarik.rickandmorty.ui.core.model.UIState
-import cz.minarik.rickandmorty.ui.model.CircleImageVo
+import cz.minarik.rickandmorty.ui.core.model.UIViewModel
 import cz.minarik.rickandmorty.ui.model.EpisodeDetailVo
+import cz.minarik.rickandmorty.ui.screens.home.CharactersRow
+import cz.minarik.rickandmorty.ui.screens.home.util.CharacterItemUtils.getListColumnsCount
+import cz.minarik.rickandmorty.ui.screens.home.util.MockData
 import cz.minarik.rickandmorty.ui.theme.SpacingMedium
 import cz.minarik.rickandmorty.ui.theme.SpacingSmall
 import cz.minarik.rickandmorty.ui.theme.SpacingXLarge
-import cz.minarik.rickandmorty.ui.theme.grayscale
 
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun EpisodeDetailScreen(
-    onBackClicked: () -> Unit,
-    episodeName: String?,
     viewModel: UIViewModel<EpisodeDetailScreenData, UIEvent>,
+    onCharacterDetailClicked: (String, String?) -> Unit,
 ) {
     val viewState by viewModel.viewState.collectAsStateWithLifecycle()
     ScreenContentWrapper(state = viewState) {
         Scaffold(
             modifier = Modifier
-                .fillMaxSize()
-                .windowInsetsPadding(
-                    WindowInsets.statusBars
-                ),
-            topBar = {
-                RaMTopAppBar(
-                    onBackClicked = onBackClicked,
-                    text = episodeName?.decodeSafely()
-                )
-            },
-            content = { padding ->
+                .fillMaxSize(),
+            content = { _ ->
                 viewState.data.episode?.let {
                     EpisodeDetailView(
-                        modifier = Modifier.padding(padding),
                         episode = it,
+                        onCharacterDetailClicked = onCharacterDetailClicked,
+                        modifier = Modifier
+                            .fillMaxSize()
                     )
                 }
             }
@@ -78,32 +73,56 @@ fun EpisodeDetailScreen(
 private fun EpisodeDetailView(
     episode: EpisodeDetailVo,
     modifier: Modifier = Modifier,
+    onCharacterDetailClicked: (String, String?) -> Unit,
 ) {
     LazyColumn(
-        modifier.fillMaxSize(),
+        modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
+        contentPadding = PaddingValues(
+            horizontal = ScreenPaddingHorizontal,
+        )
     ) {
+
+        item {
+            Spacer(
+                Modifier.windowInsetsTopHeight(
+                    WindowInsets.statusBars
+                )
+            )
+        }
+
         item {
             EpisodeHeader(episode)
         }
 
-        if (!episode.characterImages.isNullOrEmpty()) {
+        if (!episode.characters.isNullOrEmpty()) {
             item {
                 Text(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(
-                            horizontal = ScreenPaddingHorizontal,
-                            vertical = ScreenPaddingVertical
-                        ),
+                        .padding(vertical = ScreenPaddingVertical),
                     textAlign = TextAlign.Center,
                     text = stringResource(id = R.string.characters),
-                    style = MaterialTheme.typography.h6,
+                    style = MaterialTheme.typography.headlineMedium,
                 )
-                CircleImagesRow(
-                    modifier = Modifier.padding(top = ScreenPaddingVertical),
-                    images = episode.characterImages
-                )
+            }
+
+            items(
+                count = episode.characters.size,
+            ) { index ->
+                BoxWithConstraints {
+                    val screenWidth = maxWidth
+                    val columns = remember(maxWidth) {
+                        getListColumnsCount(screenWidth)
+                    }
+                    CharactersRow(
+                        characters = episode.characters,
+                        index = index,
+                        columns = columns,
+                        onDetailClicked = onCharacterDetailClicked,
+                        startingCharacter = episode.characters[index]
+                    )
+                }
             }
         }
         item {
@@ -124,27 +143,24 @@ private fun EpisodeHeader(
         Text(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(
-                    horizontal = ScreenPaddingHorizontal,
-                    vertical = ScreenPaddingVertical
-                ),
+                .padding(vertical = ScreenPaddingVertical),
             textAlign = TextAlign.Center,
             text = episode.name,
-            style = MaterialTheme.typography.h5,
+            style = MaterialTheme.typography.headlineMedium,
         )
     }
     if (episode.airDate?.isNotBlank() == true) {
         TextLine(
             title = stringResource(id = R.string.aired),
             text = episode.airDate,
-            style = MaterialTheme.typography.body1,
+            style = MaterialTheme.typography.bodyLarge,
         )
     }
     if (episode.code?.isNotBlank() == true) {
         TextLine(
             title = stringResource(id = R.string.code),
             text = episode.code,
-            style = MaterialTheme.typography.body1,
+            style = MaterialTheme.typography.bodyLarge,
         )
     }
 }
@@ -158,10 +174,7 @@ private fun TextLine(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(
-                horizontal = ScreenPaddingHorizontal,
-                vertical = ScreenPaddingVertical
-            ),
+            .padding(vertical = ScreenPaddingVertical),
         horizontalArrangement = Arrangement.spacedBy(SpacingSmall)
     ) {
         TitleText(text = title)
@@ -177,8 +190,8 @@ private fun RowScope.TitleText(text: String) {
     Text(
         modifier = Modifier.weight(1f),
         text = text,
-        style = MaterialTheme.typography.body1,
-        color = MaterialTheme.colors.grayscale.gray700
+        style = MaterialTheme.typography.bodyLarge,
+        color = MaterialTheme.colorScheme.onBackground
     )
 }
 
@@ -198,26 +211,12 @@ private fun EpisodeDetailScreenPreview() {
                             name = "Pilot",
                             airDate = "December 2, 2013",
                             code = "S01E01",
-                            characterImages = listOf(
-                                CircleImageVo(
-                                    id = "1",
-                                    imageUrl = "https://rickandmortyapi.com/api/character/avatar/1.jpeg"
-                                ),
-                                CircleImageVo(
-                                    id = "2",
-                                    imageUrl = "https://rickandmortyapi.com/api/character/avatar/2.jpeg"
-                                ),
-                                CircleImageVo(
-                                    id = "3",
-                                    imageUrl = "https://rickandmortyapi.com/api/character/avatar/3.jpeg"
-                                ),
-                            )
+                            characters = MockData.characters
                         )
                     )
                 )
             ),
-            onBackClicked = {},
-            episodeName = "Pilot",
+            onCharacterDetailClicked = { _, _ -> }
         )
     }
 }

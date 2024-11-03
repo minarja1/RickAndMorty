@@ -1,7 +1,10 @@
 package cz.minarik.rickandmorty.ui.screens.characters.detail
 
+import android.annotation.SuppressLint
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -20,9 +23,8 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -38,9 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.rememberAsyncImagePainter
 import cz.minarik.rickandmorty.R
-import cz.minarik.rickandmorty.common.util.decodeSafely
 import cz.minarik.rickandmorty.ui.core.composable.PreviewSurface
-import cz.minarik.rickandmorty.ui.core.composable.RaMTopAppBar
 import cz.minarik.rickandmorty.ui.core.composable.ScreenContentWrapper
 import cz.minarik.rickandmorty.ui.core.composable.ScreenPreview
 import cz.minarik.rickandmorty.ui.core.model.PreviewViewModel
@@ -52,44 +52,27 @@ import cz.minarik.rickandmorty.ui.screens.home.util.MockData
 import cz.minarik.rickandmorty.ui.theme.SpacingMedium
 import cz.minarik.rickandmorty.ui.theme.SpacingSmall
 import cz.minarik.rickandmorty.ui.theme.SpacingXLarge
-import cz.minarik.rickandmorty.ui.theme.grayscale
 
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun CharacterDetailScreen(
-    onBackClicked: () -> Unit,
-    characterName: String?,
     onEpisodeDetailClicked: (String, String?) -> Unit,
     viewModel: UIViewModel<CharacterDetailScreenData, CharacterDetailScreenEvent>,
 ) {
     val viewState by viewModel.viewState.collectAsStateWithLifecycle()
     ScreenContentWrapper(state = viewState) {
-        Scaffold(
-            modifier = Modifier
-                .fillMaxSize()
-                .windowInsetsPadding(
-                    WindowInsets.statusBars
-                ),
-            topBar = {
-                RaMTopAppBar(
-                    onBackClicked = onBackClicked,
-                    text = characterName?.decodeSafely()
-                )
-            },
-            content = { padding ->
-                viewState.data.character?.let {
-                    CharacterDetailContent(
-                        modifier = Modifier.padding(padding),
-                        character = it,
-                        expanded = viewState.data.episodesExpanded,
-                        onExpanded = { viewModel.onEvent(CharacterDetailScreenEvent.ExpandEpisodesClicked) },
-                        onEpisodeDetailClicked = onEpisodeDetailClicked,
-                    )
-                }
-            }
-        )
+        viewState.data.character?.let {
+            CharacterDetailContent(
+                character = it,
+                expanded = viewState.data.episodesExpanded,
+                onExpanded = { viewModel.onEvent(CharacterDetailScreenEvent.ExpandEpisodesClicked) },
+                onEpisodeDetailClicked = onEpisodeDetailClicked,
+            )
+        }
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun CharacterDetailContent(
     character: CharacterDetailVo,
@@ -98,47 +81,80 @@ private fun CharacterDetailContent(
     onEpisodeDetailClicked: (String, String?) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    LazyColumn(
-        modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        item {
-            CharacterHeader(character)
-        }
-
-        if (character.episodes.isNotEmpty()) {
+    Box {
+        LazyColumn(
+            modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
             item {
-                EpisodesExpandButton(
-                    expanded = expanded,
-                    onExpanded = onExpanded
+                Image(
+                    modifier = Modifier
+                        .aspectRatio(1f)
+                        .fillMaxWidth(),
+                    painter = rememberAsyncImagePainter(character.imageUrl),
+                    contentDescription = stringResource(id = R.string.character_image),
+                    contentScale = ContentScale.Crop
                 )
             }
 
-            if (expanded) {
-                items(
-                    items = character.episodes,
-                    key = { it.id },
-                ) { episode ->
-                    ClickableCard(
+            stickyHeader {
+                if (character.name?.isNotBlank() == true) {
+                    Text(
                         modifier = Modifier
-                            .padding(
-                                horizontal = ScreenPaddingHorizontal,
-                                vertical = SpacingSmall
+                            .fillMaxWidth()
+                            .padding(bottom = ItemPaddingVertical)
+                            .background(MaterialTheme.colorScheme.background)
+                            .windowInsetsPadding(
+                                WindowInsets.statusBars
                             ),
-                        clickableCardVo = episode,
-                        onItemClick = {
-                            onEpisodeDetailClicked.invoke(episode.id, episode.title)
-                        }
+                        textAlign = TextAlign.Center,
+                        text = character.name,
+                        style = MaterialTheme.typography.headlineMedium,
+                        color = MaterialTheme.colorScheme.onBackground,
                     )
                 }
             }
-        }
-        item {
-            Spacer(
-                Modifier.windowInsetsBottomHeight(
-                    WindowInsets.systemBars
+
+            item {
+                CharacterHeader(character)
+            }
+
+            if (character.episodes.isNotEmpty()) {
+                item {
+                    EpisodesExpandButton(
+                        expanded = expanded,
+                        onExpanded = onExpanded
+                    )
+                }
+
+                if (expanded) {
+                    items(
+                        items = character.episodes,
+                        key = { it.id },
+                    ) { episode ->
+                        ClickableCard(
+                            modifier = Modifier
+                                .padding(
+                                    horizontal = ScreenPaddingHorizontal,
+                                    vertical = SpacingSmall
+                                ),
+                            clickableCardVo = episode,
+                            onItemClick = {
+                                onEpisodeDetailClicked.invoke(episode.id, episode.title)
+                            }
+                        )
+                    }
+                }
+            }
+            item {
+                Spacer(
+                    Modifier.windowInsetsBottomHeight(
+                        WindowInsets.systemBars
+                    )
                 )
-            )
+            }
         }
     }
 }
@@ -167,15 +183,15 @@ private fun EpisodesExpandButton(
         ) {
             Text(
                 text = stringResource(id = R.string.episodes),
-                style = MaterialTheme.typography.body1,
-                color = MaterialTheme.colors.onBackground
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onBackground
             )
             Spacer(modifier = Modifier.weight(0.1f))
             Image(
                 modifier = Modifier.rotate(rotationState),
                 painter = painterResource(id = R.drawable.ic_baseline_chevron_right_24),
                 contentDescription = stringResource(id = R.string.chevron),
-                colorFilter = ColorFilter.tint(color = MaterialTheme.colors.grayscale.gray700)
+                colorFilter = ColorFilter.tint(color = MaterialTheme.colorScheme.onBackground)
             )
         }
     }
@@ -183,29 +199,11 @@ private fun EpisodesExpandButton(
 
 @Composable
 private fun CharacterHeader(character: CharacterDetailVo) {
-    Image(
-        modifier = Modifier
-            .aspectRatio(1f)
-            .fillMaxWidth(),
-        painter = rememberAsyncImagePainter(character.imageUrl),
-        contentDescription = stringResource(id = R.string.character_image),
-        contentScale = ContentScale.Crop
-    )
     Column(
         modifier = Modifier.padding(
             horizontal = ScreenPaddingHorizontal,
         )
     ) {
-        if (character.name?.isNotBlank() == true) {
-            Text(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = ItemPaddingVertical),
-                textAlign = TextAlign.Center,
-                text = character.name,
-                style = MaterialTheme.typography.h5,
-            )
-        }
         if (character.species?.isNotBlank() == true) {
             TextLine(
                 title = stringResource(id = R.string.species),
@@ -259,14 +257,14 @@ private fun TextLine(
     ) {
         Text(
             text = title,
-            style = MaterialTheme.typography.body1,
-            color = MaterialTheme.colors.onBackground
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onBackground
         )
         Spacer(modifier = Modifier.weight(0.1f))
         Text(
             text = text,
-            style = MaterialTheme.typography.body1,
-            color = MaterialTheme.colors.onBackground,
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onBackground,
         )
     }
 }
@@ -299,8 +297,6 @@ private fun CharacterDetailScreenPreview() {
                     )
                 )
             ),
-            onBackClicked = {},
-            characterName = "Rick Sanchez",
             onEpisodeDetailClicked = { _, _ ->
 
             }

@@ -10,7 +10,7 @@ import android.text.style.TypefaceSpan
 import android.text.style.URLSpan
 import android.text.style.UnderlineSpan
 import androidx.compose.foundation.text.ClickableText
-import androidx.compose.material.MaterialTheme
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -50,7 +50,7 @@ fun HtmlText(
     maxLines: Int = Int.MAX_VALUE,
     onLinkClick: ((String) -> Unit)? = null,
     linkStyle: SpanStyle = style.toSpanStyle().copy(
-        color = MaterialTheme.colors.primary,
+        color = MaterialTheme.colorScheme.primary,
         fontWeight = FontWeight.Medium,
     ),
     flag: Int = HtmlCompat.FROM_HTML_MODE_COMPACT,
@@ -62,7 +62,7 @@ fun HtmlText(
                 when (model) {
                     is StringModel.Html,
                     is StringModel.HtmlResource,
-                    -> append(model.getString().asHTML(flag, linkStyle))
+                        -> append(model.getString().asHTML(flag, linkStyle))
 
                     else -> append(model.getString())
                 }

@@ -4,6 +4,7 @@ import cz.minarik.rickandmorty.domain.model.EpisodeDetail
 import cz.minarik.rickandmorty.domain.model.TVCharacter
 import cz.minarik.rickandmorty.ui.model.CircleImageVo
 import cz.minarik.rickandmorty.ui.model.EpisodeDetailVo
+import cz.minarik.rickandmorty.ui.screens.home.toVo
 
 /**
  * Mapper for converting [EpisodeDetail] to [EpisodeDetailVo].
@@ -13,7 +14,7 @@ fun EpisodeDetail.toVo() = EpisodeDetailVo(
     name = name,
     code = code,
     airDate = airDate,
-    characterImages = characters?.mapNotNull { it.toCircleImageVo() }
+    characters = characters?.map { it.toVo() }
 )
 
 /**

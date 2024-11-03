@@ -10,14 +10,13 @@ import cz.minarik.rickandmorty.domain.model.TVCharacter
 import cz.minarik.rickandmorty.domain.model.Episode
 import cz.minarik.rickandmorty.domain.model.EpisodeDetail
 import cz.minarik.rickandmorty.domain.repository.EpisodeRepository
-import javax.inject.Inject
 
 /**
  * Implementation of [EpisodeRepository].
  *
  * @param apolloClient Apollo client.
  */
-class EpisodeRepositoryImpl @Inject constructor(
+class EpisodeRepositoryImpl(
     private val apolloClient: ApolloClient,
 ) : EpisodeRepository {
 

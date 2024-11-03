@@ -6,8 +6,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.progressSemantics
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.MaterialTheme
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -27,7 +27,7 @@ fun ProgressIndicator(
     Box(
         modifier = modifier
             .background(
-                color = MaterialTheme.colors.background.copy(
+                color = MaterialTheme.colorScheme.background.copy(
                     alpha = if (showOverlay) .9f else 0f
                 )
             )
@@ -40,7 +40,7 @@ fun ProgressIndicator(
         ) {
             CircularProgressIndicator(
                 modifier = Modifier.size(ProgressIndicatorSize),
-                color = MaterialTheme.colors.onSurface,
+                color = MaterialTheme.colorScheme.primary,
                 strokeWidth = ProgressIndicatorStrokeWidth
             )
         }

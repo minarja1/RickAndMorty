@@ -1,5 +1,6 @@
 package cz.minarik.rickandmorty.ui.screens.home
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -16,12 +17,13 @@ import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.windowInsetsBottomHeight
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Tab
-import androidx.compose.material.TabRow
-import androidx.compose.material.TabRowDefaults
-import androidx.compose.material.Text
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
@@ -37,10 +39,6 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemContentType
 import androidx.paging.compose.itemKey
-import com.google.accompanist.pager.ExperimentalPagerApi
-import com.google.accompanist.pager.HorizontalPager
-import com.google.accompanist.pager.pagerTabIndicatorOffset
-import com.google.accompanist.pager.rememberPagerState
 import cz.minarik.rickandmorty.ui.core.composable.PagedScreenContentWrapper
 import cz.minarik.rickandmorty.ui.core.composable.PreviewSurface
 import cz.minarik.rickandmorty.ui.core.composable.ScreenPreview
@@ -65,6 +63,7 @@ import kotlinx.coroutines.launch
  * @param onCharacterDetailClicked Callback for character detail click.
  * @param onEpisodeDetailClicked Callback for episode detail click.
  */
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun HomeScreen(
     onCharacterDetailClicked: (String, String?) -> Unit,
@@ -75,18 +74,20 @@ fun HomeScreen(
     Scaffold(
         modifier = Modifier
             .fillMaxSize()
-            .windowInsetsPadding(
-                WindowInsets.statusBars
-            ),
-        backgroundColor = MaterialTheme.colors.background,
-    ) { padding ->
-        TabsContent(
-            modifier = Modifier.padding(padding),
-            pagedCharacters = viewState.data.pagedCharacters.collectAsLazyPagingItems(),
-            pagedEpisodes = viewState.data.pagedEpisodes.collectAsLazyPagingItems(),
-            onCharacterDetailClicked = onCharacterDetailClicked,
-            onEpisodeDetailClicked = onEpisodeDetailClicked,
-        )
+    ) { _ ->
+        Column {
+            Spacer(
+                Modifier.windowInsetsPadding(
+                    WindowInsets.statusBars
+                ),
+            )
+            TabsContent(
+                pagedCharacters = viewState.data.pagedCharacters.collectAsLazyPagingItems(),
+                pagedEpisodes = viewState.data.pagedEpisodes.collectAsLazyPagingItems(),
+                onCharacterDetailClicked = onCharacterDetailClicked,
+                onEpisodeDetailClicked = onEpisodeDetailClicked,
+            )
+        }
     }
 }
 
@@ -96,7 +97,7 @@ private fun TabsContent(
     pagedEpisodes: LazyPagingItems<ClickableCardVo>,
     onCharacterDetailClicked: (String, String?) -> Unit,
     onEpisodeDetailClicked: (String, String?) -> Unit,
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
 ) {
     HomeScreenTabLayout(
         charactersContent = {
@@ -129,7 +130,7 @@ fun EpisodesContent(
         ) {
             LazyColumn(
                 Modifier
-                    .background(MaterialTheme.colors.background)
+                    .background(MaterialTheme.colorScheme.background)
                     .fillMaxSize(), contentPadding = PaddingValues(vertical = 8.dp)
             ) {
                 items(
@@ -179,7 +180,7 @@ private fun CharactersContent(
         ) {
             LazyColumn(
                 Modifier
-                    .background(MaterialTheme.colors.background)
+                    .background(MaterialTheme.colorScheme.background)
                     .fillMaxSize(), contentPadding = PaddingValues(vertical = 8.dp)
             ) {
                 items(
@@ -220,23 +221,17 @@ private fun CharactersContent(
     }
 }
 
-@OptIn(ExperimentalPagerApi::class)
 @Composable
 private fun HomeScreenTabLayout(
     charactersContent: @Composable () -> Unit,
     episodesContent: @Composable () -> Unit,
 ) {
-    val pagerState = rememberPagerState()
+    val pagerState = rememberPagerState(pageCount = { HomeScreenTabs.entries.size })
     val tabIndex = pagerState.currentPage
     val coroutineScope = rememberCoroutineScope()
 
     Column {
-        TabRow(selectedTabIndex = tabIndex, indicator = { tabPositions ->
-            TabRowDefaults.Indicator(
-                modifier = Modifier.pagerTabIndicatorOffset(pagerState, tabPositions),
-                color = MaterialTheme.colors.onBackground,
-            )
-        }) {
+        TabRow(selectedTabIndex = tabIndex) {
             HomeScreenTabs.entries.forEachIndexed { index, tabData ->
                 Tab(selected = tabIndex == index, onClick = {
                     coroutineScope.launch {
@@ -245,7 +240,7 @@ private fun HomeScreenTabLayout(
                 }, text = {
                     Text(
                         text = stringResource(id = tabData.tabTitleStringRes),
-                        color = MaterialTheme.colors.onBackground,
+                        color = MaterialTheme.colorScheme.onBackground,
                     )
                 })
             }
@@ -253,7 +248,6 @@ private fun HomeScreenTabLayout(
         HorizontalPager(
             state = pagerState,
             modifier = Modifier.weight(1f),
-            count = HomeScreenTabs.entries.size,
         ) { index ->
             when (index) {
                 HomeScreenTabs.Characters.ordinal -> charactersContent()
@@ -264,7 +258,7 @@ private fun HomeScreenTabLayout(
 }
 
 @Composable
-private fun CharactersRow(
+fun CharactersRow(
     characters: List<TVCharacterVo>,
     index: Int,
     columns: Int,

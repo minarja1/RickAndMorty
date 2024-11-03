@@ -1,7 +1,7 @@
 package cz.minarik.rickandmorty.ui.core.composable
 
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material.Surface
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import cz.minarik.rickandmorty.ui.theme.RaMTheme

@@ -59,8 +59,6 @@ fun Navigation() {
                 )
             ) {
                 CharacterDetailScreen(
-                    onBackClicked = navController::navigateUp,
-                    characterName = it.arguments?.getString(NavigationConstants.argCharacterName),
                     viewModel = koinViewModel<CharacterDetailScreenViewModel>(parameters = {
                         parametersOf(it.arguments?.getString(NavigationConstants.argCharacterId))
                     }),
@@ -87,11 +85,17 @@ fun Navigation() {
                 )
             ) {
                 EpisodeDetailScreen(
-                    onBackClicked = navController::navigateUp,
                     viewModel = koinViewModel<EpisodeDetailScreenViewModel>(parameters = {
                         parametersOf(it.arguments?.getString(NavigationConstants.argEpisodeId))
                     }),
-                    episodeName = it.arguments?.getString(NavigationConstants.argEpisodeName),
+                    onCharacterDetailClicked = { id, name ->
+                        navController.navigate(
+                            Screen.CharacterDetail.withArgs(
+                                id,
+                                URLEncoder.encode(name ?: "", Constants.UTF_8)
+                            )
+                        )
+                    },
                 )
             }
         }

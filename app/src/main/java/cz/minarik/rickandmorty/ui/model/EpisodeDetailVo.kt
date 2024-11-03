@@ -11,5 +11,5 @@ data class EpisodeDetailVo(
     val name: String?,
     val airDate: String? = null,
     val code: String? = null,
-    val characterImages: List<CircleImageVo>? = null,
+    val characters: List<TVCharacterVo>? = null,
 )

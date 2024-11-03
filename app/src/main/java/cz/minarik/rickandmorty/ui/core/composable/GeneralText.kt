@@ -2,11 +2,9 @@ package cz.minarik.rickandmorty.ui.core.composable
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.material.LocalContentAlpha
-import androidx.compose.material.LocalContentColor
-import androidx.compose.material.LocalTextStyle
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -100,7 +98,7 @@ fun GeneralText(
     style: TextStyle = LocalTextStyle.current,
     onLinkClick: ((String) -> Unit)? = null,
     linkStyle: SpanStyle = style.toSpanStyle().copy(
-        color = MaterialTheme.colors.primary,
+        color = MaterialTheme.colorScheme.primary,
         fontWeight = FontWeight.Medium
     ),
     onClick: (() -> Unit)? = null,
@@ -109,7 +107,7 @@ fun GeneralText(
         is StringModel.Html,
         is StringModel.HtmlResource,
         is StringModel.ComposedString
-        -> {
+            -> {
             HtmlText(
                 text = text,
                 modifier = modifier,

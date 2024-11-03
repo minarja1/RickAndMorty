@@ -6,24 +6,24 @@ import cz.minarik.rickandmorty.GetCharacterDetailQuery
 import cz.minarik.rickandmorty.GetCharactersQuery
 import cz.minarik.rickandmorty.data.remote.response.CharactersResponse
 import cz.minarik.rickandmorty.data.remote.response.InfoResponse
-import cz.minarik.rickandmorty.domain.model.TVCharacter
 import cz.minarik.rickandmorty.domain.model.CharacterDetail
 import cz.minarik.rickandmorty.domain.model.Episode
 import cz.minarik.rickandmorty.domain.model.Location
+import cz.minarik.rickandmorty.domain.model.TVCharacter
 import cz.minarik.rickandmorty.domain.repository.CharacterRepository
-import javax.inject.Inject
 
 /**
  * Implementation of [CharacterRepository].
  *
  * @param apolloClient Apollo client.
  */
-class CharacterRepositoryImpl @Inject constructor(
+class CharacterRepositoryImpl(
     private val apolloClient: ApolloClient,
 ) : CharacterRepository {
 
     override suspend fun getCharacters(page: Int): CharactersResponse {
-        val result = apolloClient.query(GetCharactersQuery(Optional.presentIfNotNull(page))).execute()
+        val result =
+            apolloClient.query(GetCharactersQuery(Optional.presentIfNotNull(page))).execute()
         val characters = result.data?.characters?.results?.mapNotNull { character ->
             character?.id?.let { id ->
                 TVCharacter(

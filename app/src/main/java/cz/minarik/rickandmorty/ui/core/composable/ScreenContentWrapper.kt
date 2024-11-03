@@ -3,8 +3,8 @@ package cz.minarik.rickandmorty.ui.core.composable
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.sp
@@ -104,7 +104,7 @@ private fun ScreenContentWrapperLoadingPreview() {
                 Column {
                     Text(
                         "Content",
-                        color = MaterialTheme.colors.onBackground,
+                        color = MaterialTheme.colorScheme.onBackground,
                         fontSize = 40.sp
                     )
                 }
@@ -132,7 +132,7 @@ private fun ScreenContentWrapperErrorPreview() {
                 Column {
                     Text(
                         "Content",
-                        color = MaterialTheme.colors.onBackground,
+                        color = MaterialTheme.colorScheme.onBackground,
                         fontSize = 40.sp
                     )
                 }

@@ -6,9 +6,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.Card
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -18,9 +18,9 @@ import androidx.compose.ui.unit.dp
 import cz.minarik.rickandmorty.ui.core.composable.CircleImagesRow
 import cz.minarik.rickandmorty.ui.core.composable.ComponentPreview
 import cz.minarik.rickandmorty.ui.core.composable.PreviewSurface
-import cz.minarik.rickandmorty.ui.theme.SpacingXSmall
 import cz.minarik.rickandmorty.ui.model.ClickableCardVo
 import cz.minarik.rickandmorty.ui.screens.home.util.MockData
+import cz.minarik.rickandmorty.ui.theme.SpacingXSmall
 
 @Composable
 fun ClickableCard(
@@ -33,7 +33,7 @@ fun ClickableCard(
         shape = roundedCornerShape,
         border = BorderStroke(
             width = 1.dp,
-            color = MaterialTheme.colors.onBackground
+            color = MaterialTheme.colorScheme.onBackground
         ),
         modifier = modifier
             .clip(roundedCornerShape)
@@ -48,7 +48,7 @@ fun ClickableCard(
                 Text(
                     modifier = Modifier.padding(SpacingXSmall),
                     text = name,
-                    style = MaterialTheme.typography.h6,
+                    style = MaterialTheme.typography.headlineSmall,
                     overflow = TextOverflow.Ellipsis,
                     maxLines = 1,
                 )
@@ -57,7 +57,7 @@ fun ClickableCard(
                 Text(
                     modifier = Modifier.padding(SpacingXSmall),
                     text = code,
-                    style = MaterialTheme.typography.body2,
+                    style = MaterialTheme.typography.bodyMedium,
                     overflow = TextOverflow.Ellipsis,
                     maxLines = 1,
                 )
