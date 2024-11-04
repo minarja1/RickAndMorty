@@ -3,8 +3,6 @@ package cz.minarik.rickandmorty.ui.screens.home.components
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -30,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import cz.minarik.rickandmorty.R
+import cz.minarik.rickandmorty.ui.common.getSharedElementModifier
 import cz.minarik.rickandmorty.ui.core.composable.ComponentPreview
 import cz.minarik.rickandmorty.ui.core.composable.PreviewSurface
 import cz.minarik.rickandmorty.ui.model.TVCharacterVo
@@ -49,21 +48,6 @@ fun CharacterListItem(
 ) {
     val roundedCornerShape = RoundedCornerShape(8.dp)
 
-    val sharedTransitionModifierImage =
-        if (sharedTransitionScope == null || animatedContentScope == null) {
-            Modifier
-        } else {
-            with(sharedTransitionScope) {
-                Modifier.sharedBounds(
-                    rememberSharedContentState(key = "${character.imageUrl}"),
-                    animatedVisibilityScope = animatedContentScope,
-                    enter = fadeIn(),
-                    exit = fadeOut(),
-                    resizeMode = SharedTransitionScope.ResizeMode.ScaleToBounds()
-                )
-            }
-        }
-
     Card(
         shape = roundedCornerShape,
         border = BorderStroke(
@@ -72,7 +56,13 @@ fun CharacterListItem(
         ),
         modifier = modifier
             .clip(roundedCornerShape)
-            .then(sharedTransitionModifierImage)
+            .then(
+                getSharedElementModifier(
+                    key = "${character.imageUrl}",
+                    sharedTransitionScope = sharedTransitionScope,
+                    animatedContentScope = animatedContentScope,
+                )
+            )
             .clickable { onItemClick(character) }
     ) {
         Box(
@@ -90,21 +80,6 @@ fun CharacterListItem(
                     .height(CharacterImageSize)
             )
             character.name?.let {
-                val sharedTransitionModifierName =
-                    if (sharedTransitionScope == null || animatedContentScope == null) {
-                        Modifier
-                    } else {
-                        with(sharedTransitionScope) {
-                            Modifier.sharedBounds(
-                                rememberSharedContentState(key = "${character.id} + ${character.name}"),
-                                animatedVisibilityScope = animatedContentScope,
-                                enter = fadeIn(),
-                                exit = fadeOut(),
-                                resizeMode = SharedTransitionScope.ResizeMode.RemeasureToBounds
-                            )
-                        }
-                    }
-
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -117,7 +92,13 @@ fun CharacterListItem(
                                 )
                             )
                         )
-                        .then(sharedTransitionModifierName),
+                        .then(
+                            getSharedElementModifier(
+                                key = "${character.id}${character.name}",
+                                sharedTransitionScope = sharedTransitionScope,
+                                animatedContentScope = animatedContentScope,
+                            )
+                        ),
                 ) {
                     Text(
                         modifier = Modifier

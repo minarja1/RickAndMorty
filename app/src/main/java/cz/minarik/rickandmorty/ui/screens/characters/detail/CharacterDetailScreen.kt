@@ -5,8 +5,6 @@ import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -48,6 +46,7 @@ import coil.compose.rememberAsyncImagePainter
 import cz.minarik.rickandmorty.R
 import cz.minarik.rickandmorty.navigation.CharacterImageUrl
 import cz.minarik.rickandmorty.navigation.CharacterName
+import cz.minarik.rickandmorty.ui.common.getSharedElementModifier
 import cz.minarik.rickandmorty.ui.core.composable.PreviewSurface
 import cz.minarik.rickandmorty.ui.core.composable.ProgressIndicator
 import cz.minarik.rickandmorty.ui.core.composable.ScreenContentWrapper
@@ -83,25 +82,17 @@ fun CharacterDetailScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             item {
-                val sharedTransitionModifierImage =
-                    if (sharedTransitionScope == null || animatedContentScope == null) {
-                        Modifier
-                    } else {
-                        with(sharedTransitionScope) {
-                            Modifier.sharedBounds(
-                                rememberSharedContentState(key = "$imageUrl"),
-                                animatedVisibilityScope = animatedContentScope,
-                                enter = fadeIn(),
-                                exit = fadeOut(),
-                                resizeMode = SharedTransitionScope.ResizeMode.ScaleToBounds()
-                            )
-                        }
-                    }
                 Image(
                     modifier = Modifier
                         .aspectRatio(1f)
                         .fillMaxWidth()
-                        .then(sharedTransitionModifierImage),
+                        .then(
+                            getSharedElementModifier(
+                                key = "$imageUrl",
+                                sharedTransitionScope = sharedTransitionScope,
+                                animatedContentScope = animatedContentScope,
+                            )
+                        ),
                     painter = rememberAsyncImagePainter(imageUrl),
                     contentDescription = stringResource(id = R.string.character_image),
                     contentScale = ContentScale.Crop
@@ -110,29 +101,19 @@ fun CharacterDetailScreen(
 
             stickyHeader {
                 if (characterName?.isNotBlank() == true) {
-                    val sharedTransitionModifierName =
-                        if (sharedTransitionScope == null || animatedContentScope == null) {
-                            Modifier
-                        } else {
-                            with(sharedTransitionScope) {
-                                Modifier.sharedBounds(
-                                    rememberSharedContentState(key = "$characterId + $characterName"),
-                                    animatedVisibilityScope = animatedContentScope,
-                                    enter = fadeIn(),
-                                    exit = fadeOut(),
-                                    resizeMode = SharedTransitionScope.ResizeMode.RemeasureToBounds
-                                )
-                            }
-                        }
                     Text(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(bottom = ItemPaddingVertical)
                             .background(MaterialTheme.colorScheme.background)
-                            .windowInsetsPadding(
-                                WindowInsets.statusBars
-                            )
-                            .then(sharedTransitionModifierName),
+                            .windowInsetsPadding(WindowInsets.statusBars)
+                            .then(
+                                getSharedElementModifier(
+                                    key = "$characterId$characterName",
+                                    sharedTransitionScope = sharedTransitionScope,
+                                    animatedContentScope = animatedContentScope,
+                                )
+                            ),
                         textAlign = TextAlign.Center,
                         text = characterName,
                         style = MaterialTheme.typography.headlineMedium,

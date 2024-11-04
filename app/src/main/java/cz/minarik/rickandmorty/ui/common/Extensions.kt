@@ -1,5 +1,12 @@
 package cz.minarik.rickandmorty.ui.common
 
+import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import cz.minarik.rickandmorty.data.remote.exception.NoConnectionException
 import cz.minarik.rickandmorty.ui.core.model.ErrorIndicatorVo
 import cz.minarik.rickandmorty.ui.core.model.UIState
@@ -75,3 +82,31 @@ fun Throwable.toDisplayMessage(): String {
         else -> this.message ?: ""
     }
 }
+
+/**
+ * Returns shared element modifier if sharedTransitionScope and animatedContentScope are not null.
+ *
+ * @param key key for shared element
+ * @param sharedTransitionScope shared transition scope
+ * @param animatedContentScope animated content scope
+ */
+@OptIn(ExperimentalSharedTransitionApi::class)
+@Composable
+fun getSharedElementModifier(
+    key: String,
+    sharedTransitionScope: SharedTransitionScope?,
+    animatedContentScope: AnimatedContentScope?,
+) =
+    if (sharedTransitionScope == null || animatedContentScope == null) {
+        Modifier
+    } else {
+        with(sharedTransitionScope) {
+            Modifier.sharedBounds(
+                rememberSharedContentState(key = key),
+                animatedVisibilityScope = animatedContentScope,
+                enter = fadeIn(),
+                exit = fadeOut(),
+                resizeMode = SharedTransitionScope.ResizeMode.ScaleToBounds()
+            )
+        }
+    }
