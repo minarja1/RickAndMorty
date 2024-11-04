@@ -36,7 +36,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
-import androidx.paging.compose.itemContentType
 import androidx.paging.compose.itemKey
 import cz.minarik.rickandmorty.navigation.CharacterId
 import cz.minarik.rickandmorty.navigation.CharacterImageUrl
@@ -143,12 +142,12 @@ fun EpisodesContent(
             LazyColumn(
                 Modifier
                     .background(MaterialTheme.colorScheme.background)
-                    .fillMaxSize(), contentPadding = PaddingValues(vertical = 8.dp)
+                    .fillMaxSize(),
+                contentPadding = PaddingValues(vertical = 8.dp),
             ) {
                 items(
                     count = pagedEpisodes.itemCount,
                     key = pagedEpisodes.itemKey { it.id },
-                    contentType = pagedEpisodes.itemContentType { "contentType" }
                 ) { index ->
                     pagedEpisodes[index]?.let { episode ->
                         ClickableCard(
@@ -196,12 +195,12 @@ private fun CharactersContent(
             LazyColumn(
                 Modifier
                     .background(MaterialTheme.colorScheme.background)
-                    .fillMaxSize(), contentPadding = PaddingValues(vertical = 8.dp)
+                    .fillMaxSize(),
+                contentPadding = PaddingValues(vertical = 8.dp),
             ) {
                 items(
                     count = pagedCharacters.itemCount,
                     key = pagedCharacters.itemKey { it.id },
-                    contentType = pagedCharacters.itemContentType { "contentType" }
                 ) { index ->
                     BoxWithConstraints {
                         val screenWidth = maxWidth
@@ -250,16 +249,19 @@ private fun HomeScreenTabLayout(
     Column {
         TabRow(selectedTabIndex = tabIndex) {
             HomeScreenTabs.entries.forEachIndexed { index, tabData ->
-                Tab(selected = tabIndex == index, onClick = {
-                    coroutineScope.launch {
-                        pagerState.animateScrollToPage(index)
-                    }
-                }, text = {
-                    Text(
-                        text = stringResource(id = tabData.tabTitleStringRes),
-                        color = MaterialTheme.colorScheme.onBackground,
-                    )
-                })
+                Tab(
+                    selected = tabIndex == index,
+                    onClick = {
+                        coroutineScope.launch {
+                            pagerState.animateScrollToPage(index)
+                        }
+                    },
+                    text = {
+                        Text(
+                            text = stringResource(id = tabData.tabTitleStringRes),
+                            color = MaterialTheme.colorScheme.onBackground,
+                        )
+                    })
             }
         }
         HorizontalPager(

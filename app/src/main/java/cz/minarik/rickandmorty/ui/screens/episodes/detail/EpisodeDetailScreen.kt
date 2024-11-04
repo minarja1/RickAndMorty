@@ -69,8 +69,7 @@ fun EpisodeDetailScreen(
                     EpisodeDetailContent(
                         episode = it,
                         onCharacterDetailClicked = onCharacterDetailClicked,
-                        modifier = Modifier
-                            .fillMaxSize(),
+                        modifier = Modifier.fillMaxSize(),
                         sharedTransitionScope = sharedTransitionScope,
                         animatedContentScope = animatedContentScope,
                     )
@@ -123,6 +122,7 @@ private fun EpisodeDetailContent(
 
             items(
                 count = episode.characters.size,
+                key = { episode.characters[it].id },
             ) { index ->
                 BoxWithConstraints {
                     val screenWidth = maxWidth

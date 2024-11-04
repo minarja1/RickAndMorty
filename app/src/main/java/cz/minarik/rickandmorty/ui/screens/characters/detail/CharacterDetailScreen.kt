@@ -240,37 +240,37 @@ private fun CharacterHeader(character: CharacterDetailVo) {
         )
     ) {
         if (character.species?.isNotBlank() == true) {
-            TextLine(
+            TextRow(
                 title = stringResource(id = R.string.species),
                 text = character.species,
             )
         }
         if (character.type?.isNotBlank() == true) {
-            TextLine(
+            TextRow(
                 title = stringResource(id = R.string.type),
                 text = character.type,
             )
         }
         if (character.gender?.isNotBlank() == true) {
-            TextLine(
+            TextRow(
                 title = stringResource(id = R.string.gender),
                 text = character.gender,
             )
         }
         if (character.status?.isNotBlank() == true) {
-            TextLine(
+            TextRow(
                 title = stringResource(id = R.string.status),
                 text = character.status,
             )
         }
         if (character.origin?.isNotBlank() == true) {
-            TextLine(
+            TextRow(
                 title = stringResource(id = R.string.origin),
                 text = character.origin,
             )
         }
         if (character.location?.isNotBlank() == true) {
-            TextLine(
+            TextRow(
                 title = stringResource(id = R.string.location),
                 text = character.location,
             )
@@ -279,7 +279,7 @@ private fun CharacterHeader(character: CharacterDetailVo) {
 }
 
 @Composable
-private fun TextLine(
+private fun TextRow(
     title: String,
     text: String,
     modifier: Modifier = Modifier,
