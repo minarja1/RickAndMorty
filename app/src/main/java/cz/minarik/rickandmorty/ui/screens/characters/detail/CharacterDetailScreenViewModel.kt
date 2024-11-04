@@ -77,7 +77,7 @@ class CharacterDetailScreenViewModel(
                             text = StringModel.String(result.error.toDisplayMessage()),
                             buttonVo = ButtonVo(
                                 text = StringModel.Resource(R.string.try_again),
-                                onClick = { getCharacterDetail() }
+                                onClick = ::getCharacterDetail
                             ),
                         )
                     )

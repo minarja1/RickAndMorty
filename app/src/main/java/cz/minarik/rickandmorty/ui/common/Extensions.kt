@@ -33,8 +33,6 @@ fun <T> MutableStateFlow<UIState<T>>.updateData(getNewData: (T) -> T) {
 
 /**
  * Removes errors and shows loading, keeps data in UIState.
- *
- * @param T UIState date type
  */
 fun <T> MutableStateFlow<UIState<T>>.showLoading() {
     update { currentState ->
@@ -47,8 +45,6 @@ fun <T> MutableStateFlow<UIState<T>>.showLoading() {
 
 /**
  * Removes loading and shows error, keep data in UIState.
- *
- * @param T UIState date type
  */
 fun <T> MutableStateFlow<UIState<T>>.showError(error: ErrorIndicatorVo) {
     update { currentState ->
@@ -61,8 +57,6 @@ fun <T> MutableStateFlow<UIState<T>>.showError(error: ErrorIndicatorVo) {
 
 /**
  * Clear all overlays (loading, error). Keep data in UIState.
- *
- * @param T UIState date type
  */
 fun <T> MutableStateFlow<UIState<T>>.hideAllOverlays() {
     update { currentState ->
