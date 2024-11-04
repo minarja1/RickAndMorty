@@ -44,6 +44,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.rememberAsyncImagePainter
 import cz.minarik.rickandmorty.R
+import cz.minarik.rickandmorty.navigation.CharacterId
 import cz.minarik.rickandmorty.navigation.CharacterImageUrl
 import cz.minarik.rickandmorty.navigation.CharacterName
 import cz.minarik.rickandmorty.ui.common.getSharedElementModifier
@@ -67,11 +68,11 @@ import cz.minarik.rickandmorty.ui.theme.SpacingXLarge
 fun CharacterDetailScreen(
     onEpisodeDetailClicked: (String) -> Unit,
     viewModel: UIViewModel<CharacterDetailScreenData, CharacterDetailScreenEvent>,
+    characterId: CharacterId,
+    imageUrl: CharacterImageUrl,
+    characterName: CharacterName,
     sharedTransitionScope: SharedTransitionScope? = null,
     animatedContentScope: AnimatedContentScope? = null,
-    imageUrl: CharacterImageUrl? = null,
-    characterName: CharacterName? = null,
-    characterId: String,
 ) {
     val viewState by viewModel.viewState.collectAsStateWithLifecycle()
     ScreenContentWrapper(state = viewState, showLoading = false) {
@@ -88,7 +89,7 @@ fun CharacterDetailScreen(
                         .fillMaxWidth()
                         .then(
                             getSharedElementModifier(
-                                key = "$imageUrl",
+                                key = imageUrl,
                                 sharedTransitionScope = sharedTransitionScope,
                                 animatedContentScope = animatedContentScope,
                             )
@@ -100,7 +101,7 @@ fun CharacterDetailScreen(
             }
 
             stickyHeader {
-                if (characterName?.isNotBlank() == true) {
+                if (characterName.isNotBlank()) {
                     Text(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -335,6 +336,8 @@ private fun CharacterDetailScreenPreview() {
                 )
             ),
             characterId = "1",
+            imageUrl = "",
+            characterName = "Rick Sanchez",
         )
     }
 }

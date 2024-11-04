@@ -66,7 +66,7 @@ fun EpisodeDetailScreen(
                 .fillMaxSize(),
             content = { _ ->
                 viewState.data.episode?.let {
-                    EpisodeDetailView(
+                    EpisodeDetailContent(
                         episode = it,
                         onCharacterDetailClicked = onCharacterDetailClicked,
                         modifier = Modifier
@@ -82,7 +82,7 @@ fun EpisodeDetailScreen(
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-private fun EpisodeDetailView(
+private fun EpisodeDetailContent(
     episode: EpisodeDetailVo,
     modifier: Modifier = Modifier,
     onCharacterDetailClicked: (CharacterId, CharacterImageUrl?, CharacterName?) -> Unit,

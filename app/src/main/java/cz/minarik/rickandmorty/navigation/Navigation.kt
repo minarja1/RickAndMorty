@@ -40,8 +40,8 @@ fun Navigation() {
                             navController.navigate(
                                 Screen.CharacterDetail.withArgs(
                                     id,
-                                    URLEncoder.encode(imageUrl ?: "", Constants.UTF_8),
-                                    name ?: ""
+                                    URLEncoder.encode(imageUrl.orEmpty(), Constants.UTF_8),
+                                    name.orEmpty(),
                                 )
                             )
                         },
@@ -80,10 +80,12 @@ fun Navigation() {
                         },
                         sharedTransitionScope = this@SharedTransitionLayout,
                         animatedContentScope = this@composable,
-                        imageUrl = it.arguments?.getString(NavigationConstants.argCharacterImageUrl),
-                        characterName = it.arguments?.getString(NavigationConstants.argCharacterName),
+                        imageUrl = it.arguments?.getString(NavigationConstants.argCharacterImageUrl)
+                            .orEmpty(),
+                        characterName = it.arguments?.getString(NavigationConstants.argCharacterName)
+                            .orEmpty(),
                         characterId = it.arguments?.getString(NavigationConstants.argCharacterId)
-                            ?: ""
+                            .orEmpty()
                     )
                 }
 
@@ -103,8 +105,8 @@ fun Navigation() {
                             navController.navigate(
                                 Screen.CharacterDetail.withArgs(
                                     id,
-                                    URLEncoder.encode(imageUrl ?: "", Constants.UTF_8),
-                                    name ?: "",
+                                    URLEncoder.encode(imageUrl.orEmpty(), Constants.UTF_8),
+                                    name.orEmpty(),
                                 )
                             )
                         },
