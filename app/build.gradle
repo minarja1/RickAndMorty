@@ -13,7 +13,7 @@ apollo {
 }
 
 android {
-    compileSdk 35
+    compileSdk 36
 
     defaultConfig {
         applicationId "cz.minarik.rickandmorty"
@@ -45,7 +45,6 @@ android {
         compose true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion '1.5.15'
         kotlinCompilerVersion kotlin_version
     }
     packagingOptions {
@@ -105,6 +104,7 @@ dependencies {
     implementation libs.okhttp
     implementation libs.logging.interceptor
     implementation libs.kotlinx.serialization.json
+    implementation libs.kotlinx.serialization.core
 
     //Coil
     implementation(libs.coil.compose)
@@ -119,6 +119,10 @@ dependencies {
     implementation libs.androidx.paging.compose
 
     implementation libs.timber
+
+    // navigation V3
+    implementation libs.androidx.navigation3.runtime
+    implementation libs.androidx.navigation3.ui
 }
 
 apollo {

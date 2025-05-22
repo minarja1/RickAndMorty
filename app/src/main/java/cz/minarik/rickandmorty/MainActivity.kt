@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import cz.minarik.rickandmorty.di.appModule
 import cz.minarik.rickandmorty.di.networkModule
 import cz.minarik.rickandmorty.navigation.Navigation
+import cz.minarik.rickandmorty.navigation.NavigationV3
 import org.koin.android.ext.koin.androidLogger
 import org.koin.compose.KoinApplication
 import org.koin.core.logger.Level
