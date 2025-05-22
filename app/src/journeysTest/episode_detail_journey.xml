@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?><!-- @formatter:off -->
+<journey name="Episode detail journey">
+    <description>A Journey that tests going to episode dtaile</description>
+    <actions>
+        <action>There should be 2 tabs on top of the screen. Click the "Episodes" tab.</action><action>Pick a random episode and click it. This should take you to the episode detail screen.</action><action>There should be a list of characters that apeared in the episode. Pick a random one and click it. This should take you to the character detail screen.</action>
+    </actions>
+</journey>

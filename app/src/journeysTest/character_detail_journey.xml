@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?><!-- @formatter:off -->
+<journey name="Rick And Morty Journey">
+    <description><![CDATA[A Journey that tests going to character detail -> episode detail]]></description>
+    <actions>
+        <action>Pick a random character and click it. This should take you to the character detail screen.</action><action>Wait until the character detail is loaded. Click the "Episodes" button. You might need to scroll down to see the "Episodes" button.</action><action>Scroll down to see the list of episodes. </action><action>Click a random episode. This should take you to the episode detail screen. There should be some info about the episode as well as list of characters that appered in it.</action>
+    </actions>
+</journey>
