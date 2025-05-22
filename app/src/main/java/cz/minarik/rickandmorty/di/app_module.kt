@@ -1,7 +1,7 @@
 package cz.minarik.rickandmorty.di
 
-import cz.minarik.rickandmorty.data.repository.CharacterRepositoryImpl
-import cz.minarik.rickandmorty.data.repository.EpisodeRepositoryImpl
+import cz.minarik.rickandmorty.data.repository.RemoteCharacterRepository
+import cz.minarik.rickandmorty.data.repository.RemoteEpisodeRepository
 import cz.minarik.rickandmorty.domain.repository.CharacterRepository
 import cz.minarik.rickandmorty.domain.repository.EpisodeRepository
 import cz.minarik.rickandmorty.domain.usecase.getcharacterdetail.GetCharacterDetailUseCase
@@ -19,13 +19,13 @@ import org.koin.dsl.module
 val appModule = module {
 
     single<CharacterRepository> {
-        CharacterRepositoryImpl(
+        RemoteCharacterRepository(
             get(),
         )
     }
 
     single<EpisodeRepository> {
-        EpisodeRepositoryImpl(
+        RemoteEpisodeRepository(
             get(),
         )
     }

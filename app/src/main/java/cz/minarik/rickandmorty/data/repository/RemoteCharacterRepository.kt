@@ -17,7 +17,7 @@ import cz.minarik.rickandmorty.domain.repository.CharacterRepository
  *
  * @param apolloClient Apollo client.
  */
-class CharacterRepositoryImpl(
+class RemoteCharacterRepository(
     private val apolloClient: ApolloClient,
 ) : CharacterRepository {
 

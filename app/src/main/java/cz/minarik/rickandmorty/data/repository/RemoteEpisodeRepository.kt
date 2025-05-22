@@ -16,7 +16,7 @@ import cz.minarik.rickandmorty.domain.repository.EpisodeRepository
  *
  * @param apolloClient Apollo client.
  */
-class EpisodeRepositoryImpl(
+class RemoteEpisodeRepository(
     private val apolloClient: ApolloClient,
 ) : EpisodeRepository {
 
